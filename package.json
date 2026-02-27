@@ -1,0 +1,25 @@
+{
+  "name": "mehtrics",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun --filter '*' build",
+    "dev:web": "bun --filter @mehtrics/web dev",
+    "build:web": "bun --filter @mehtrics/web build",
+    "dev:dashboard": "bun --filter @mehtrics/dashboard dev",
+    "build:dashboard": "bun --filter @mehtrics/dashboard build",
+    "lint": "bunx biome lint --write",
+    "format": "bunx biome format --write"
+  }
+}
