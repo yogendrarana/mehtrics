@@ -1,0 +1,20 @@
+{
+  "name": "@mehtrics/env",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.12.0",
+    "zod": "^3.25.64"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./server": "./src/server-env.ts",
+    "./client": "./src/client-env.ts"
+  }
+}

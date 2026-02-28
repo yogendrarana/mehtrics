@@ -1,0 +1,30 @@
+version: "3.9"
+
+name: mehtrics-prod
+
+services:
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+    restart: always
+    volumes:
+      - /opt/mehtrics/data/postgres:/var/lib/postgresql/data
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+    restart: always
+    volumes:
+      - /opt/mehtrics/data/redis:/data
+
+  dashboard:
+    extends:
+      file: docker-compose.yml
+      service: dashboard
+    restart: always
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "80:3001" # Direct port 80 for production if no reverse proxy

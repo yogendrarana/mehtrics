@@ -1,0 +1,105 @@
+version: "3.9"
+
+name: mehtrics
+
+# ============================================================
+# Networks
+# ============================================================
+networks:
+  mehtrics-net:
+    driver: bridge
+
+# ============================================================
+# Volumes
+# ============================================================
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+
+# ============================================================
+# Services
+# ============================================================
+services:
+  # ----------------------------------------------------------
+  # PostgreSQL
+  # ----------------------------------------------------------
+  postgres:
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    container_name: mehtrics-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mehtrics}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mehtrics}
+      POSTGRES_DB: ${POSTGRES_DB:-mehtrics}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mehtrics-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mehtrics} -d ${POSTGRES_DB:-mehtrics}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------
+  # Redis
+  # ----------------------------------------------------------
+  redis:
+    build:
+      context: .
+      dockerfile: redis.Dockerfile
+    container_name: mehtrics-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - mehtrics-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ----------------------------------------------------------
+  # Dashboard App (self-hosted)
+  # ----------------------------------------------------------
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/app.Dockerfile
+      args:
+        APP: dashboard
+    container_name: mehtrics-dashboard
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
+      REDIS_URL: redis://redis:6379
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3001}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3001}
+    ports:
+      - "${DASHBOARD_PORT:-3001}:3001"
+    networks:
+      - mehtrics-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

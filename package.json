@@ -14,12 +14,25 @@
     "packages/*"
   ],
   "scripts": {
+    "lint": "bunx biome lint --write",
+    "format": "bunx biome format --write",
     "build": "bun --filter '*' build",
+
     "dev:web": "bun --filter @mehtrics/web dev",
     "build:web": "bun --filter @mehtrics/web build",
+    
     "dev:dashboard": "bun --filter @mehtrics/dashboard dev",
     "build:dashboard": "bun --filter @mehtrics/dashboard build",
-    "lint": "bunx biome lint --write",
-    "format": "bunx biome format --write"
+    
+    "dev:docs": "bun --filter @mehtrics/docs dev",
+    "build:docs": "bun --filter @mehtrics/docs build",
+    
+    "dev:worker": "bun run --watch apps/dashboard/src/lib/worker.ts",
+
+    "db:generate": "bun --filter @mehtrics/db db:generate",
+    "db:migrate": "bun --filter @mehtrics/db db:migrate",
+    "db:seed": "bun --filter @mehtrics/db db:seed",
+    "db:studio": "bun --filter @mehtrics/db db:studio",
+    "db:push": "bun --filter @mehtrics/db db:push"
   }
 }
