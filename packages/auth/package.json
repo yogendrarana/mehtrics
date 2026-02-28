@@ -3,10 +3,19 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "dependencies": {
+    "better-auth": "^1.2.8",
+    "@mehtrics/db": "workspace:*"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./client": "./src/client.ts",
+    "./server": "./src/server.ts"
   }
 }

@@ -1,12 +1,31 @@
 {
   "name": "@mehtrics/db",
-  "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "bun run src/seed.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "pg": "^8.19.0",
+    "zod": "^3.25.64"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/pg": "^8.16.0",
+    "drizzle-kit": "^0.31.9",
+    "tsx": "^4.21.0"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./schema": "./src/schema.ts",
+    "./client": "./src/client.ts"
   }
 }
