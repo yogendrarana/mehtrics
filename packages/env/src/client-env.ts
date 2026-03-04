@@ -6,7 +6,7 @@ export const clientEnv = createEnv({
     NEXT_PUBLIC_APP_URL: z.string().url(),
   },
   runtimeEnv: {
-    NEXT_PUBLIC_APP_URL: process.env["NEXT_PUBLIC_APP_URL"],
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
-  skipValidation: !!process.env["SKIP_ENV_VALIDATION"],
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

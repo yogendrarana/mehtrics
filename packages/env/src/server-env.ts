@@ -12,11 +12,11 @@ export const serverEnv = createEnv({
     BETTER_AUTH_URL: z.string().url(),
   },
   runtimeEnv: {
-    NODE_ENV: process.env["NODE_ENV"],
-    DATABASE_URL: process.env["DATABASE_URL"],
-    REDIS_URL: process.env["REDIS_URL"],
-    BETTER_AUTH_SECRET: process.env["BETTER_AUTH_SECRET"],
-    BETTER_AUTH_URL: process.env["BETTER_AUTH_URL"],
+    NODE_ENV: process.env.NODE_ENV,
+    DATABASE_URL: process.env.DATABASE_URL,
+    REDIS_URL: process.env.REDIS_URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   },
-  skipValidation: !!process.env["SKIP_ENV_VALIDATION"],
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

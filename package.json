@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "lint": "bunx biome lint --write",
-    "format": "bunx biome format --write",
+    "format": "bun --filter @mehtrics/web format",
     "build": "bun --filter '*' build",
 
     "dev:web": "bun --filter @mehtrics/web dev",
