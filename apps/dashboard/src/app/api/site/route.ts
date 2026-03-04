@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { db, sites, eq } from "@mehtrics/db";
+import { db, site, eq } from "@mehtrics/db";
 import { getSessionFromRequest } from "@mehtrics/auth";
 
 // ---- Schema ----
@@ -19,23 +19,23 @@ const createSiteSchema = z.object({
   timezone: z.string().default("UTC"),
 });
 
-// GET /api/sites — List user's sites
+// GET /api/site — List user's site
 export async function GET(request: NextRequest) {
   const session = await getSessionFromRequest(request);
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userSites = await db
+  const userSiteList = await db
     .select()
-    .from(sites)
-    .where(eq(sites.userId, session.user.id))
-    .orderBy(sites.createdAt);
+    .from(site)
+    .where(eq(site.userId, session.user.id))
+    .orderBy(site.createdAt);
 
-  return NextResponse.json({ sites: userSites });
+  return NextResponse.json({ site: userSiteList });
 }
 
-// POST /api/sites — Create a site
+// POST /api/site — Create a site
 export async function POST(request: NextRequest) {
   const session = await getSessionFromRequest(request);
   if (!session?.user) {
@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
 
   // Check domain uniqueness
   const [existing] = await db
-    .select({ id: sites.id })
-    .from(sites)
-    .where(eq(sites.domain, domain))
+    .select({ id: site.id })
+    .from(site)
+    .where(eq(site.domain, domain))
     .limit(1);
 
   if (existing) {
@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const [site] = await db
-    .insert(sites)
+  const [createdSite] = await db
+    .insert(site)
     .values({ name, domain, timezone, userId: session.user.id })
     .returning();
 
-  return NextResponse.json({ site }, { status: 201 });
+  return NextResponse.json({ site: createdSite }, { status: 201 });
 }

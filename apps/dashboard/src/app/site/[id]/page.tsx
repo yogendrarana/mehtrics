@@ -4,8 +4,8 @@ import Link from "next/link";
 import { getSessionFromRequest } from "@mehtrics/auth";
 import {
   db,
-  sites,
-  events,
+  site as siteTable,
+  event as eventTable,
   eq,
   and,
   gte,
@@ -28,9 +28,9 @@ function getDateRange(days: number): { start: Date; end: Date } {
 
 async function getOverviewStats(siteId: string, start: Date, end: Date) {
   const filter = and(
-    eq(events.siteId, siteId),
-    gte(events.createdAt, start),
-    lt(events.createdAt, end)
+    eq(eventTable.siteId, siteId),
+    gte(eventTable.createdAt, start),
+    lt(eventTable.createdAt, end)
   );
 
   // Parallel queries
@@ -41,29 +41,29 @@ async function getOverviewStats(siteId: string, start: Date, end: Date) {
     topReferrers,
   ] = await Promise.all([
     // Total pageviews
-    db.select({ value: count() }).from(events).where(filter),
+    db.select({ value: count() }).from(eventTable).where(filter),
 
     // Unique visitors
     db
-      .select({ value: sql<number>`COUNT(DISTINCT ${events.visitorHash})` })
-      .from(events)
+      .select({ value: sql<number>`COUNT(DISTINCT ${eventTable.visitorHash})` })
+      .from(eventTable)
       .where(filter),
 
     // Top 10 pages
     db
-      .select({ pathname: events.pathname, views: count() })
-      .from(events)
+      .select({ pathname: eventTable.pathname, views: count() })
+      .from(eventTable)
       .where(filter)
-      .groupBy(events.pathname)
+      .groupBy(eventTable.pathname)
       .orderBy(desc(count()))
       .limit(10),
 
     // Top 10 referrers
     db
-      .select({ referrer: events.referrer, visits: count() })
-      .from(events)
-      .where(and(filter, sql`${events.referrer} IS NOT NULL`))
-      .groupBy(events.referrer)
+      .select({ referrer: eventTable.referrer, visits: count() })
+      .from(eventTable)
+      .where(and(filter, sql`${eventTable.referrer} IS NOT NULL`))
+      .groupBy(eventTable.referrer)
       .orderBy(desc(count()))
       .limit(10),
   ]);
@@ -86,18 +86,18 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
   if (!session?.user) redirect("/login");
 
   // Load site (ownership check)
-  const [site] = await db
+  const [siteData] = await db
     .select()
-    .from(sites)
-    .where(and(eq(sites.id, id), eq(sites.userId, session.user.id)))
+    .from(siteTable)
+    .where(and(eq(siteTable.id, id), eq(siteTable.userId, session.user.id)))
     .limit(1);
 
-  if (!site) notFound();
+  if (!siteData) notFound();
 
   const { start, end } = getDateRange(30);
-  const stats = await getOverviewStats(site.id, start, end);
+  const stats = await getOverviewStats(siteData.id, start, end);
 
-  const trackingSnippet = `<script src="${process.env["NEXT_PUBLIC_APP_URL"] ?? ""}/tracker.js" data-site-id="${site.id}" async></script>`;
+  const trackingSnippet = `<script src="${process.env["NEXT_PUBLIC_APP_URL"] ?? ""}/tracker.js" data-site-id="${siteData.id}" async></script>`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,9 +108,9 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
               ← All Sites
             </Link>
             <span className="text-muted-foreground">/</span>
-            <h1 className="font-semibold">{site.name}</h1>
+            <h1 className="font-semibold">{siteData.name}</h1>
           </div>
-          <span className="text-xs text-muted-foreground">{site.domain}</span>
+          <span className="text-xs text-muted-foreground">{siteData.domain}</span>
         </div>
       </header>
 
@@ -120,8 +120,8 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard label="Pageviews (30d)" value={stats.pageviews.toLocaleString()} />
           <StatCard label="Unique Visitors (30d)" value={stats.uniqueVisitors.toLocaleString()} />
-          <StatCard label="Site ID" value={site.id.slice(0, 8) + "…"} mono />
-          <StatCard label="Timezone" value={site.timezone} />
+          <StatCard label="Site ID" value={siteData.id.slice(0, 8) + "…"} mono />
+          <StatCard label="Timezone" value={siteData.timezone} />
         </div>
 
         {/* Top Tables */}

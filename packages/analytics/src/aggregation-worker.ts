@@ -13,9 +13,9 @@
 
 import {
   db,
-  sites,
-  events,
-  aggregatedDailyStats,
+  site,
+  event,
+  aggregatedDailyStat,
   eq,
   and,
   gte,
@@ -31,7 +31,7 @@ type AggregationMetric =
   | "bounce_rate"
   | "avg_duration";
 
-type InsertableAgg = typeof aggregatedDailyStats.$inferInsert;
+type InsertableAgg = typeof aggregatedDailyStat.$inferInsert;
 
 // ============================================================
 // Get the date range for yesterday
@@ -61,15 +61,15 @@ async function aggregateSite(
   const rows: InsertableAgg[] = [];
 
   const baseFilter = and(
-    eq(events.siteId, siteId),
-    gte(events.createdAt, start),
-    lt(events.createdAt, end),
+    eq(event.siteId, siteId),
+    gte(event.createdAt, start),
+    lt(event.createdAt, end),
   );
 
   // 1. Total pageviews
   const [pvResult] = await db
     .select({ value: count() })
-    .from(events)
+    .from(event)
     .where(baseFilter);
 
   if (pvResult) {
@@ -84,9 +84,9 @@ async function aggregateSite(
   // 2. Unique visitors (by visitorHash)
   const [uvResult] = await db
     .select({
-      value: sql<number>`COUNT(DISTINCT ${events.visitorHash})`,
+      value: sql<number>`COUNT(DISTINCT ${event.visitorHash})`,
     })
-    .from(events)
+    .from(event)
     .where(baseFilter);
 
   if (uvResult) {
@@ -101,12 +101,12 @@ async function aggregateSite(
   // 3. Top pages (pathname breakdown)
   const topPages = await db
     .select({
-      dimension: events.pathname,
+      dimension: event.pathname,
       value: count(),
     })
-    .from(events)
+    .from(event)
     .where(baseFilter)
-    .groupBy(events.pathname)
+    .groupBy(event.pathname)
     .orderBy(sql`count(*) DESC`)
     .limit(100);
 
@@ -124,12 +124,12 @@ async function aggregateSite(
   // 4. Referrer breakdown
   const referrers = await db
     .select({
-      dimension: events.referrer,
+      dimension: event.referrer,
       value: count(),
     })
-    .from(events)
-    .where(and(baseFilter, sql`${events.referrer} IS NOT NULL`))
-    .groupBy(events.referrer)
+    .from(event)
+    .where(and(baseFilter, sql`${event.referrer} IS NOT NULL`))
+    .groupBy(event.referrer)
     .orderBy(sql`count(*) DESC`)
     .limit(100);
 
@@ -147,12 +147,12 @@ async function aggregateSite(
   // 5. Country breakdown
   const countries = await db
     .select({
-      dimension: events.country,
+      dimension: event.country,
       value: count(),
     })
-    .from(events)
-    .where(and(baseFilter, sql`${events.country} IS NOT NULL`))
-    .groupBy(events.country)
+    .from(event)
+    .where(and(baseFilter, sql`${event.country} IS NOT NULL`))
+    .groupBy(event.country)
     .orderBy(sql`count(*) DESC`);
 
   for (const c of countries) {
@@ -169,12 +169,12 @@ async function aggregateSite(
   // 6. Browser breakdown
   const browsers = await db
     .select({
-      dimension: events.browser,
+      dimension: event.browser,
       value: count(),
     })
-    .from(events)
-    .where(and(baseFilter, sql`${events.browser} IS NOT NULL`))
-    .groupBy(events.browser)
+    .from(event)
+    .where(and(baseFilter, sql`${event.browser} IS NOT NULL`))
+    .groupBy(event.browser)
     .orderBy(sql`count(*) DESC`);
 
   for (const b of browsers) {
@@ -191,12 +191,12 @@ async function aggregateSite(
   // 7. Device breakdown
   const devices = await db
     .select({
-      dimension: events.device,
+      dimension: event.device,
       value: count(),
     })
-    .from(events)
-    .where(and(baseFilter, sql`${events.device} IS NOT NULL`))
-    .groupBy(events.device)
+    .from(event)
+    .where(and(baseFilter, sql`${event.device} IS NOT NULL`))
+    .groupBy(event.device)
     .orderBy(sql`count(*) DESC`);
 
   for (const d of devices) {
@@ -212,7 +212,7 @@ async function aggregateSite(
 
   // Bulk upsert
   if (rows.length > 0) {
-    await db.insert(aggregatedDailyStats).values(rows).onConflictDoNothing();
+    await db.insert(aggregatedDailyStat).values(rows).onConflictDoNothing();
   }
 
   console.log(
@@ -227,14 +227,14 @@ async function runAggregation(): Promise<void> {
   const { start, end, dateStr } = getYesterdayRange();
   console.log(`[Aggregation] Running for date: ${dateStr}`);
 
-  const allSites = await db.select({ id: sites.id }).from(sites);
-  console.log(`[Aggregation] Found ${allSites.length} sites to process.`);
+  const allSiteList = await db.select({ id: site.id }).from(site);
+  console.log(`[Aggregation] Found ${allSiteList.length} sites to process.`);
 
-  for (const site of allSites) {
+  for (const s of allSiteList) {
     try {
-      await aggregateSite(site.id, start, end, dateStr);
+      await aggregateSite(s.id, start, end, dateStr);
     } catch (err) {
-      console.error(`[Aggregation] Failed for site ${site.id}:`, err);
+      console.error(`[Aggregation] Failed for site ${s.id}:`, err);
     }
   }
 

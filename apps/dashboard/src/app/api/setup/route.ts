@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { db, users, count, eq } from "@mehtrics/db";
+import { db, user, count, eq } from "@mehtrics/db";
 import { auth } from "@mehtrics/auth";
 import { z } from "zod";
 
@@ -14,7 +14,7 @@ const setupSchema = z.object({
 
 export async function POST(request: NextRequest) {
   // Check if users already exist — if so, this endpoint is disabled
-  const [result] = await db.select({ value: count() }).from(users).limit(1);
+  const [result] = await db.select({ value: count() }).from(user).limit(1);
   if ((result?.value ?? 0) > 0) {
     return NextResponse.json(
       { error: "Setup already completed. This endpoint is disabled." },
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
   // Promote to admin — at this point only one user exists (the one just created)
   // We use a subquery to get the email we just signed up with
-  await db.update(users).set({ role: "admin" }).where(eq(users.email, email));
+  await db.update(user).set({ role: "admin" }).where(eq(user.email, email));
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }

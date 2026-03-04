@@ -4,9 +4,9 @@ CREATE TYPE "public"."device_type" AS ENUM('desktop', 'mobile', 'tablet', 'unkno
 CREATE TYPE "public"."event_type" AS ENUM('pageview', 'custom');--> statement-breakpoint
 CREATE TYPE "public"."subscription_status" AS ENUM('active', 'canceled', 'past_due', 'trialing', 'incomplete');--> statement-breakpoint
 CREATE TYPE "public"."plan_interval" AS ENUM('monthly', 'yearly');--> statement-breakpoint
-CREATE TABLE "accounts" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+CREATE TABLE "account" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
 	"account_id" text NOT NULL,
 	"provider_id" text NOT NULL,
 	"access_token" text,
@@ -16,57 +16,57 @@ CREATE TABLE "accounts" (
 	"scope" text,
 	"id_token" text,
 	"password" text,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp
 );
 --> statement-breakpoint
-CREATE TABLE "sessions" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+CREATE TABLE "session" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
 	"token" text NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
 	"ip_address" varchar(64),
 	"user_agent" text,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "sessions_token_unique" UNIQUE("token")
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
+	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+CREATE TABLE "user" (
+	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
-	"email_verified" timestamp with time zone,
+	"email_verified" boolean DEFAULT false NOT NULL,
 	"image" text,
 	"role" "user_role" DEFAULT 'user' NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "users_email_unique" UNIQUE("email")
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
+	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE "verifications" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+CREATE TABLE "verification" (
+	"id" text PRIMARY KEY NOT NULL,
 	"identifier" text NOT NULL,
 	"value" text NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp
 );
 --> statement-breakpoint
-CREATE TABLE "sites" (
+CREATE TABLE "site" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"domain" varchar(255) NOT NULL,
 	"public_key" uuid DEFAULT gen_random_uuid() NOT NULL,
 	"timezone" varchar(64) DEFAULT 'UTC' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "sites_domain_unique" UNIQUE("domain"),
-	CONSTRAINT "sites_public_key_unique" UNIQUE("public_key")
+	CONSTRAINT "site_domain_unique" UNIQUE("domain"),
+	CONSTRAINT "site_public_key_unique" UNIQUE("public_key")
 );
 --> statement-breakpoint
-CREATE TABLE "aggregated_daily_stats" (
+CREATE TABLE "aggregated_daily_stat" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"site_id" uuid NOT NULL,
 	"date" date NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE "aggregated_daily_stats" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "events" (
+CREATE TABLE "event" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"site_id" uuid NOT NULL,
 	"type" "event_type" DEFAULT 'pageview' NOT NULL,
@@ -97,9 +97,9 @@ CREATE TABLE "events" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "subscriptions" (
+CREATE TABLE "subscription" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"plan_id" uuid NOT NULL,
 	"status" "subscription_status" NOT NULL,
 	"interval" "plan_interval" DEFAULT 'monthly' NOT NULL,
@@ -110,10 +110,10 @@ CREATE TABLE "subscriptions" (
 	"stripe_customer_id" varchar(128),
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "subscriptions_stripe_subscription_id_unique" UNIQUE("stripe_subscription_id")
+	CONSTRAINT "subscription_stripe_subscription_id_unique" UNIQUE("stripe_subscription_id")
 );
 --> statement-breakpoint
-CREATE TABLE "plans" (
+CREATE TABLE "plan" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(128) NOT NULL,
 	"description" text,
@@ -127,19 +127,19 @@ CREATE TABLE "plans" (
 	"is_featured" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "plans_name_unique" UNIQUE("name")
+	CONSTRAINT "plan_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
-ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "sites" ADD CONSTRAINT "sites_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "aggregated_daily_stats" ADD CONSTRAINT "aggregated_daily_stats_site_id_sites_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."sites"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "events" ADD CONSTRAINT "events_site_id_sites_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."sites"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_plan_id_plans_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plans"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "aggregated_daily_stats_site_date_idx" ON "aggregated_daily_stats" USING btree ("site_id","date");--> statement-breakpoint
-CREATE INDEX "aggregated_daily_stats_site_metric_idx" ON "aggregated_daily_stats" USING btree ("site_id","metric");--> statement-breakpoint
-CREATE INDEX "events_site_id_created_at_idx" ON "events" USING btree ("site_id","created_at");--> statement-breakpoint
-CREATE INDEX "events_site_id_pathname_idx" ON "events" USING btree ("site_id","pathname");--> statement-breakpoint
-CREATE INDEX "events_site_id_referrer_idx" ON "events" USING btree ("site_id","referrer");--> statement-breakpoint
-CREATE INDEX "events_site_id_country_idx" ON "events" USING btree ("site_id","country");
+ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "site" ADD CONSTRAINT "site_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "aggregated_daily_stat" ADD CONSTRAINT "aggregated_daily_stat_site_id_site_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."site"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "event" ADD CONSTRAINT "event_site_id_site_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."site"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "subscription" ADD CONSTRAINT "subscription_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "subscription" ADD CONSTRAINT "subscription_plan_id_plan_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plan"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "aggregated_daily_stat_site_date_idx" ON "aggregated_daily_stat" USING btree ("site_id","date");--> statement-breakpoint
+CREATE INDEX "aggregated_daily_stat_site_metric_idx" ON "aggregated_daily_stat" USING btree ("site_id","metric");--> statement-breakpoint
+CREATE INDEX "event_site_id_created_at_idx" ON "event" USING btree ("site_id","created_at");--> statement-breakpoint
+CREATE INDEX "event_site_id_pathname_idx" ON "event" USING btree ("site_id","pathname");--> statement-breakpoint
+CREATE INDEX "event_site_id_referrer_idx" ON "event" USING btree ("site_id","referrer");--> statement-breakpoint
+CREATE INDEX "event_site_id_country_idx" ON "event" USING btree ("site_id","country");

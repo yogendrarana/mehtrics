@@ -86,6 +86,9 @@
     },
     "packages/analytics": {
       "name": "@mehtrics/analytics",
+      "dependencies": {
+        "@mehtrics/db": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
       },

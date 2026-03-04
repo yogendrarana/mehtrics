@@ -10,7 +10,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { sites } from "./sites.schema";
+import { site } from "./site.schema";
 
 // enums
 export const eventTypeEnum = pgEnum("event_type", ["pageview", "custom"]);
@@ -29,14 +29,14 @@ export const aggregationMetricEnum = pgEnum("aggregation_metric", [
   "avg_duration",
 ]);
 
-// events table
-export const events = pgTable(
-  "events",
+// event table
+export const event = pgTable(
+  "event",
   {
     id: uuid("id").defaultRandom().primaryKey(),
     siteId: uuid("site_id")
       .notNull()
-      .references(() => sites.id, { onDelete: "cascade" }),
+      .references(() => site.id, { onDelete: "cascade" }),
     type: eventTypeEnum("type").default("pageview").notNull(),
 
     // Page data
@@ -73,27 +73,27 @@ export const events = pgTable(
   },
   (table) => [
     // Primary query pattern: site + time range
-    index("events_site_id_created_at_idx").on(table.siteId, table.createdAt),
+    index("event_site_id_created_at_idx").on(table.siteId, table.createdAt),
 
     // Pathname breakdown
-    index("events_site_id_pathname_idx").on(table.siteId, table.pathname),
+    index("event_site_id_pathname_idx").on(table.siteId, table.pathname),
 
     // Referrer breakdown
-    index("events_site_id_referrer_idx").on(table.siteId, table.referrer),
+    index("event_site_id_referrer_idx").on(table.siteId, table.referrer),
 
     // Country breakdown
-    index("events_site_id_country_idx").on(table.siteId, table.country),
+    index("event_site_id_country_idx").on(table.siteId, table.country),
   ],
 );
 
-// aggregated daily stats table
-export const aggregatedDailyStats = pgTable(
-  "aggregated_daily_stats",
+// aggregated daily stat table
+export const aggregatedDailyStat = pgTable(
+  "aggregated_daily_stat",
   {
     id: uuid("id").defaultRandom().primaryKey(),
     siteId: uuid("site_id")
       .notNull()
-      .references(() => sites.id, { onDelete: "cascade" }),
+      .references(() => site.id, { onDelete: "cascade" }),
     date: date("date").notNull(),
     metric: aggregationMetricEnum("metric").notNull(),
     value: bigint("value", { mode: "number" }).notNull().default(0),
@@ -105,10 +105,10 @@ export const aggregatedDailyStats = pgTable(
   },
   (table) => [
     // Primary dashboard query: site + date range
-    index("aggregated_daily_stats_site_date_idx").on(table.siteId, table.date),
+    index("aggregated_daily_stat_site_date_idx").on(table.siteId, table.date),
 
     // Metric-specific query
-    index("aggregated_daily_stats_site_metric_idx").on(
+    index("aggregated_daily_stat_site_metric_idx").on(
       table.siteId,
       table.metric,
     ),
@@ -116,16 +116,16 @@ export const aggregatedDailyStats = pgTable(
 );
 
 // relations
-export const eventsRelations = relations(events, ({ one }) => ({
-  site: one(sites, { fields: [events.siteId], references: [sites.id] }),
+export const eventRelation = relations(event, ({ one }) => ({
+  site: one(site, { fields: [event.siteId], references: [site.id] }),
 }));
 
-export const aggregatedDailyStatRelations = relations(
-  aggregatedDailyStats,
+export const aggregatedDailyStatRelation = relations(
+  aggregatedDailyStat,
   ({ one }) => ({
-    site: one(sites, {
-      fields: [aggregatedDailyStats.siteId],
-      references: [sites.id],
+    site: one(site, {
+      fields: [aggregatedDailyStat.siteId],
+      references: [site.id],
     }),
   }),
 );

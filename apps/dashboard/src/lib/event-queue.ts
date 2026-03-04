@@ -7,7 +7,7 @@ import { getRedisClient } from "./redis";
 // Producer (track route) uses LPUSH.
 // Consumer (worker) uses BRPOP / batch RPOP.
 
-export const EVENT_QUEUE_KEY = "mehtrics:events:queue";
+export const EVENT_QUEUE_KEY = "mehtrics:event:queue";
 
 export type QueuedEvent = {
   siteId: string;
@@ -50,18 +50,18 @@ export async function dequeueBatch(batchSize = 500): Promise<QueuedEvent[]> {
   const results = await pipeline.exec();
   if (!results) return [];
 
-  const events: QueuedEvent[] = [];
+  const eventList: QueuedEvent[] = [];
   for (const [err, value] of results) {
     if (!err && value && typeof value === "string") {
       try {
-        events.push(JSON.parse(value) as QueuedEvent);
+        eventList.push(JSON.parse(value) as QueuedEvent);
       } catch {
         // skip malformed
       }
     }
   }
 
-  return events;
+  return eventList;
 }
 
 /**

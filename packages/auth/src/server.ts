@@ -10,10 +10,10 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
-      user: schema.users,
-      session: schema.sessions,
-      account: schema.accounts,
-      verification: schema.verifications,
+      user: schema.user,
+      session: schema.session,
+      account: schema.account,
+      verification: schema.verification,
     },
   }),
 
@@ -38,7 +38,6 @@ export const auth = betterAuth({
 
   // Cookie configuration — httpOnly by default in better-auth
   advanced: {
-    generateId: () => crypto.randomUUID(),
     cookiePrefix: "mehtrics",
   },
 
@@ -50,12 +49,6 @@ export const auth = betterAuth({
         defaultValue: "user",
         input: false,
       },
-    },
-    changeEmail: {
-      enabled: true,
-    },
-    changePassword: {
-      enabled: true,
     },
   },
 
