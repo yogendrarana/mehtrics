@@ -9,4 +9,10 @@ export const clientEnv = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  onValidationError: (error) => {
+    for (const issue of (error as any).issues || []) {
+      console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
+    }
+    throw new Error("Invalid environment variables");
+  },
 });

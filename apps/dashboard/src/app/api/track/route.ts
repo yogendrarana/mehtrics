@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { UAParser } from "ua-parser-js";
-import { db, sites, eq } from "@mehtrics/db";
+import { db, site, eq } from "@mehtrics/db";
 import { checkRateLimit } from "@/lib/rate-limiter";
 import { shouldIgnoreRequest } from "@/lib/bot-filter";
 import { enqueueEvent, type QueuedEvent } from "@/lib/event-queue";
@@ -59,12 +59,12 @@ async function isSiteValid(siteId: string): Promise<boolean> {
     return cached.valid;
   }
 
-  const [site] = await db
-    .select({ id: sites.id })
-    .from(sites)
-    .where(eq(sites.id, siteId))
+  const [siteResult] = await db
+    .select({ id: site.id })
+    .from(site)
+    .where(eq(site.id, siteId))
     .limit(1);
-  const valid = !!site;
+  const valid = !!siteResult;
   siteCache.set(siteId, { valid, ts: Date.now() });
   return valid;
 }

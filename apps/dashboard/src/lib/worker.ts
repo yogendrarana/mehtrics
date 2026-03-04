@@ -1,4 +1,4 @@
-import { db, events } from "@mehtrics/db";
+import { db, event } from "@mehtrics/db";
 import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
 
 // ============================================================
@@ -13,7 +13,7 @@ import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
 const POLL_INTERVAL_MS = 5_000; // 5 seconds
 const BATCH_SIZE = 500; // events per DB insert
 
-type InsertableEvent = typeof events.$inferInsert;
+type InsertableEvent = typeof event.$inferInsert;
 
 function mapQueuedEventToInsert(e: QueuedEvent): InsertableEvent {
   return {
@@ -42,7 +42,7 @@ async function processBatch(): Promise<void> {
 
   try {
     // Bulk insert — Drizzle uses $batches internally for large inserts
-    await db.insert(events).values(rows);
+    await db.insert(event).values(rows);
     console.log(`[Worker] Inserted ${rows.length} events.`);
   } catch (err) {
     console.error("[Worker] Bulk insert failed:", err);

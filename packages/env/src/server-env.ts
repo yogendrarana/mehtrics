@@ -19,4 +19,10 @@ export const serverEnv = createEnv({
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  onValidationError: (error) => {
+    for (const issue of (error as any).issues || []) {
+      console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
+    }
+    throw new Error("Invalid environment variables");
+  },
 });

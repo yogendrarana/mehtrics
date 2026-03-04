@@ -9,13 +9,13 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { subscriptions } from "./subscriptions.schema";
+import { subscription } from "./subscription.schema";
 
 // enums
 export const planIntervalEnum = pgEnum("plan_interval", ["monthly", "yearly"]);
 
-// plans
-export const plans = pgTable("plans", {
+// plan
+export const plan = pgTable("plan", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 128 }).notNull().unique(),
   description: text("description"),
@@ -40,6 +40,6 @@ export const plans = pgTable("plans", {
 });
 
 // relations
-export const planRelations = relations(plans, ({ many }) => ({
-  subscriptions: many(subscriptions),
+export const planRelation = relations(plan, ({ many }) => ({
+  subscription: many(subscription),
 }));

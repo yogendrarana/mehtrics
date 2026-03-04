@@ -1,13 +1,14 @@
-import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { users } from "./auth.schema";
+import { user } from "./auth.schema";
+import { event, aggregatedDailyStat } from "./analytic.schema";
 
-// sites
-export const sites = pgTable("sites", {
+// site
+export const site = pgTable("site", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 255 }).notNull(),
   domain: varchar("domain", { length: 255 }).notNull().unique(),
 
@@ -25,6 +26,8 @@ export const sites = pgTable("sites", {
 });
 
 // relations
-export const siteRelations = relations(sites, ({ one }) => ({
-  user: one(users, { fields: [sites.userId], references: [users.id] }),
+export const siteRelation = relations(site, ({ one, many }) => ({
+  user: one(user, { fields: [site.userId], references: [user.id] }),
+  event: many(event),
+  aggregatedDailyStat: many(aggregatedDailyStat),
 }));

@@ -6,6 +6,9 @@
     "build:tracker": "bun build src/tracker.ts --outdir dist --minify --target browser",
     "dev:worker": "bun run --watch src/worker.ts"
   },
+  "dependencies": {
+    "@mehtrics/db": "workspace:*"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

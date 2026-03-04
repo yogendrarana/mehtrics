@@ -5,10 +5,11 @@ import {
   timestamp,
   boolean,
   pgEnum,
+  text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { users } from "./auth.schema";
-import { planIntervalEnum, plans } from "./plans.schema";
+import { user } from "./auth.schema";
+import { planIntervalEnum, plan } from "./plan.schema";
 
 // enums
 export const subscriptiontatusEnum = pgEnum("subscription_status", [
@@ -19,15 +20,15 @@ export const subscriptiontatusEnum = pgEnum("subscription_status", [
   "incomplete",
 ]);
 
-// subscriptions
-export const subscriptions = pgTable("subscriptions", {
+// subscription
+export const subscription = pgTable("subscription", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" }),
   planId: uuid("plan_id")
     .notNull()
-    .references(() => plans.id),
+    .references(() => plan.id),
   status: subscriptiontatusEnum("status").notNull(),
   interval: planIntervalEnum("interval").notNull().default("monthly"),
   currentPeriodStart: timestamp("current_period_start", { withTimezone: true }),
@@ -50,7 +51,7 @@ export const subscriptions = pgTable("subscriptions", {
 });
 
 // relations
-export const subscriptionRelations = relations(subscriptions, ({ one }) => ({
-  user: one(users, { fields: [subscriptions.userId], references: [users.id] }),
-  plan: one(plans, { fields: [subscriptions.planId], references: [plans.id] }),
+export const subscriptionRelation = relations(subscription, ({ one }) => ({
+  user: one(user, { fields: [subscription.userId], references: [user.id] }),
+  plan: one(plan, { fields: [subscription.planId], references: [plan.id] }),
 }));

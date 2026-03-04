@@ -11,7 +11,7 @@ import {
   CardFooter,
 } from "@mehtrics/ui";
 
-const plans = [
+const planList = [
   {
     name: "Free",
     price: "$0",
@@ -59,7 +59,7 @@ export default function PricingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto w-full">
-            {plans.map((plan) => (
+            {planList.map((plan) => (
               <Card
                 key={plan.name}
                 className={cn(

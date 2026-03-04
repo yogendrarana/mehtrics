@@ -17,7 +17,7 @@ export default function NewSitePage() {
     setLoading(true);
     setError(null);
 
-    const res = await fetch("/api/sites", {
+    const res = await fetch("/api/site", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, domain }),
@@ -31,7 +31,7 @@ export default function NewSitePage() {
       return;
     }
 
-    router.push(`/sites/${data.site!.id}`);
+    router.push(`/site/${data.site!.id}`);
   }
 
   return (

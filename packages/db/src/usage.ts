@@ -19,12 +19,12 @@ export async function getMonthlyEventCount(userId: string) {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
   // Get all site IDs for this user
-  const userSites = await db
+  const userSiteList = await db
     .select({ id: site.id })
     .from(site)
     .where(eq(site.userId, userId));
 
-  const siteIds = userSites.map((s) => s.id);
+  const siteIds = userSiteList.map((s) => s.id);
   if (siteIds.length === 0) return 0;
 
   const [result] = await db
@@ -76,9 +76,9 @@ export async function checkPlanLimits(userId: string) {
     canAddSite: limit.siteLimit === 0 || siteCount < limit.siteLimit,
     canIngestEvent: limit.eventLimit === 0 || eventCount < limit.eventLimit,
     usage: {
-      sites: siteCount,
+      site: siteCount,
       siteLimit: limit.siteLimit,
-      events: eventCount,
+      event: eventCount,
       eventLimit: limit.eventLimit,
     },
   };
