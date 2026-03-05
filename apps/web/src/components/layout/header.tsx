@@ -30,7 +30,11 @@ export function Header() {
 
           <div className="flex items-center gap-4">
             {isLoggedIn && (
-              <Button onClick={() => authClient.signOut()} variant="ghost" size="sm">
+              <Button
+                onClick={() => authClient.signOut()}
+                variant="ghost"
+                size="sm"
+              >
                 Sign Out
               </Button>
             )}
