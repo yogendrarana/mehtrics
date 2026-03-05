@@ -1,34 +1,35 @@
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { getSessionFromRequest } from "@mehtrics/auth";
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { Container } from "@mehtrics/ui";
+import { Container, ScrollArea } from "@mehtrics/ui";
+import { cn } from "@mehtrics/utils";
+import { DashboardMenu } from "./__components/dashboard-menu";
 
-export default async function DashboardLayout({
-  children,
-}: {
+interface Props {
   children: React.ReactNode;
-}) {
-  const h = await headers();
-  const reqHeaders = new Headers(h);
-  const session = await getSessionFromRequest({ headers: reqHeaders } as never);
+}
 
-  if (!session?.user) {
-    redirect("/signin");
-  }
-
+export default function DocsLayout({ children }: Props) {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="h-screen flex flex-col overflow-hidden">
       <Header />
-      <div className="flex-1 flex flex-col">
-        <Container className="flex-1 flex flex-col">
-          <main className="flex-1 border-x border-border p-6 md:p-10 min-h-[calc(100vh-theme(spacing.16)-theme(spacing.24))]">
-            {children}
-          </main>
-        </Container>
-      </div>
-      <Footer />
+
+      <Container
+        className={cn(
+          "flex-1 overflow-hidden",
+          "md:grid md:grid-cols-[275px_minmax(0,1fr)]",
+        )}
+      >
+        {/* sidebar */}
+        <aside className="border-x hidden md:flex md:flex-col h-full overflow-hidden">
+          <ScrollArea className="h-full">
+            <DashboardMenu />
+          </ScrollArea>
+        </aside>
+
+        {/* main */}
+        <main className="flex-1 h-full overflow-hidden border-r">
+          <ScrollArea className="h-full">{children}</ScrollArea>
+        </main>
+      </Container>
     </div>
   );
 }
