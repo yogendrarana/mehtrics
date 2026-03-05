@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useEffect } from "react";
 import { Palette, Bell, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { authClient } from "@mehtrics/auth";
 import { 
   Label, 
@@ -14,16 +15,19 @@ import { SettingHeader } from "@/app/dashboard/settings/__components/setting-hea
 import { getUserPreference, updateMode } from "./__lib/actions";
 
 export default function PreferencesPage() {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const { data: sessionData, isPending: sessionPending } = authClient.useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
 
+  // When mounted on client, now we can show the UI
   useEffect(() => {
+    setMounted(true);
+    
     async function loadPreferences() {
       try {
         const response = await getUserPreference();
         if (response.success && response.data) {
-          setTheme(response.data.appearanceSettings?.theme || "light");
         }
       } catch (error) {
         console.error("Failed to load preferences", error);
@@ -35,6 +39,8 @@ export default function PreferencesPage() {
   }, []);
 
   const handleUpdateMode = useCallback(async (newTheme: "dark" | "light") => {
+    setTheme(newTheme);
+
     if (!sessionData || sessionPending) return;
 
     try {
@@ -49,7 +55,6 @@ export default function PreferencesPage() {
           description: response.message,
           type: "success",
         });
-        setTheme(newTheme);
       } else {
         toastManager.add({
           title: "Error!",
@@ -64,15 +69,18 @@ export default function PreferencesPage() {
         type: "error",
       });
     }
-  }, [sessionData, sessionPending]);
+  }, [sessionData, sessionPending, setTheme]);
 
-  if (isLoading || sessionPending) {
+  if (!mounted || isLoading || sessionPending) {
     return (
       <div className="p-8 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
+
+  // Use resolvedTheme to correctly identify dark/light even if 'system' is selected
+  const activeTheme = theme === "system" ? resolvedTheme : theme;
 
   return (
     <div>
@@ -95,7 +103,7 @@ export default function PreferencesPage() {
                 {/* Background slider */}
                 <div
                   className={`absolute top-1 h-8 w-8 bg-background rounded-md shadow-sm transition-transform duration-200 ease-in-out ${
-                    theme === "dark" ? "translate-x-8" : "translate-x-0"
+                    activeTheme === "dark" ? "translate-x-8" : "translate-x-0"
                   }`}
                 />
 
@@ -105,7 +113,7 @@ export default function PreferencesPage() {
                   size="icon"
                   onClick={() => handleUpdateMode("light")}
                   className={`size-8 hover:bg-transparent relative z-10 rounded-md transition-colors duration-200 ${
-                    theme === "light"
+                    activeTheme === "light"
                       ? "text-foreground hover:text-foreground"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
@@ -119,7 +127,7 @@ export default function PreferencesPage() {
                   size="icon"
                   onClick={() => handleUpdateMode("dark")}
                   className={`size-8 hover:bg-transparent relative z-10 rounded-md transition-colors duration-200 ${
-                    theme === "dark"
+                    activeTheme === "dark"
                       ? "text-foreground hover:text-foreground"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
