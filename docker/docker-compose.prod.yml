@@ -19,10 +19,10 @@ services:
     volumes:
       - /opt/mehtrics/data/redis:/data
 
-  dashboard:
+  web:
     extends:
       file: docker-compose.yml
-      service: dashboard
+      service: web
     restart: always
     environment:
       - NODE_ENV=production

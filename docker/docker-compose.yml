@@ -71,15 +71,15 @@ services:
       start_period: 5s
 
   # ----------------------------------------------------------
-  # Dashboard App (self-hosted)
+  # Web App (self-hosted)
   # ----------------------------------------------------------
-  dashboard:
+  web:
     build:
       context: ..
       dockerfile: docker/app.Dockerfile
       args:
-        APP: dashboard
-    container_name: mehtrics-dashboard
+        APP: web
+    container_name: mehtrics-web
     restart: unless-stopped
     depends_on:
       postgres:
@@ -94,7 +94,7 @@ services:
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3001}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3001}
     ports:
-      - "${DASHBOARD_PORT:-3001}:3001"
+      - "${WEB_PORT:-3001}:3001"
     networks:
       - mehtrics-net
     healthcheck:

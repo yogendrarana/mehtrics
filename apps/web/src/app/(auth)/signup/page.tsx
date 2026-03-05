@@ -8,9 +8,8 @@ import { useForm } from "@tanstack/react-form";
 import { RegisterUserSchema } from "../_lib/validation";
 
 import { Logo } from "@/components/logo";
-import { authClient } from "@mehtrics/auth/client";
+import { authClient } from "@mehtrics/auth";
 import { Button, Google, Input, Label, toastManager } from "@mehtrics/ui";
-
 
 export default function Page() {
   const router = useRouter();
@@ -30,37 +29,38 @@ export default function Page() {
       onSubmit: RegisterUserSchema,
     },
     onSubmit: async ({ value }) => {
-        await toastManager.promise(
-          (async () => {
-            const { error: signUpError } = await authClient.signUp.email({
-              email: value.email,
-              password: value.password,
-              name: value.name,
-              callbackURL: "/dashboard",
-            });
+      await toastManager.promise(
+        (async () => {
+          const { error: signUpError } = await authClient.signUp.email({
+            email: value.email,
+            password: value.password,
+            name: value.name,
+            callbackURL: "/dashboard",
+          });
 
-            if (signUpError) {
-              throw signUpError;
-            }
-          })(),
-          {
-            loading: {
-              title: "Signing up...",
-              description: "Please wait while we sign you up.",
-            },
-            success: {
-              title: "Signed up successfully!",
-              description: "You are now logged in.",
-            },
-            error: (err: any) => ({
-              title: "Error signing up",
-              description: err?.message ?? "Something went wrong. Please try again.",
-            }),
+          if (signUpError) {
+            throw signUpError;
+          }
+        })(),
+        {
+          loading: {
+            title: "Signing up...",
+            description: "Please wait while we sign you up.",
           },
-        );
+          success: {
+            title: "Signed up successfully!",
+            description: "You are now logged in.",
+          },
+          error: (err: any) => ({
+            title: "Error signing up",
+            description:
+              err?.message ?? "Something went wrong. Please try again.",
+          }),
+        },
+      );
 
-        router.push("/dashboard");
-        router.refresh();
+      router.push("/dashboard");
+      router.refresh();
     },
   });
 
@@ -97,9 +97,7 @@ export default function Page() {
             name="name"
             children={(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  Full Name
-                </Label>
+                <Label htmlFor={field.name}>Full Name</Label>
                 <Input
                   placeholder="John Doe"
                   value={field.state.value}
@@ -109,17 +107,20 @@ export default function Page() {
                   disabled={isSubmitting}
                   className="bg-transparent"
                 />
-                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <div className="space-y-1">
-                    {field.state.meta.errors.map((err, i) =>
-                      err ? (
-                        <p key={i} className="text-xs text-destructive">
-                          {typeof err === "string" ? err : (err as any).message}
-                        </p>
-                      ) : null,
-                    )}
-                  </div>
-                )}
+                {field.state.meta.isTouched &&
+                  field.state.meta.errors.length > 0 && (
+                    <div className="space-y-1">
+                      {field.state.meta.errors.map((err, i) =>
+                        err ? (
+                          <p key={i} className="text-xs text-destructive">
+                            {typeof err === "string"
+                              ? err
+                              : (err as any).message}
+                          </p>
+                        ) : null,
+                      )}
+                    </div>
+                  )}
               </div>
             )}
           />
@@ -129,9 +130,7 @@ export default function Page() {
             name="email"
             children={(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  Email
-                </Label>
+                <Label htmlFor={field.name}>Email</Label>
                 <Input
                   type="email"
                   name={field.name}
@@ -143,17 +142,20 @@ export default function Page() {
                   disabled={isSubmitting}
                   className="bg-transparent"
                 />
-                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <div className="space-y-1">
-                    {field.state.meta.errors.map((err, i) =>
-                      err ? (
-                        <p key={i} className="text-xs text-destructive">
-                          {typeof err === "string" ? err : (err as any).message}
-                        </p>
-                      ) : null,
-                    )}
-                  </div>
-                )}
+                {field.state.meta.isTouched &&
+                  field.state.meta.errors.length > 0 && (
+                    <div className="space-y-1">
+                      {field.state.meta.errors.map((err, i) =>
+                        err ? (
+                          <p key={i} className="text-xs text-destructive">
+                            {typeof err === "string"
+                              ? err
+                              : (err as any).message}
+                          </p>
+                        ) : null,
+                      )}
+                    </div>
+                  )}
               </div>
             )}
           />
@@ -163,9 +165,7 @@ export default function Page() {
             name="password"
             children={(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  Password
-                </Label>
+                <Label htmlFor={field.name}>Password</Label>
                 <Input
                   type="password"
                   id={field.name}
@@ -176,17 +176,20 @@ export default function Page() {
                   disabled={isSubmitting}
                   className="bg-transparent"
                 />
-                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <div className="space-y-1">
-                    {field.state.meta.errors.map((err, i) =>
-                      err ? (
-                        <p key={i} className="text-xs text-destructive">
-                          {typeof err === "string" ? err : (err as any).message}
-                        </p>
-                      ) : null,
-                    )}
-                  </div>
-                )}
+                {field.state.meta.isTouched &&
+                  field.state.meta.errors.length > 0 && (
+                    <div className="space-y-1">
+                      {field.state.meta.errors.map((err, i) =>
+                        err ? (
+                          <p key={i} className="text-xs text-destructive">
+                            {typeof err === "string"
+                              ? err
+                              : (err as any).message}
+                          </p>
+                        ) : null,
+                      )}
+                    </div>
+                  )}
               </div>
             )}
           />
@@ -195,7 +198,11 @@ export default function Page() {
           <Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
-              <Button type="submit" className="w-full h-11" disabled={!canSubmit || isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full h-11"
+                disabled={!canSubmit || isSubmitting}
+              >
                 {isSubmitting ? "Creating account..." : "Create Account"}
               </Button>
             )}
@@ -234,5 +241,3 @@ export default function Page() {
     </section>
   );
 }
-
-

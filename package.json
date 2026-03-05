@@ -21,13 +21,10 @@
     "dev:web": "bun --filter @mehtrics/web dev",
     "build:web": "bun --filter @mehtrics/web build",
     
-    "dev:dashboard": "bun --filter @mehtrics/dashboard dev",
-    "build:dashboard": "bun --filter @mehtrics/dashboard build",
-    
     "dev:docs": "bun --filter @mehtrics/docs dev",
     "build:docs": "bun --filter @mehtrics/docs build",
     
-    "dev:worker": "bun run --watch apps/dashboard/src/lib/worker.ts",
+    "dev:worker": "bun run --watch apps/web/src/lib/worker.ts",
 
     "db:generate": "bun --filter @mehtrics/db db:generate",
     "db:migrate": "bun --filter @mehtrics/db db:migrate",

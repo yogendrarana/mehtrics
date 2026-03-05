@@ -7,7 +7,7 @@ import { useForm } from "@tanstack/react-form";
 import { LoginUserSchema } from "../_lib/validation";
 
 import { Logo } from "@/components/logo";
-import { authClient } from "@mehtrics/auth/client";
+import { authClient } from "@mehtrics/auth";
 import { Button, Google, Input, Label, toastManager } from "@mehtrics/ui";
 
 export default function Page() {
@@ -50,7 +50,8 @@ export default function Page() {
           },
           error: (err: any) => ({
             title: "Error signing in",
-            description: err?.message ?? "Something went wrong. Please try again.",
+            description:
+              err?.message ?? "Something went wrong. Please try again.",
           }),
         },
       );
@@ -80,9 +81,7 @@ export default function Page() {
         <div className="space-y-4">
           <div>
             <Logo />
-            <h1 className="mb-1 mt-4 text-xl font-semibold">
-              Sign In
-            </h1>
+            <h1 className="mb-1 mt-4 text-xl font-semibold">Sign In</h1>
             <p className="text-muted-foreground">
               Welcome back! Please enter your details
             </p>
@@ -93,9 +92,7 @@ export default function Page() {
             name="email"
             children={(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  Email
-                </Label>
+                <Label htmlFor={field.name}>Email</Label>
                 <Input
                   type="email"
                   name={field.name}
@@ -107,17 +104,20 @@ export default function Page() {
                   disabled={isSubmitting}
                   className="bg-transparent"
                 />
-                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <div className="space-y-1">
-                    {field.state.meta.errors.map((err, i) =>
-                      err ? (
-                        <p key={i} className="text-xs text-destructive">
-                          {typeof err === "string" ? err : (err as any).message}
-                        </p>
-                      ) : null,
-                    )}
-                  </div>
-                )}
+                {field.state.meta.isTouched &&
+                  field.state.meta.errors.length > 0 && (
+                    <div className="space-y-1">
+                      {field.state.meta.errors.map((err, i) =>
+                        err ? (
+                          <p key={i} className="text-xs text-destructive">
+                            {typeof err === "string"
+                              ? err
+                              : (err as any).message}
+                          </p>
+                        ) : null,
+                      )}
+                    </div>
+                  )}
               </div>
             )}
           />
@@ -127,9 +127,7 @@ export default function Page() {
             name="password"
             children={(field) => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  Password
-                </Label>
+                <Label htmlFor={field.name}>Password</Label>
                 <Input
                   type="password"
                   id={field.name}
@@ -140,17 +138,20 @@ export default function Page() {
                   disabled={isSubmitting}
                   className="bg-transparent"
                 />
-                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <div className="space-y-1">
-                    {field.state.meta.errors.map((err, i) =>
-                      err ? (
-                        <p key={i} className="text-xs text-destructive">
-                          {typeof err === "string" ? err : (err as any).message}
-                        </p>
-                      ) : null,
-                    )}
-                  </div>
-                )}
+                {field.state.meta.isTouched &&
+                  field.state.meta.errors.length > 0 && (
+                    <div className="space-y-1">
+                      {field.state.meta.errors.map((err, i) =>
+                        err ? (
+                          <p key={i} className="text-xs text-destructive">
+                            {typeof err === "string"
+                              ? err
+                              : (err as any).message}
+                          </p>
+                        ) : null,
+                      )}
+                    </div>
+                  )}
               </div>
             )}
           />
@@ -159,7 +160,11 @@ export default function Page() {
           <Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
-              <Button type="submit" className="w-full h-11" disabled={!canSubmit || isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full h-11"
+                disabled={!canSubmit || isSubmitting}
+              >
                 {isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
             )}

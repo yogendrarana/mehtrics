@@ -86,7 +86,7 @@ success "Networks removed."
 if [[ "$REMOVE_IMAGES" =~ ^[Yy]$ ]]; then
   log "Removing images..."
   docker images --filter "label=maintainer=mehtrics" -q | xargs -r docker rmi -f 2>/dev/null || true
-  docker rmi mehtrics-postgres mehtrics-redis mehtrics-dashboard 2>/dev/null || true
+  docker rmi mehtrics-postgres mehtrics-redis mehtrics-web 2>/dev/null || true
   success "Images removed."
 fi
 
