@@ -55,3 +55,7 @@ export const subscriptionRelation = relations(subscription, ({ one }) => ({
   user: one(user, { fields: [subscription.userId], references: [user.id] }),
   plan: one(plan, { fields: [subscription.planId], references: [plan.id] }),
 }));
+
+// types
+export type SubscriptionSelect = typeof subscription.$inferSelect;
+export type SubscriptionInsert = typeof subscription.$inferInsert;

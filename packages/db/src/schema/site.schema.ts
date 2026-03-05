@@ -31,3 +31,7 @@ export const siteRelation = relations(site, ({ one, many }) => ({
   event: many(event),
   aggregatedDailyStat: many(aggregatedDailyStat),
 }));
+
+// types
+export type SiteSelect = typeof site.$inferSelect;
+export type SiteInsert = typeof site.$inferInsert;

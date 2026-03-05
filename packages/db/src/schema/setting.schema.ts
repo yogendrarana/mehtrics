@@ -15,6 +15,11 @@ export const setting = pgTable("setting", {
   updatedAt: timestamp("updated_at"),
 });
 
+// relations
 export const settingRelation = relations(setting, ({ one }) => ({
   user: one(user, { fields: [setting.userId], references: [user.id] }),
 }));
+
+// types
+export type SettingSelect = typeof setting.$inferSelect;
+export type SettingInsert = typeof setting.$inferInsert;

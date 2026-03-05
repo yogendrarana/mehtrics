@@ -43,3 +43,7 @@ export const plan = pgTable("plan", {
 export const planRelation = relations(plan, ({ many }) => ({
   subscription: many(subscription),
 }));
+
+// types
+export type PlanSelect = typeof plan.$inferSelect;
+export type PlanInsert = typeof plan.$inferInsert;

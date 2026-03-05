@@ -129,3 +129,10 @@ export const aggregatedDailyStatRelation = relations(
     }),
   }),
 );
+
+// types
+export type EventSelect = typeof event.$inferSelect;
+export type EventInsert = typeof event.$inferInsert;
+
+export type AggregatedDailyStatSelect = typeof aggregatedDailyStat.$inferSelect;
+export type AggregatedDailyStatInsert = typeof aggregatedDailyStat.$inferInsert;
