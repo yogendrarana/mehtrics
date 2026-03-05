@@ -19,12 +19,14 @@ export function AccountManagement() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <UserX className="w-4 h-4 text-orange-500" />
-                <h3 className="font-medium text-gray-900">Deactivate Account</h3>
+                <h3 className="font-medium text-gray-900">
+                  Deactivate Account
+                </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Temporarily disable your account. You can reactivate it anytime by logging back
-                in. Your data will be preserved but your account will be hidden from other
-                users.
+                Temporarily disable your account. You can reactivate it anytime
+                by logging back in. Your data will be preserved but your account
+                will be hidden from other users.
               </p>
             </div>
 
@@ -43,9 +45,9 @@ export function AccountManagement() {
                 <h3 className="font-medium text-gray-900">Delete Account</h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Permanently delete your account and all associated data. This action cannot be
-                undone. All your files, settings, and account information will be permanently
-                removed.
+                Permanently delete your account and all associated data. This
+                action cannot be undone. All your files, settings, and account
+                information will be permanently removed.
               </p>
             </div>
 

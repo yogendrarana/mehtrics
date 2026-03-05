@@ -3,17 +3,13 @@
 import { useState, useTransition } from "react";
 import { Globe, Settings, Clock } from "lucide-react";
 import { authClient } from "@mehtrics/auth";
-import { 
-  Button, 
-  Badge, 
-  toastManager 
-} from "@mehtrics/ui";
-import { 
-  cn, 
-  formatDate, 
-  formatExpiryDate, 
-  getBrowserName, 
-  getDeviceName 
+import { Button, Badge, toastManager } from "@mehtrics/ui";
+import {
+  cn,
+  formatDate,
+  formatExpiryDate,
+  getBrowserName,
+  getDeviceName,
 } from "@mehtrics/utils";
 import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
 
@@ -22,7 +18,10 @@ interface SessionSettingsProps {
   currentSessionToken?: string;
 }
 
-export function SessionSettings({ initialSessions, currentSessionToken }: SessionSettingsProps) {
+export function SessionSettings({
+  initialSessions,
+  currentSessionToken,
+}: SessionSettingsProps) {
   const [isPending, startTransition] = useTransition();
   const [sessions, setSessions] = useState(initialSessions);
 
@@ -71,11 +70,18 @@ export function SessionSettings({ initialSessions, currentSessionToken }: Sessio
             <div className="flex items-center gap-3">
               <span className="truncate flex items-center gap-2">
                 <Globe className="h-4 w-4 text-muted-foreground" />
-                {session.userAgent ? getDeviceName(session.userAgent) : "Unknown Device"}
+                {session.userAgent
+                  ? getDeviceName(session.userAgent)
+                  : "Unknown Device"}
               </span>
 
-              <Badge variant="secondary" className="text-xs px-2 py-0.5 rounded-full">
-                {session.userAgent ? getBrowserName(session.userAgent) : "Unknown Browser"}
+              <Badge
+                variant="secondary"
+                className="text-xs px-2 py-0.5 rounded-full"
+              >
+                {session.userAgent
+                  ? getBrowserName(session.userAgent)
+                  : "Unknown Browser"}
               </Badge>
 
               {currentSessionToken === session.token && (
@@ -116,7 +122,12 @@ export function SessionSettings({ initialSessions, currentSessionToken }: Sessio
               <div className="flex items-center gap-1">
                 <span className="h-4 w-4 inline-block">
                   <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                    <rect width="16" height="16" rx="2" fill="hsl(var(--muted))" />
+                    <rect
+                      width="16"
+                      height="16"
+                      rx="2"
+                      fill="hsl(var(--muted))"
+                    />
                     <path
                       d="M8 4v4l3 1"
                       stroke="hsl(var(--muted-foreground))"

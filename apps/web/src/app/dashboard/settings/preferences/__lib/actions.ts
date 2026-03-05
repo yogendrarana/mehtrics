@@ -68,7 +68,7 @@ export async function updateMode(data: {
 /**
  * Get the current user's preferences.
  */
-export async function getUserPreference() {
+export async function getUserSetting() {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),

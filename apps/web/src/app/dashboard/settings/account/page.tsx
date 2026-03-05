@@ -8,6 +8,7 @@ import { ProfileSettings } from "./__components/profile-settings";
 import { PasswordSettings } from "./__components/password-settings";
 import { SessionSettings } from "./__components/session-settings";
 import { AccountManagement } from "./__components/account-management";
+import { Separator } from "@mehtrics/ui";
 
 export default function AccountSettingsPage() {
   const { data: session } = authClient.useSession();
@@ -21,7 +22,11 @@ export default function AccountSettingsPage() {
         if (data && !error) {
           const activeSessions = data
             .filter((s) => new Date(s.expiresAt) > new Date())
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+            );
           setSessions(activeSessions);
         }
       } catch (err) {
@@ -49,21 +54,31 @@ export default function AccountSettingsPage() {
         className="sticky top-0 z-10"
       />
 
-      <div className="p-4 space-y-4">
-        {/* Profile Settings Section */}
-        <ProfileSettings user={session.user} />
+      <div>
+        <div className="p-4">
+          <ProfileSettings user={session.user} />
+        </div>
 
-        {/* Security / Password Settings Section */}
-        <PasswordSettings />
+        <Separator />
 
-        {/* Sessions Section */}
-        <SessionSettings 
-          initialSessions={sessions} 
-          currentSessionToken={session.session.token} 
-        />
+        <div className="p-4">
+          <PasswordSettings />
+        </div>
 
-        {/* Account Management Section */}
-        <AccountManagement />
+        <Separator />
+
+        <div className="p-4">
+          <SessionSettings
+            initialSessions={sessions}
+            currentSessionToken={session.session.token}
+          />
+        </div>
+
+        <Separator />
+
+        <div className="p-4">
+          <AccountManagement />
+        </div>
       </div>
     </div>
   );

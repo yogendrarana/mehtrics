@@ -3,12 +3,7 @@
 import { useState, useTransition } from "react";
 import { Shield, Settings } from "lucide-react";
 import { authClient } from "@mehtrics/auth";
-import { 
-  Button, 
-  Input, 
-  Label, 
-  toastManager 
-} from "@mehtrics/ui";
+import { Button, Input, Label, toastManager } from "@mehtrics/ui";
 import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
 
 export function PasswordSettings() {
@@ -52,12 +47,17 @@ export function PasswordSettings() {
             description: "Password has been changed successfully.",
             type: "success",
           });
-          setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+          setPasswordData({
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+          });
         }
       } catch (err: any) {
         toastManager.add({
           title: "Error",
-          description: err?.message || "Something went wrong. Please try again.",
+          description:
+            err?.message || "Something went wrong. Please try again.",
           type: "error",
         });
       }
@@ -65,7 +65,11 @@ export function PasswordSettings() {
   }
 
   return (
-    <SettingCard title="Password" subtitle="Manage your account password" Icon={Shield}>
+    <SettingCard
+      title="Password"
+      subtitle="Manage your account password"
+      Icon={Shield}
+    >
       <div className="p-4 space-y-4">
         {/* Row: Current Password */}
         <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
@@ -73,7 +77,9 @@ export function PasswordSettings() {
             <Label htmlFor="currentPassword" className="text-sm font-medium">
               Current Password
             </Label>
-            <p className="text-sm text-muted-foreground">Enter your existing password</p>
+            <p className="text-sm text-muted-foreground">
+              Enter your existing password
+            </p>
           </div>
           <Input
             id="currentPassword"
@@ -96,7 +102,9 @@ export function PasswordSettings() {
             <Label htmlFor="newPassword" className="text-sm font-medium">
               New Password
             </Label>
-            <p className="text-sm text-muted-foreground">Choose a strong new password</p>
+            <p className="text-sm text-muted-foreground">
+              Choose a strong new password
+            </p>
           </div>
           <Input
             id="newPassword"
@@ -119,7 +127,9 @@ export function PasswordSettings() {
             <Label htmlFor="confirmPassword" className="text-sm font-medium">
               Confirm New Password
             </Label>
-            <p className="text-sm text-muted-foreground">Re-enter new password</p>
+            <p className="text-sm text-muted-foreground">
+              Re-enter new password
+            </p>
           </div>
           <Input
             id="confirmPassword"

@@ -3,14 +3,14 @@
 import { useState, useTransition } from "react";
 import { User, Settings } from "lucide-react";
 import { authClient } from "@mehtrics/auth";
-import { 
-  Button, 
-  Input, 
-  Label, 
-  Avatar, 
-  AvatarFallback, 
-  AvatarImage, 
-  toastManager 
+import {
+  Button,
+  Input,
+  Label,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  toastManager,
 } from "@mehtrics/ui";
 import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
 
@@ -61,7 +61,11 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
   };
 
   return (
-    <SettingCard title="Profile Setting" subtitle="Change your profile data" Icon={User}>
+    <SettingCard
+      title="Profile Setting"
+      subtitle="Change your profile data"
+      Icon={User}
+    >
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-4">
           <Avatar className="h-14 w-14">
@@ -74,7 +78,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             <Button variant="outline" size="sm">
               Change Photo
             </Button>
-            <p className="text-xs text-muted-foreground">Your avatar visible to public.</p>
+            <p className="text-xs text-muted-foreground">
+              Your avatar visible to public.
+            </p>
           </div>
         </div>
 
@@ -91,7 +97,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           <Input
             id="name"
             value={profileData.name}
-            onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+            onChange={(e) =>
+              setProfileData({ ...profileData, name: e.target.value })
+            }
             className="h-10"
             placeholder="Enter your full name"
           />
@@ -111,7 +119,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             id="email"
             type="email"
             value={profileData.email}
-            onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+            onChange={(e) =>
+              setProfileData({ ...profileData, email: e.target.value })
+            }
             className="h-10"
             placeholder="Enter your email address"
           />
