@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
   const visitorHash = await hashVisitor(ip, userAgent ?? "", payload.siteId);
 
   // 9. Build queued event
-  const event: QueuedEvent = {
+  const queuedEvent: QueuedEvent = {
     siteId: payload.siteId,
     type: payload.type,
     url: payload.url,
@@ -163,11 +163,11 @@ export async function POST(request: NextRequest) {
   // Overwrite country from Cloudflare header if available
   const cfCountry = request.headers.get("cf-ipcountry");
   if (cfCountry && cfCountry !== "XX") {
-    event.country = cfCountry.toUpperCase().slice(0, 2);
+    queuedEvent.country = cfCountry.toUpperCase().slice(0, 2);
   }
 
   // 10. Push to Redis queue
-  await enqueueEvent(event);
+  await enqueueEvent(queuedEvent);
 
   return NextResponse.json(
     { ok: true },

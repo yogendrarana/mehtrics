@@ -19,7 +19,7 @@ const createSiteSchema = z.object({
   timezone: z.string().default("UTC"),
 });
 
-// GET /api/site — List user's site
+// GET /api/site — List user's sites
 export async function GET(request: NextRequest) {
   const session = await getSessionFromRequest(request);
   if (!session?.user) {

@@ -8,7 +8,7 @@ export async function proxy(request: NextRequest) {
     const session = await getSessionFromRequest(request);
 
     if (!session?.user) {
-      const loginUrl = new URL("/auth/login", request.url);
+      const loginUrl = new URL("/signin", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }

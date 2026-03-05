@@ -1,4 +1,7 @@
 import { auth } from "./src/server";
+import { authClient } from "./src/client";
+
+import { toNextJsHandler } from "better-auth/next-js";
 
 /**
  * Get the current session from a request.
@@ -34,7 +37,5 @@ export async function requireAdmin(request: Request) {
   return session;
 }
 
-export * from "./src/server";
-export * from "./src/client";
-
-export { toNextJsHandler } from "better-auth/next-js";
+// exports
+export { authClient, auth, toNextJsHandler };

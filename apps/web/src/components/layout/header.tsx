@@ -1,8 +1,15 @@
-import { Logo } from "@/components/logo";
-import { Button, Container } from "@mehtrics/ui";
+"use client";
+
 import Link from "next/link";
 
+import { Logo } from "@/components/logo";
+import { authClient } from "@mehtrics/auth";
+import { Button, Container } from "@mehtrics/ui";
+
 export function Header() {
+  const { isPending, data } = authClient.useSession();
+  const isLoggedIn = !isPending && !!data?.user;
+
   return (
     <header className="border-b border-border sticky top-0 bg-background/50 backdrop-blur-md">
       <Container>
@@ -21,9 +28,18 @@ export function Header() {
             </Link>
           </div>
 
-          <Button>
-            <Link href="/signup">Get Started</Link>
-          </Button>
+          <div className="flex items-center gap-4">
+            {isLoggedIn && (
+              <Button onClick={() => authClient.signOut()} variant="ghost" size="sm">
+                Sign Out
+              </Button>
+            )}
+            <Button>
+              <Link href={isLoggedIn ? "/dashboard" : "/signup"}>
+                {isLoggedIn ? "Dashboard" : "Get Started"}
+              </Link>
+            </Button>
+          </div>
         </div>
       </Container>
     </header>

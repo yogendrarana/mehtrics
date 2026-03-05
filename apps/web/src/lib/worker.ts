@@ -8,7 +8,7 @@ import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
 // up to BATCH_SIZE events per tick into PostgreSQL.
 //
 // Run as a standalone Bun process:
-//   bun run apps/dashboard/src/lib/worker.ts
+//   bun run apps/web/src/lib/worker.ts
 
 const POLL_INTERVAL_MS = 5_000; // 5 seconds
 const BATCH_SIZE = 500; // events per DB insert
