@@ -16,16 +16,18 @@ export function SettingCard({
   className?: string;
 }) {
   return (
-    <div className="rounded-md overflow-hidden border">
-      <div className="px-4 py-3 border-b">
-        <div className="flex items-center space-x-2 text-base font-medium">
+    <div className="rounded-md overflow-hidden border bg-muted/50 p-0.75">
+      <div className="px-4 py-3">
+        <div className="flex items-center space-x-2 text-base font-medium ">
           {Icon && <Icon className="h-4 w-4" />}
           <span>{title}</span>
         </div>
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
 
-      <div className={cn("", className)}>{children}</div>
+      <div className={cn("bg-background rounded-md border overflow-hidden", className)}>
+        {children}
+      </div>
     </div>
   );
 }
