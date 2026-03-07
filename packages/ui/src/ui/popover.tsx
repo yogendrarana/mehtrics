@@ -2,7 +2,7 @@
 
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 const PopoverCreateHandle = PopoverPrimitive.createHandle;
 

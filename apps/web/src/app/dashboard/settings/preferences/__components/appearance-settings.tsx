@@ -10,7 +10,7 @@ import { Button } from "@mehtrics/ui/button";
 import { toastManager } from "@mehtrics/ui/toast";
 
 import { updateMode } from "../__lib/actions";
-import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
+import { SectionCard } from "@/components/section-card";
 
 export function AppearanceSettings() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -20,6 +20,8 @@ export function AppearanceSettings() {
 
   const handleUpdateMode = useCallback(
     async (newTheme: "dark" | "light") => {
+      if (theme === newTheme) return;
+
       setTheme(newTheme);
 
       if (!sessionData || sessionPending) return;
@@ -51,7 +53,7 @@ export function AppearanceSettings() {
   const activeTheme = theme === "system" ? resolvedTheme : theme;
 
   return (
-    <SettingCard
+    <SectionCard
       title="Appearance"
       subtitle="Customize how the app looks"
       Icon={Palette}
@@ -103,6 +105,6 @@ export function AppearanceSettings() {
           </div>
         </div>
       </div>
-    </SettingCard>
+    </SectionCard>
   );
 }

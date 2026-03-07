@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import Providers from "@/components/providers";
 
 // css

@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import {
   Menu,
   MenuCheckboxItem,

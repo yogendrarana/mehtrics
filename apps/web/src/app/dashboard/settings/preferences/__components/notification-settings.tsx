@@ -3,11 +3,11 @@
 import { Bell } from "lucide-react";
 import { Label } from "@mehtrics/ui/label";
 import { Switch } from "@mehtrics/ui/switch";
-import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
+import { SectionCard } from "@/components/section-card";
 
 export function NotificationSettings() {
   return (
-    <SettingCard
+    <SectionCard
       title="Notifications"
       subtitle="Control how you receive notifications"
       Icon={Bell}
@@ -41,6 +41,6 @@ export function NotificationSettings() {
           <Switch id="share-notifications" defaultChecked />
         </div>
       </div>
-    </SettingCard>
+    </SectionCard>
   );
 }

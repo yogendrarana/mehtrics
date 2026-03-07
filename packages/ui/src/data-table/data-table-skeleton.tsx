@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 interface DataTableSkeletonProps extends React.ComponentProps<"div"> {
   columnCount: number;

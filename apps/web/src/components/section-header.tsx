@@ -1,6 +1,6 @@
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
-export function SettingHeader({
+export function SectionHeader({
   title,
   subtitle,
   className,

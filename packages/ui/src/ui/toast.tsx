@@ -5,11 +5,11 @@ import {
   CircleAlertIcon,
   CircleCheckIcon,
   InfoIcon,
-  LoaderCircleIcon,
+  Loader,
   TriangleAlertIcon,
 } from "lucide-react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import { buttonVariants } from "./button";
 
 const toastManager = Toast.createToastManager();
@@ -18,7 +18,7 @@ const anchoredToastManager = Toast.createToastManager();
 const TOAST_ICONS = {
   error: CircleAlertIcon,
   info: InfoIcon,
-  loading: LoaderCircleIcon,
+  loading: Loader,
   success: CircleCheckIcon,
   warning: TriangleAlertIcon,
 } as const;

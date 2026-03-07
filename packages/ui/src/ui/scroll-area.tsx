@@ -2,17 +2,19 @@
 
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 function ScrollArea({
   className,
   children,
   scrollFade = false,
   scrollbarGutter = false,
+  hideScrollBar = false,
   ...props
 }: ScrollAreaPrimitive.Root.Props & {
   scrollFade?: boolean;
   scrollbarGutter?: boolean;
+  hideScrollBar?: boolean;
 }) {
   return (
     <ScrollAreaPrimitive.Root
@@ -31,9 +33,9 @@ function ScrollArea({
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
-      <ScrollBar orientation="vertical" />
-      <ScrollBar orientation="horizontal" />
-      <ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" />
+      {!hideScrollBar && <ScrollBar orientation="vertical" />}
+      {!hideScrollBar && <ScrollBar orientation="horizontal" />}
+      {!hideScrollBar && <ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" />}
     </ScrollAreaPrimitive.Root>
   );
 }

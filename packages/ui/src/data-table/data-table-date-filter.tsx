@@ -10,7 +10,7 @@ import { Calendar } from '../ui/calendar';
 import { Separator } from '../ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
-import { formatDate } from '@mehtrics/utils';
+import { formatDate } from "@mehtrics/utils/date";
 
 type DateSelection = Date[] | DateRange;
 

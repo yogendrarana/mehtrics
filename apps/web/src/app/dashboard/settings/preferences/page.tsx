@@ -7,7 +7,7 @@ import { authClient } from "@mehtrics/auth";
 import { getUserSetting } from "./__lib/actions";
 import { AppearanceSettings } from "./__components/appearance-settings";
 import { NotificationSettings } from "./__components/notification-settings";
-import { SettingHeader } from "@/app/dashboard/settings/__components/setting-header";
+import { SectionHeader } from "@/components/section-header";
 import { Separator } from "@mehtrics/ui/separator";
 
 export default function PreferencesPage() {
@@ -45,7 +45,7 @@ export default function PreferencesPage() {
 
   return (
     <div>
-      <SettingHeader
+      <SectionHeader
         title="Preference Settings"
         subtitle="Manage your preference data"
         className="sticky top-0 z-10"

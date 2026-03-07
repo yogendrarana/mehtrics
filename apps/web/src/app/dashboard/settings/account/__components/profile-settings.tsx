@@ -4,16 +4,12 @@ import { User, Settings } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import { authClient } from "@mehtrics/auth";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@mehtrics/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@mehtrics/ui/avatar";
 import { Input } from "@mehtrics/ui/input";
 import { Label } from "@mehtrics/ui/label";
 import { Button } from "@mehtrics/ui/button";
 import { toastManager } from "@mehtrics/ui/toast";
-import { SettingCard } from "../../__components/setting-card";
+import { SectionCard } from "@/components/section-card";
 
 interface ProfileSettingsProps {
   user: {
@@ -62,7 +58,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
   };
 
   return (
-    <SettingCard
+    <SectionCard
       title="Profile Setting"
       subtitle="Change your profile data"
       Icon={User}
@@ -86,7 +82,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         </div>
 
         {/* Name Field */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-4">
           <div>
             <Label htmlFor="name" className="text-sm font-medium">
               Name
@@ -101,13 +97,12 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             onChange={(e) =>
               setProfileData({ ...profileData, name: e.target.value })
             }
-            className="h-10"
             placeholder="Enter your full name"
           />
         </div>
 
         {/* Email Field */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-4">
           <div>
             <Label htmlFor="email" className="text-sm font-medium">
               Email
@@ -123,13 +118,12 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             onChange={(e) =>
               setProfileData({ ...profileData, email: e.target.value })
             }
-            className="h-10"
             placeholder="Enter your email address"
           />
         </div>
       </div>
 
-      <div className="p-4 border-t">
+      <div className="p-4 border-t bg-muted flex justify-end">
         <Button
           type="button"
           onClick={handleSave}
@@ -150,6 +144,6 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           )}
         </Button>
       </div>
-    </SettingCard>
+    </SectionCard>
   );
 }

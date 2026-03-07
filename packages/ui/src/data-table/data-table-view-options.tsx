@@ -4,7 +4,7 @@ import * as React from "react";
 import type { Table } from "@tanstack/react-table";
 import { Check, ChevronsUpDown, Settings2 } from "lucide-react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import {
   Command,
   CommandEmpty,

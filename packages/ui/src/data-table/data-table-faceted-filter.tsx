@@ -4,7 +4,7 @@ import * as React from "react";
 import type { Column } from "@tanstack/react-table";
 import { Check, PlusCircle, XCircle } from "lucide-react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import type { Option } from "../types";
 import {
   Command,

@@ -6,14 +6,10 @@ import { authClient } from "@mehtrics/auth";
 import { Button } from "@mehtrics/ui/button";
 import { Badge } from "@mehtrics/ui/badge";
 import { toastManager } from "@mehtrics/ui/toast";
-import {
-  cn,
-  formatDate,
-  formatExpiryDate,
-  getBrowserName,
-  getDeviceName,
-} from "@mehtrics/utils";
-import { SettingCard } from "../../__components/setting-card";
+import { cn } from "@mehtrics/utils/cn";
+import { formatDate, formatExpiryDate } from "@mehtrics/utils/date";
+import { getBrowserName, getDeviceName } from "@mehtrics/utils/ua";
+import { SectionCard } from "@/components/section-card";
 
 interface SessionSettingsProps {
   initialSessions: any[];
@@ -55,7 +51,7 @@ export function SessionSettings({
   };
 
   return (
-    <SettingCard
+    <SectionCard
       Icon={Globe}
       title="Session Settings"
       subtitle={`Manage your active login sessions across all devices (${sessions.length} active)`}
@@ -146,6 +142,6 @@ export function SessionSettings({
           </div>
         ))}
       </div>
-    </SettingCard>
+    </SectionCard>
   );
 }

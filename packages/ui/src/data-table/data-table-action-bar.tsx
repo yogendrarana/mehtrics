@@ -8,7 +8,7 @@ import { Loader, X } from "lucide-react";
 import type { Table } from "@tanstack/react-table";
 import { AnimatePresence, motion } from "motion/react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import {
   Tooltip,
   TooltipContent,

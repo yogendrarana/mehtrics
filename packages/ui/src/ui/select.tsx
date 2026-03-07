@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 const Select = SelectPrimitive.Root;
 

@@ -2,7 +2,7 @@
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import { Button } from "./button";
 import { ScrollArea } from "./scroll-area";
 

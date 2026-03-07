@@ -1,6 +1,6 @@
 import type * as React from "react";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (

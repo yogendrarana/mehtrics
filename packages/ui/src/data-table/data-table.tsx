@@ -1,7 +1,7 @@
 import * as React from "react";
 import { flexRender, type Table as TanstackTable } from "@tanstack/react-table";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import {
   Table,
   TableBody,
@@ -25,7 +25,7 @@ export function DataTable<TData>({
   return (
     <div className={cn("w-full rounded-md border overflow-hidden", className)}>
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {

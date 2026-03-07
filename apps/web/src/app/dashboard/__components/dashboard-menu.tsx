@@ -88,11 +88,13 @@ const SIDEBAR_NAV_ITEMS = [
 export function DashboardMenu() {
   return (
     <div>
-      {SIDEBAR_NAV_ITEMS.map((item) => (
-        <div key={item.title} className="p-4 space-y-4 border-b last:border-0">
-          <div className="text-xs text-muted-foreground uppercase font-semibold">
-            {item.title}
-          </div>
+      {SIDEBAR_NAV_ITEMS.map((item, index) => (
+        <div key={index} className="p-4 space-y-4 border-b last:border-0">
+          {item.title && (
+            <div className="text-xs text-muted-foreground uppercase font-semibold">
+              {item.title}
+            </div>
+          )}
           <div className="flex flex-col gap-4">
             {item.items.map((navItem) => (
               <Link
