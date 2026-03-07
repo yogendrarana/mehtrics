@@ -1,7 +1,8 @@
 "use client";
 
 import { Bell } from "lucide-react";
-import { Label, Switch } from "@mehtrics/ui";
+import { Label } from "@mehtrics/ui/label";
+import { Switch } from "@mehtrics/ui/switch";
 import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
 
 export function NotificationSettings() {

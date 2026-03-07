@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@mehtrics/ui";
-import { Input } from "@mehtrics/ui";
+import { Button } from "@mehtrics/ui/button";
+import { Input } from "@mehtrics/ui/input";
 
 export default function NewSitePage() {
   const router = useRouter();

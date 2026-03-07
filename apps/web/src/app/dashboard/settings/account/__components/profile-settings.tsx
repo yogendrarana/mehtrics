@@ -1,18 +1,19 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { User, Settings } from "lucide-react";
+import { useState, useTransition } from "react";
+
 import { authClient } from "@mehtrics/auth";
 import {
-  Button,
-  Input,
-  Label,
   Avatar,
   AvatarFallback,
   AvatarImage,
-  toastManager,
-} from "@mehtrics/ui";
-import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
+} from "@mehtrics/ui/avatar";
+import { Input } from "@mehtrics/ui/input";
+import { Label } from "@mehtrics/ui/label";
+import { Button } from "@mehtrics/ui/button";
+import { toastManager } from "@mehtrics/ui/toast";
+import { SettingCard } from "../../__components/setting-card";
 
 interface ProfileSettingsProps {
   user: {

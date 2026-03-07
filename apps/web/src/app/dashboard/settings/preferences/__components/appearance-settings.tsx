@@ -5,7 +5,9 @@ import { Palette, Moon, Sun } from "lucide-react";
 import { useCallback } from "react";
 
 import { authClient } from "@mehtrics/auth";
-import { Label, Button, toastManager } from "@mehtrics/ui";
+import { Label } from "@mehtrics/ui/label";
+import { Button } from "@mehtrics/ui/button";
+import { toastManager } from "@mehtrics/ui/toast";
 
 import { updateMode } from "../__lib/actions";
 import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";

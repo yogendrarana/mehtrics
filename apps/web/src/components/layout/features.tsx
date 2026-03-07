@@ -1,5 +1,4 @@
-import { Container } from "@mehtrics/ui";
-import React from "react";
+import { Container } from "@mehtrics/ui/container";
 
 export function Features() {
   return (

@@ -8,7 +8,7 @@ import { ProfileSettings } from "./__components/profile-settings";
 import { PasswordSettings } from "./__components/password-settings";
 import { SessionSettings } from "./__components/session-settings";
 import { AccountManagement } from "./__components/account-management";
-import { Separator } from "@mehtrics/ui";
+import { Separator } from "@mehtrics/ui/separator";
 
 export default function AccountSettingsPage() {
   const { data: session } = authClient.useSession();

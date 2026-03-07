@@ -1,21 +1,21 @@
 "use client";
 
+import { useState } from "react";
+import { Trash2 } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogClose,
-  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogPopup,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Button,
-  Input,
-  Label,
-} from "@mehtrics/ui";
-import { Trash2 } from "lucide-react";
-import { useState } from "react";
+} from "@mehtrics/ui/alert-dialog";
+import { Button } from "@mehtrics/ui/button";
+import { Label } from "@mehtrics/ui/label";
+import { Input } from "@mehtrics/ui/input";
 
 export function DeleteAccount() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");

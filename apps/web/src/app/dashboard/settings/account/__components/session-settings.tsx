@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import { Globe, Settings, Clock } from "lucide-react";
 import { authClient } from "@mehtrics/auth";
-import { Button, Badge, toastManager } from "@mehtrics/ui";
+import { Button } from "@mehtrics/ui/button";
+import { Badge } from "@mehtrics/ui/badge";
+import { toastManager } from "@mehtrics/ui/toast";
 import {
   cn,
   formatDate,
@@ -11,7 +13,7 @@ import {
   getBrowserName,
   getDeviceName,
 } from "@mehtrics/utils";
-import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
+import { SettingCard } from "../../__components/setting-card";
 
 interface SessionSettingsProps {
   initialSessions: any[];

@@ -2,7 +2,8 @@ import { headers } from "next/headers";
 import Link from "next/link";
 
 import { db, site, eq } from "@mehtrics/db";
-import { Button, Badge } from "@mehtrics/ui";
+import { Badge } from "@mehtrics/ui/badge";
+import { Button } from "@mehtrics/ui/button";
 import { getSessionFromRequest } from "@mehtrics/auth";
 
 async function getSiteList(userId: string) {

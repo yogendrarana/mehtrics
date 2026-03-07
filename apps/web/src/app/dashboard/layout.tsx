@@ -1,6 +1,9 @@
-import { Header } from "@/components/layout/header";
-import { Container, ScrollArea } from "@mehtrics/ui";
 import { cn } from "@mehtrics/utils";
+import { Header } from "@/components/layout/header";
+
+import { Container } from "@mehtrics/ui/container";
+import { ScrollArea } from "@mehtrics/ui/scroll-area";
+
 import { DashboardMenu } from "./__components/dashboard-menu";
 
 interface Props {

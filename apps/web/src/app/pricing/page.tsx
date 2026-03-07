@@ -1,7 +1,6 @@
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { cn } from "@mehtrics/utils";
-import { Button, Container } from "@mehtrics/ui";
 import {
   Card,
   CardHeader,
@@ -9,7 +8,9 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@mehtrics/ui";
+} from "@mehtrics/ui/card";
+import { Button } from "@mehtrics/ui/button";
+import { Container } from "@mehtrics/ui/container";
 
 const planList = [
   {

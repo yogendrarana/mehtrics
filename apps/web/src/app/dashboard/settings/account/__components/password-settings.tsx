@@ -2,9 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { Shield, Settings } from "lucide-react";
+
+import { Input } from "@mehtrics/ui/input";
+import { Label } from "@mehtrics/ui/label";
 import { authClient } from "@mehtrics/auth";
-import { Button, Input, Label, toastManager } from "@mehtrics/ui";
-import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
+import { Button } from "@mehtrics/ui/button";
+import { toastManager } from "@mehtrics/ui/toast";
+import { SettingCard } from "../../__components/setting-card";
 
 export function PasswordSettings() {
   const [isPending, startTransition] = useTransition();

@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import { Logo } from "@/components/logo";
 import { authClient } from "@mehtrics/auth";
-import { Button, Container } from "@mehtrics/ui";
+import { Button } from "@mehtrics/ui/button";
+import { Container } from "@mehtrics/ui/container";
 
 export function Header() {
   const { isPending, data } = authClient.useSession();

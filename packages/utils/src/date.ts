@@ -4,11 +4,11 @@ import {
   differenceInDays,
 } from "date-fns";
 
-export function formatDate(dateString: string): string {
+export function formatDate(dateString: string | Date): string {
   return formatDistanceToNow(new Date(dateString), { addSuffix: true });
 }
 
-export function formatExpiryDate(dateString: string): string {
+export function formatExpiryDate(dateString: string | Date): string {
   const now = new Date();
   const date = new Date(dateString);
   const hours = differenceInHours(date, now);

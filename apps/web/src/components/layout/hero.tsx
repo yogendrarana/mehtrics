@@ -1,4 +1,6 @@
-import { Badge, Button, Container } from "@mehtrics/ui";
+import { Badge } from "@mehtrics/ui/badge";
+import { Button } from "@mehtrics/ui/button"
+import { Container } from "@mehtrics/ui/container";
 
 export function Hero() {
   return (

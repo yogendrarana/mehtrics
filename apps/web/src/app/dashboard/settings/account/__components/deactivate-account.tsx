@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { UserX } from "lucide-react";
 
+import { Button } from "@mehtrics/ui/button";
 import {
-  Button,
   Dialog,
   DialogPopup,
   DialogDescription,
@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@mehtrics/ui";
+} from "@mehtrics/ui/dialog";
 
 export function DeactivateAccount() {
   const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false);

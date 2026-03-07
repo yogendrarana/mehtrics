@@ -8,7 +8,7 @@ import { getUserSetting } from "./__lib/actions";
 import { AppearanceSettings } from "./__components/appearance-settings";
 import { NotificationSettings } from "./__components/notification-settings";
 import { SettingHeader } from "@/app/dashboard/settings/__components/setting-header";
-import { Separator } from "@mehtrics/ui";
+import { Separator } from "@mehtrics/ui/separator";
 
 export default function PreferencesPage() {
   const [mounted, setMounted] = useState(false);

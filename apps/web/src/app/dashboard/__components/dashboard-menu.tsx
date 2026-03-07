@@ -5,7 +5,6 @@ import {
   Home,
   Settings2,
   User,
-  Users,
   BarChart3,
   Share2,
   Clock,
@@ -14,17 +13,13 @@ import {
   FileText,
 } from "lucide-react";
 
-import { cn } from "@mehtrics/utils";
-
 const SIDEBAR_NAV_ITEMS = [
   {
-    title: "Analytics",
-    icon: BarChart3,
     items: [
       {
         title: "Overview",
         url: "/dashboard",
-        icon: Home,
+        icon: BarChart3,
       },
       {
         title: "Realtime",
@@ -49,8 +44,17 @@ const SIDEBAR_NAV_ITEMS = [
     ],
   },
   {
+    title: "Sites",
+    items: [
+      {
+        title: "Sites",
+        url: "/dashboard/sites",
+        icon: Home,
+      },
+    ],
+  },
+  {
     title: "Billing",
-    icon: CreditCard,
     items: [
       {
         title: "Subscription",
@@ -66,7 +70,6 @@ const SIDEBAR_NAV_ITEMS = [
   },
   {
     title: "Settings",
-    icon: Settings2,
     items: [
       {
         title: "Account",
@@ -76,7 +79,7 @@ const SIDEBAR_NAV_ITEMS = [
       {
         title: "Preferences",
         url: "/dashboard/settings/preferences",
-        icon: User,
+        icon: Settings2,
       },
     ],
   },

@@ -1,5 +1,6 @@
 import React from "react";
 import type { LucideIcon } from "lucide-react";
+
 import { cn } from "@mehtrics/utils";
 
 export function SettingCard({
@@ -25,7 +26,12 @@ export function SettingCard({
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
 
-      <div className={cn("bg-background rounded-md border overflow-hidden", className)}>
+      <div
+        className={cn(
+          "bg-background rounded-md border overflow-hidden",
+          className,
+        )}
+      >
         {children}
       </div>
     </div>
