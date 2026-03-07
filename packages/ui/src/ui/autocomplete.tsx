@@ -3,7 +3,7 @@
 import { ChevronsUpDownIcon, XIcon } from "lucide-react";
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 import { Input } from "./input";
 import { ScrollArea } from "./scroll-area";

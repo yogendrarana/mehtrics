@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@mehtrics/ui/dialog";
 
-export function DeactivateAccount() {
+export function ConfirmDeactivateAccount() {
   const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false);
 
   return (

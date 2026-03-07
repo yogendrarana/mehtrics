@@ -9,7 +9,11 @@ import { RegisterUserSchema } from "../_lib/validation";
 
 import { Logo } from "@/components/logo";
 import { authClient } from "@mehtrics/auth";
-import { Button, Google, Input, Label, toastManager } from "@mehtrics/ui";
+import { Button } from "@mehtrics/ui/button";
+import { Google } from "@mehtrics/ui/icons";
+import { Input } from "@mehtrics/ui/input";
+import { Label } from "@mehtrics/ui/label";
+import { toastManager } from "@mehtrics/ui/toast";
 
 export default function Page() {
   const router = useRouter();
@@ -29,38 +33,40 @@ export default function Page() {
       onSubmit: RegisterUserSchema,
     },
     onSubmit: async ({ value }) => {
-      await toastManager.promise(
-        (async () => {
-          const { error: signUpError } = await authClient.signUp.email({
-            email: value.email,
-            password: value.password,
-            name: value.name,
-            callbackURL: "/dashboard",
-          });
+      const id = toastManager.add({
+        type: "loading",
+        title: "Signing up...",
+        description: "Please wait while we sign you up.",
+      });
 
-          if (signUpError) {
-            throw signUpError;
-          }
-        })(),
-        {
-          loading: {
-            title: "Signing up...",
-            description: "Please wait while we sign you up.",
-          },
-          success: {
-            title: "Signed up successfully!",
-            description: "You are now logged in.",
-          },
-          error: (err: any) => ({
-            title: "Error signing up",
-            description:
-              err?.message ?? "Something went wrong. Please try again.",
-          }),
-        },
-      );
+      try {
+        const { error: signUpError } = await authClient.signUp.email({
+          email: value.email,
+          password: value.password,
+          name: value.name,
+          callbackURL: "/dashboard",
+        });
 
-      router.push("/dashboard");
-      router.refresh();
+        if (signUpError) {
+          throw signUpError;
+        }
+
+        toastManager.update(id, {
+          type: "success",
+          title: "Signed up successfully!",
+          description: "You are now logged in.",
+        });
+
+        router.push("/dashboard");
+        router.refresh();
+      } catch (err: any) {
+        toastManager.update(id, {
+          type: "error",
+          title: "Error signing up",
+          description:
+            err?.message ?? "Something went wrong. Please try again.",
+        });
+      }
     },
   });
 

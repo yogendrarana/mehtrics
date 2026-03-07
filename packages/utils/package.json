@@ -14,6 +14,10 @@
     "tailwind-merge": "^3.5.0"
   },
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./cn": "./src/cn.ts",
+    "./date": "./src/date.ts",
+    "./ua": "./src/ua.ts",
+    "./string": "./src/string.ts"
   }
 }

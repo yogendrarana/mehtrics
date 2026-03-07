@@ -17,7 +17,7 @@ import { Button } from "@mehtrics/ui/button";
 import { Label } from "@mehtrics/ui/label";
 import { Input } from "@mehtrics/ui/input";
 
-export function DeleteAccount() {
+export function ConfirmDeleteAccount() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
 
   return (

@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import type { Table } from "@tanstack/react-table";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import {
   Select,
   SelectContent,

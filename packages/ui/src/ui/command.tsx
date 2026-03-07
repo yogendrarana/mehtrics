@@ -4,7 +4,7 @@ import type * as React from "react";
 import { SearchIcon } from "lucide-react";
 import { Dialog as CommandDialogPrimitive } from "@base-ui/react/dialog";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import {
   Autocomplete,
   AutocompleteCollection,

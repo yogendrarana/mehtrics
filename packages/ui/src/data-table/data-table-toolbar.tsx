@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import type { Column } from "@tanstack/react-table";
 import type { Table } from "@tanstack/react-table";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { DataTableViewOptions } from "./data-table-view-options";

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { authClient } from "@mehtrics/auth";
 
-import { SettingHeader } from "@/app/dashboard/settings/__components/setting-header";
+import { SectionHeader } from "@/components/section-header";
 import { ProfileSettings } from "./__components/profile-settings";
 import { PasswordSettings } from "./__components/password-settings";
 import { SessionSettings } from "./__components/session-settings";
@@ -48,7 +48,7 @@ export default function AccountSettingsPage() {
 
   return (
     <div>
-      <SettingHeader
+      <SectionHeader
         title="Profile Settings"
         subtitle="Manage your profile data"
         className="sticky top-0 z-10"

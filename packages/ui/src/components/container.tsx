@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 
 const containerVariants = cva(
   "h-full w-full mx-auto px-4 sm:px-6 md:px-12 lg:px-[200px]",

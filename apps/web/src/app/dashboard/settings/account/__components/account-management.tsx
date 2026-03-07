@@ -1,21 +1,21 @@
 "use client";
 
 import { AlertTriangle, UserX, Trash2 } from "lucide-react";
-import { SettingCard } from "@/app/dashboard/settings/__components/setting-card";
-import { DeactivateAccount } from "@/app/dashboard/settings/account/__components/deactivate-account";
-import { DeleteAccount } from "@/app/dashboard/settings/account/__components/delete-account";
+import { SectionCard } from "@/components/section-card";
+import { ConfirmDeactivateAccount } from "@/app/dashboard/settings/account/__components/confirm-deactivate-account";
+import { ConfirmDeleteAccount } from "@/app/dashboard/settings/account/__components/confirm-delete-account";
 
 export function AccountManagement() {
   return (
-    <SettingCard
+    <SectionCard
       Icon={AlertTriangle}
       title="Account Management"
       subtitle="Manage your account status and data"
     >
       <div>
         {/* Deactivate Account */}
-        <div className="border-b p-4 bg-background">
-          <div className="grid md:grid-cols-2 gap-4 items-start">
+        <div className="border-b p-4 bg-card">
+          <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <UserX className="w-4 h-4 text-orange-500" />
@@ -30,15 +30,15 @@ export function AccountManagement() {
               </p>
             </div>
 
-            <div className="flex items-start justify-end">
-              <DeactivateAccount />
+            <div className="flex items-center justify-end">
+              <ConfirmDeactivateAccount />
             </div>
           </div>
         </div>
 
         {/* Delete Account */}
-        <div className="p-4 bg-background">
-          <div className="grid md:grid-cols-2 gap-4 items-start">
+        <div className="p-4 bg-card">
+          <div className="grid md:grid-cols-2 gap-4 items-center">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Trash2 className="w-4 h-4 text-red-500" />
@@ -51,12 +51,12 @@ export function AccountManagement() {
               </p>
             </div>
 
-            <div className="flex items-start justify-end">
-              <DeleteAccount />
+            <div className="flex items-center justify-end">
+              <ConfirmDeleteAccount />
             </div>
           </div>
         </div>
       </div>
-    </SettingCard>
+    </SectionCard>
   );
 }

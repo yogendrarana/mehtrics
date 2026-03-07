@@ -1,4 +1,4 @@
-import { cn } from "@mehtrics/utils";
+import { cn } from "@mehtrics/utils/cn";
 import { Header } from "@/components/layout/header";
 
 import { Container } from "@mehtrics/ui/container";
@@ -23,14 +23,16 @@ export default function DocsLayout({ children }: Props) {
       >
         {/* sidebar */}
         <aside className="border-x hidden md:flex md:flex-col h-full overflow-hidden">
-          <ScrollArea className="h-full">
+          <ScrollArea className="h-full" hideScrollBar>
             <DashboardMenu />
           </ScrollArea>
         </aside>
 
         {/* main */}
         <main className="flex-1 h-full overflow-hidden border-r">
-          <ScrollArea className="h-full">{children}</ScrollArea>
+          <ScrollArea className="h-full" hideScrollBar>
+            {children}
+          </ScrollArea>
         </main>
       </Container>
     </div>

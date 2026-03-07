@@ -8,7 +8,7 @@ import { Label } from "@mehtrics/ui/label";
 import { authClient } from "@mehtrics/auth";
 import { Button } from "@mehtrics/ui/button";
 import { toastManager } from "@mehtrics/ui/toast";
-import { SettingCard } from "../../__components/setting-card";
+import { SectionCard } from "@/components/section-card";
 
 export function PasswordSettings() {
   const [isPending, startTransition] = useTransition();
@@ -69,14 +69,14 @@ export function PasswordSettings() {
   }
 
   return (
-    <SettingCard
+    <SectionCard
       title="Password"
       subtitle="Manage your account password"
       Icon={Shield}
     >
       <div className="p-4 space-y-4">
         {/* Row: Current Password */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-4">
           <div>
             <Label htmlFor="currentPassword" className="text-sm font-medium">
               Current Password
@@ -95,13 +95,12 @@ export function PasswordSettings() {
                 currentPassword: e.target.value,
               }))
             }
-            className="h-10"
             placeholder="Current password"
           />
         </div>
 
         {/* Row: New Password */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-4">
           <div>
             <Label htmlFor="newPassword" className="text-sm font-medium">
               New Password
@@ -120,13 +119,12 @@ export function PasswordSettings() {
                 newPassword: e.target.value,
               }))
             }
-            className="h-10"
             placeholder="New password"
           />
         </div>
 
         {/* Row: Confirm New Password */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-4">
           <div>
             <Label htmlFor="confirmPassword" className="text-sm font-medium">
               Confirm New Password
@@ -145,14 +143,13 @@ export function PasswordSettings() {
                 confirmPassword: e.target.value,
               }))
             }
-            className="h-10"
             placeholder="New password"
           />
         </div>
       </div>
 
       {/* Action buttons */}
-      <div className="p-4 border-t flex gap-2">
+      <div className="p-4 border-t flex gap-2 justify-end bg-muted">
         <Button
           onClick={handlePasswordChange}
           disabled={
@@ -184,6 +181,6 @@ export function PasswordSettings() {
           Reset
         </Button>
       </div>
-    </SettingCard>
+    </SectionCard>
   );
 }
