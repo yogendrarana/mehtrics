@@ -30,23 +30,6 @@ export default async function SiteSettingsPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="px-4 py-2 border-b bg-muted/30">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mr-6">
-          <Link href="/dashboard/sites" className="hover:text-foreground">
-            Sites
-          </Link>
-          <span>/</span>
-          <Link
-            href={`/dashboard/sites/${siteData.id}`}
-            className="hover:text-foreground"
-          >
-            {siteData.name}
-          </Link>
-          <span>/</span>
-          <span className="text-foreground">Settings</span>
-        </div>
-      </div>
-
       <SectionHeader
         title="Site Settings"
         subtitle="Manage your site configuration and tracking."

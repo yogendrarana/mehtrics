@@ -3,6 +3,31 @@ import { z } from "zod";
 import { db, site, eq, and } from "@mehtrics/db";
 import { getSessionFromRequest } from "@mehtrics/auth";
 
+// GET /api/site/[id] — Get single site details
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const session = await getSessionFromRequest(request);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const [siteData] = await db
+    .select()
+    .from(site)
+    .where(and(eq(site.id, id), eq(site.userId, session.user.id)))
+    .limit(1);
+
+  if (!siteData) {
+    return NextResponse.json({ error: "Site not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ site: siteData });
+}
+
 const updateSiteSchema = z.object({
   name: z.string().min(1).max(255).optional(),
   domain: z

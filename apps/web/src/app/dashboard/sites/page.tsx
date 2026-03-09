@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { db, site, eq } from "@mehtrics/db";
 import { Button } from "@mehtrics/ui/button";
 import { getSessionFromRequest } from "@mehtrics/auth";
+import { SectionHeader } from "@/components/section-header";
 import { SitesTable } from "./__components/sites-table";
 
 async function getSiteList(userId: string) {
@@ -27,31 +28,24 @@ export default async function SitesPage() {
   const data = await getSiteList(session.user.id);
 
   return (
-    <div className="flex flex-col p-4 space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Sites</h1>
-          <p className="text-muted-foreground">Manage your analytics sites.</p>
-        </div>
+    <div className="flex flex-col min-h-full">
+      <SectionHeader 
+        title="Sites" 
+        subtitle="Manage your analytics sites."
+      />
 
-        <Link href="/dashboard/sites/new">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Site
-          </Button>
-        </Link>
+      <div className="p-4 space-y-4">
+        {data.length === 0 ? (
+          <div className="border border-dashed border-border rounded-xl p-12 text-center space-y-3">
+            <p className="text-muted-foreground">No sites yet.</p>
+            <Link href="/dashboard/sites/new">
+              <Button>Add your first site</Button>
+            </Link>
+          </div>
+        ) : (
+          <SitesTable data={data} />
+        )}
       </div>
-
-      {data.length === 0 ? (
-        <div className="border border-dashed border-border rounded-xl p-12 text-center space-y-3">
-          <p className="text-muted-foreground">No sites yet.</p>
-          <Link href="/dashboard/sites/new">
-            <Button>Add your first site</Button>
-          </Link>
-        </div>
-      ) : (
-        <SitesTable data={data} />
-      )}
     </div>
   );
 }

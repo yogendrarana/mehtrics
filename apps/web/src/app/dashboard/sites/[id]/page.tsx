@@ -14,8 +14,7 @@ import {
   sql,
   desc,
 } from "@mehtrics/db";
-import { Button } from "@mehtrics/ui/button";
-import { Settings } from "lucide-react";
+
 import { SectionHeader } from "@/components/section-header";
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -100,22 +99,6 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="px-4 py-2 border-b bg-muted/30 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mr-6">
-          <Link href="/dashboard/sites" className="hover:text-foreground">
-            Sites
-          </Link>
-          <span className="text-muted-foreground">/</span>
-          <span className="text-foreground">{siteData.name}</span>
-        </div>
-
-        <Link href={`/dashboard/sites/${siteData.id}/settings`}>
-          <Button variant="outline" size="sm" className="bg-background">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
-        </Link>
-      </div>
 
       <SectionHeader
         title={siteData.name}
