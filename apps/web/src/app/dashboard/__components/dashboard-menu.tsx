@@ -173,30 +173,25 @@ export function DashboardMenu() {
               </Link>
 
               <div className="px-4 py-3 flex items-center justify-between gap-3 bg-muted/30 border-y border-border">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-7 w-7 rounded-sm bg-foreground flex items-center justify-center text-background shrink-0">
-                    <Globe size={16} />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-bold truncate text-foreground leading-tight">
-                      {siteData?.name || "Loading..."}
-                    </span>
-                    <span className="text-[10px] font-medium text-muted-foreground truncate leading-none mt-0.5">
-                      {siteData?.domain || "..."}
-                    </span>
-                  </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold truncate text-foreground leading-tight">
+                    {siteData?.name || "Loading..."}
+                  </span>
+                  <span className="text-[10px] font-medium text-muted-foreground truncate leading-none mt-0.5">
+                    {siteData?.domain || "..."}
+                  </span>
                 </div>
 
                 <Button
                   variant="outline"
-                  size="icon-sm"
+                  size="icon-xs"
                   onClick={copyId}
                   title="Copy Site ID"
                 >
                   {copied ? (
-                    <Check size={14} className="text-emerald-500" />
+                    <Check size={10} className="text-emerald-500" />
                   ) : (
-                    <Copy size={14} />
+                    <Copy size={10} />
                   )}
                 </Button>
               </div>
@@ -267,7 +262,7 @@ export function DashboardMenu() {
               </p>
               <Link
                 href="/pricing"
-                className="text-[11px] font-bold text-foreground hover:opacity-80 underline decoration-foreground/30 underline-offset-4 no-underline"
+                className="text-xs font-bold text-foreground hover:opacity-80 decoration-foreground/30"
               >
                 Upgrade Account &rarr;
               </Link>

@@ -27,6 +27,7 @@
   "exports": {
     ".": "./index.ts",
     "./schema": "./src/schema.ts",
-    "./client": "./src/client.ts"
+    "./client": "./src/client.ts",
+    "./drizzle": "./src/drizzle.ts"
   }
 }
