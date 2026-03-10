@@ -99,7 +99,6 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-full">
-
       <SectionHeader
         title={siteData.name}
         subtitle={siteData.domain}

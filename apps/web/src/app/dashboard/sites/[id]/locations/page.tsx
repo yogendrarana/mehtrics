@@ -4,8 +4,8 @@ import { MapPin } from "lucide-react";
 export default async function LocationsAnalyticsPage() {
   return (
     <div className="flex flex-col h-full">
-      <SectionHeader 
-        title="Visitor Locations" 
+      <SectionHeader
+        title="Visitor Locations"
         subtitle="Analyze where your users are coming from."
       />
       <div className="flex-1 p-8 flex flex-col items-center justify-center text-center space-y-4">
@@ -13,9 +13,12 @@ export default async function LocationsAnalyticsPage() {
           <MapPin size={32} />
         </div>
         <div className="max-w-md">
-          <h3 className="text-lg font-semibold mb-2">Global Traffic Distribution</h3>
+          <h3 className="text-lg font-semibold mb-2">
+            Global Traffic Distribution
+          </h3>
           <p className="text-muted-foreground">
-            Explore traffic by country, region, and city to optimize your localization and regional strategies.
+            Explore traffic by country, region, and city to optimize your
+            localization and regional strategies.
           </p>
         </div>
       </div>

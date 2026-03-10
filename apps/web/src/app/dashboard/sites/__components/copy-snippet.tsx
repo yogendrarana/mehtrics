@@ -20,7 +20,11 @@ export function CopySnippet({ text }: { text: string }) {
       className="bg-background shrink-0"
       onClick={copy}
     >
-      {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+      {copied ? (
+        <Check size={14} className="text-emerald-500" />
+      ) : (
+        <Copy size={14} />
+      )}
     </Button>
   );
 }

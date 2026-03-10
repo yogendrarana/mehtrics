@@ -29,10 +29,7 @@ export default async function SitesPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <SectionHeader 
-        title="Sites" 
-        subtitle="Manage your analytics sites."
-      />
+      <SectionHeader title="Sites" subtitle="Manage your analytics sites." />
 
       <div className="p-4 space-y-4">
         {data.length === 0 ? (
