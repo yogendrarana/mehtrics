@@ -1,37 +1,34 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { UAParser } from "ua-parser-js";
 import { db, site, eq } from "@mehtrics/db";
 import { checkRateLimit } from "@/lib/rate-limiter";
 import { shouldIgnoreRequest } from "@/lib/bot-filter";
 import { enqueueEvent, type QueuedEvent } from "@/lib/event-queue";
+import { trackPayloadSchema, type TrackPayload } from "@/lib/validation/track";
 
-// Request Validation Schema
-const trackPayloadSchema = z.object({
-  siteId: z.string().uuid("Invalid siteId"),
-  type: z.enum(["pageview", "custom"]).default("pageview"),
-  url: z.string().url("Invalid URL").max(2048),
-  referrer: z.string().max(2048).optional().nullable(),
-  screenWidth: z.number().int().positive().max(8192).optional().nullable(),
-  eventName: z.string().max(255).optional().nullable(),
-});
-
-type TrackPayload = z.infer<typeof trackPayloadSchema>;
-
-// Visitor Fingerprint Hashing
-// We hash IP + UA + site to create a daily anonymous visitor ID.
-// Raw IPs are NEVER stored.
-async function hashVisitor(
-  ip: string,
-  ua: string,
-  siteId: string,
-): Promise<string> {
+/**
+ * Hashes IP + UA + site to create a daily anonymous visitor ID.
+ *
+ * @param param0
+ * @returns
+ */
+async function hashVisitor({
+  ip,
+  ua,
+  siteId,
+}: {
+  ip: string;
+  ua: string;
+  siteId: string;
+}): Promise<string> {
   const today = new Date().toISOString().slice(0, 10);
   const raw = `${ip}|${ua}|${siteId}|${today}`;
+
   const buffer = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(raw),
   );
+
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("")
@@ -47,9 +44,12 @@ function extractPathname(url: string): string | null {
   }
 }
 
-// Site cache (in-memory, short TTL)
-// Avoid hitting DB on every request for site validation.
-// A siteId that exists won't be deleted that often.
+/**
+ * In-memory cache for site validation.
+ * Avoids hitting DB on every request for site validation.
+ * A siteId that exists won't be deleted that often.
+ */
+
 const siteCache = new Map<string, { valid: boolean; ts: number }>();
 const SITE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
@@ -64,9 +64,26 @@ async function isSiteValid(siteId: string): Promise<boolean> {
     .from(site)
     .where(eq(site.id, siteId))
     .limit(1);
-  const valid = !!siteResult;
+
+  const valid = Boolean(siteResult);
   siteCache.set(siteId, { valid, ts: Date.now() });
   return valid;
+}
+
+function getClientIP(request: Request): string {
+  const cf = request.headers.get("cf-connecting-ip");
+  if (cf) return cf;
+
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const first = forwarded.split(",")[0];
+    if (first) return first.trim();
+  }
+
+  const real = request.headers.get("x-real-ip");
+  if (real) return real;
+
+  return "0.0.0.0";
 }
 
 // POST /api/track
@@ -91,21 +108,17 @@ export async function POST(request: NextRequest) {
   const payload: TrackPayload = parsed.data;
 
   // 3. Get IP and User-Agent
-  const ip =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "0.0.0.0";
-
+  const ip = getClientIP(request);
   const userAgent = request.headers.get("user-agent");
 
   // 4. Bot filtering
   if (shouldIgnoreRequest(userAgent)) {
-    return NextResponse.json({ ok: true }, { status: 202 }); // silently accept but discard
+    return NextResponse.json({ ok: true }, { status: 202 });
   }
 
   // 5. Rate limiting (per IP)
   const { allowed, remaining } = await checkRateLimit(ip);
+
   if (!allowed) {
     return NextResponse.json(
       { error: "Rate limit exceeded" },
@@ -140,7 +153,11 @@ export async function POST(request: NextRequest) {
   })();
 
   // 8. Hash visitor fingerprint
-  const visitorHash = await hashVisitor(ip, userAgent ?? "", payload.siteId);
+  const visitorHash = await hashVisitor({
+    ip,
+    ua: userAgent ?? "",
+    siteId: payload.siteId,
+  });
 
   // 9. Build queued event
   const queuedEvent: QueuedEvent = {
@@ -160,6 +177,9 @@ export async function POST(request: NextRequest) {
     enqueuedAt: Date.now(),
   };
 
+  console.log("\nremaining\n", remaining);
+  console.log("\nqueuedEvent\n", queuedEvent);
+
   // Overwrite country from Cloudflare header if available
   const cfCountry = request.headers.get("cf-ipcountry");
   if (cfCountry && cfCountry !== "XX") {
@@ -169,24 +189,29 @@ export async function POST(request: NextRequest) {
   // 10. Push to Redis queue
   await enqueueEvent(queuedEvent);
 
+  const origin = request.headers.get("origin") || "*";
+
   return NextResponse.json(
     { ok: true },
     {
       status: 202,
       headers: {
         "X-RateLimit-Remaining": String(remaining),
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Credentials": "true",
       },
     },
   );
 }
 
 // OPTIONS /api/track — CORS preflight
-export async function OPTIONS() {
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get("origin") || "*";
   return new NextResponse(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Credentials": "true",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Max-Age": "86400",

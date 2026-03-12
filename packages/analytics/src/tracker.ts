@@ -20,7 +20,9 @@
   // --------------------------------------------------------
   const script = document.currentScript as HTMLScriptElement | null;
   const siteId = script?.dataset["siteId"];
-  const endpoint = script?.dataset["endpoint"] ?? "/api/track";
+  const endpoint = script
+    ? new URL("/api/track", script.src).toString()
+    : "/api/track";
 
   if (!siteId) {
     console.warn("[Mehtrics] data-site-id is required.");
@@ -30,6 +32,10 @@
   // --------------------------------------------------------
   // Helpers
   // --------------------------------------------------------
+  function getUrl(): string {
+    return window.location.href;
+  }
+
   function getScreenWidth(): number {
     return window.innerWidth || screen.width || 0;
   }
@@ -38,7 +44,6 @@
     const ref = document.referrer;
     if (!ref) return null;
     try {
-      // Only track external referrers
       const refHost = new URL(ref).hostname;
       const curHost = window.location.hostname;
       if (refHost === curHost) return null;
@@ -46,10 +51,6 @@
       return null;
     }
     return ref;
-  }
-
-  function getUrl(): string {
-    return window.location.href;
   }
 
   // --------------------------------------------------------
@@ -68,7 +69,7 @@
       ...extra,
     };
 
-    // Use sendBeacon for non-blocking, reliable delivery
+    // Using sendBeacon for non-blocking, reliable delivery
     const data = JSON.stringify(payload);
     const sent = navigator.sendBeacon
       ? navigator.sendBeacon(
@@ -84,7 +85,7 @@
         headers: { "Content-Type": "application/json" },
         body: data,
         keepalive: true,
-      }).catch(() => {}); // Silently fail
+      }).catch(() => {});
     }
   }
 

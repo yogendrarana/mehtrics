@@ -1,11 +1,14 @@
 import { getRedisClient } from "./redis";
 
-// ============================================================
-// Event Queue
-// ============================================================
-// Uses a Redis LIST as a simple FIFO queue.
-// Producer (track route) uses LPUSH.
-// Consumer (worker) uses BRPOP / batch RPOP.
+/**
+ * ======================================================
+ * Event Queue
+ * ======================================================
+ *
+ * Uses a Redis LIST as a simple FIFO queue.
+ * Producer (track route) uses LPUSH.
+ * Consumer (worker) uses BRPOP / batch RPOP.
+ */
 
 export const EVENT_QUEUE_KEY = "mehtrics:event:queue";
 
@@ -23,7 +26,7 @@ export type QueuedEvent = {
   device?: "desktop" | "mobile" | "tablet" | "unknown" | null;
   screenWidth?: number | null;
   eventName?: string | null;
-  enqueuedAt: number; // unix ms
+  enqueuedAt: number;
 };
 
 /**

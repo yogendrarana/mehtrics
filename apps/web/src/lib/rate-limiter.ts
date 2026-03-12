@@ -1,10 +1,10 @@
 import { getRedisClient } from "./redis";
 
-// ============================================================
-// Sliding window rate limiter backed by Redis
-// ============================================================
-// Uses a sorted set per key (ip or siteId).
-// Each member is a unique timestamp so concurrent requests are tracked.
+/**
+ * Sliding window rate limiter backed by Redis
+ * Uses a sorted set per key (ip or siteId).
+ * Each member is a unique timestamp so concurrent requests are tracked.
+ */
 
 const WINDOW_MS = 60_000; // 1 minute
 const MAX_REQUESTS = 300; // per window per key

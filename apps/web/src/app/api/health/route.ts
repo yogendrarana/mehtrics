@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import { db } from "@mehtrics/db";
 import { getRedisClient } from "@/lib/redis";
 
-// GET /api/health
-
-// Used by Docker health checks and monitoring tools.
-// Returns 200 if all critical services are reachable.
+/**
+ * GET /api/health
+ *
+ * Used by Docker health checks and monitoring tools.
+ * Returns 200 if all critical services are reachable.
+ */
 
 export async function GET() {
   const checks: Record<string, "ok" | "error"> = {};

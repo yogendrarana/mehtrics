@@ -1,14 +1,17 @@
 import { db, event } from "@mehtrics/db";
 import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
 
-// ============================================================
-// Batch Worker
-// ============================================================
-// Polls the Redis queue every POLL_INTERVAL_MS and bulk-inserts
-// up to BATCH_SIZE events per tick into PostgreSQL.
-//
-// Run as a standalone Bun process:
-//   bun run apps/web/src/lib/worker.ts
+/**
+ * ===================================================
+ * Batch Worker
+ * ===================================================
+ *
+ * Polls the Redis queue every POLL_INTERVAL_MS and bulk-inserts
+ * up to BATCH_SIZE events per tick into PostgreSQL.
+ *
+ * Run as a standalone Bun process:
+ *   bun run apps/web/src/lib/worker.ts
+ */
 
 const POLL_INTERVAL_MS = 5_000; // 5 seconds
 const BATCH_SIZE = 500; // events per DB insert

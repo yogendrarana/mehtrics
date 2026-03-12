@@ -16,14 +16,14 @@
   "scripts": {
     "lint": "bunx biome lint --write",
     "format": "bun --filter @mehtrics/web format",
+
     "build": "bun --filter '*' build",
+    "build:web": "bun --filter @mehtrics/web build",
+    "build:analytics": "bun --filter @mehtrics/analytics build",
+    "build:docs": "bun --filter @mehtrics/docs build",
 
     "dev:web": "bun --filter @mehtrics/web dev",
-    "build:web": "bun --filter @mehtrics/web build",
-    
     "dev:docs": "bun --filter @mehtrics/docs dev",
-    "build:docs": "bun --filter @mehtrics/docs build",
-    
     "dev:worker": "bun run --watch apps/web/src/lib/worker.ts",
 
     "db:generate": "bun --filter @mehtrics/db db:generate",
