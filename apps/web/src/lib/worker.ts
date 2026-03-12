@@ -1,4 +1,4 @@
-import { db, event } from "@mehtrics/db";
+import { db, event, type EventInsert } from "@mehtrics/db";
 import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
 
 /**
@@ -16,22 +16,26 @@ import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
 const POLL_INTERVAL_MS = 5_000; // 5 seconds
 const BATCH_SIZE = 500; // events per DB insert
 
-type InsertableEvent = typeof event.$inferInsert;
-
-function mapQueuedEventToInsert(e: QueuedEvent): InsertableEvent {
+function mapQueuedEventToInsert(e: QueuedEvent): EventInsert {
   return {
     siteId: e.siteId,
     type: e.type,
     url: e.url,
     referrer: e.referrer ?? null,
-    pathname: e.pathname ?? null,
+    pathname: e.pathname ?? "/",
     visitorHash: e.visitorHash ?? null,
     country: e.country ?? null,
+    region: e.region ?? null,
+    city: e.city ?? null,
     browser: e.browser ?? null,
     browserVersion: e.browserVersion ?? null,
     os: e.os ?? null,
     device: e.device ?? "unknown",
     screenWidth: e.screenWidth ?? null,
+    screenHeight: e.screenHeight ?? null,
+    query: e.query ?? null,
+    sessionId: e.sessionId ?? null,
+    duration: e.duration ?? null,
     eventName: e.eventName ?? null,
     createdAt: new Date(e.enqueuedAt),
   };

@@ -1,5 +1,5 @@
 {
-  "id": "e0cf7e79-1f9e-4aaf-bb5a-96c38780db5e",
+  "id": "d9962620-4f2e-4bca-87af-8113fd394d1f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -418,10 +418,20 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": true,
           "notNull": true,
-          "default": "gen_random_uuid()"
+          "identity": {
+            "type": "always",
+            "name": "aggregated_daily_stat_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "site_id": {
           "name": "site_id",
@@ -437,10 +447,15 @@
         },
         "metric": {
           "name": "metric",
-          "type": "aggregation_metric",
-          "typeSchema": "public",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
+        },
+        "dimension": {
+          "name": "dimension",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false
         },
         "value": {
           "name": "value",
@@ -448,12 +463,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
-        },
-        "dimension": {
-          "name": "dimension",
-          "type": "varchar(512)",
-          "primaryKey": false,
-          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -464,8 +473,8 @@
         }
       },
       "indexes": {
-        "aggregated_daily_stat_site_date_idx": {
-          "name": "aggregated_daily_stat_site_date_idx",
+        "agg_site_date_idx": {
+          "name": "agg_site_date_idx",
           "columns": [
             {
               "expression": "site_id",
@@ -485,8 +494,8 @@
           "method": "btree",
           "with": {}
         },
-        "aggregated_daily_stat_site_metric_idx": {
-          "name": "aggregated_daily_stat_site_metric_idx",
+        "agg_site_metric_idx": {
+          "name": "agg_site_metric_idx",
           "columns": [
             {
               "expression": "site_id",
@@ -496,6 +505,33 @@
             },
             {
               "expression": "metric",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "agg_site_metric_date_idx": {
+          "name": "agg_site_metric_date_idx",
+          "columns": [
+            {
+              "expression": "site_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "metric",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "date",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -534,10 +570,20 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": true,
           "notNull": true,
-          "default": "gen_random_uuid()"
+          "identity": {
+            "type": "always",
+            "name": "event_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "site_id": {
           "name": "site_id",
@@ -547,11 +593,28 @@
         },
         "type": {
           "name": "type",
-          "type": "event_type",
-          "typeSchema": "public",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
           "default": "'pageview'"
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duration": {
+          "name": "duration",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "visitor_hash": {
+          "name": "visitor_hash",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
         },
         "url": {
           "name": "url",
@@ -569,11 +632,11 @@
           "name": "pathname",
           "type": "varchar(1024)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "visitor_hash": {
-          "name": "visitor_hash",
-          "type": "varchar(64)",
+        "query": {
+          "name": "query",
+          "type": "varchar(1024)",
           "primaryKey": false,
           "notNull": false
         },
@@ -615,8 +678,7 @@
         },
         "device": {
           "name": "device",
-          "type": "device_type",
-          "typeSchema": "public",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": false,
           "default": "'unknown'"
@@ -627,8 +689,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "duration": {
-          "name": "duration",
+        "screen_height": {
+          "name": "screen_height",
           "type": "smallint",
           "primaryKey": false,
           "notNull": false
@@ -648,8 +710,8 @@
         }
       },
       "indexes": {
-        "event_site_id_created_at_idx": {
-          "name": "event_site_id_created_at_idx",
+        "event_site_created_at_idx": {
+          "name": "event_site_created_at_idx",
           "columns": [
             {
               "expression": "site_id",
@@ -669,8 +731,8 @@
           "method": "btree",
           "with": {}
         },
-        "event_site_id_pathname_idx": {
-          "name": "event_site_id_pathname_idx",
+        "event_site_pathname_idx": {
+          "name": "event_site_pathname_idx",
           "columns": [
             {
               "expression": "site_id",
@@ -690,8 +752,8 @@
           "method": "btree",
           "with": {}
         },
-        "event_site_id_referrer_idx": {
-          "name": "event_site_id_referrer_idx",
+        "event_site_referrer_idx": {
+          "name": "event_site_referrer_idx",
           "columns": [
             {
               "expression": "site_id",
@@ -711,8 +773,8 @@
           "method": "btree",
           "with": {}
         },
-        "event_site_id_country_idx": {
-          "name": "event_site_id_country_idx",
+        "event_site_country_idx": {
+          "name": "event_site_country_idx",
           "columns": [
             {
               "expression": "site_id",
@@ -722,6 +784,42 @@
             },
             {
               "expression": "country",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "event_site_visitor_idx": {
+          "name": "event_site_visitor_idx",
+          "columns": [
+            {
+              "expression": "site_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "visitor_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "event_session_idx": {
+          "name": "event_session_idx",
+          "columns": [
+            {
+              "expression": "session_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -988,6 +1086,72 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.setting": {
+      "name": "setting",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "appearance_settings": {
+          "name": "appearance_settings",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "setting_user_id_user_id_fk": {
+          "name": "setting_user_id_user_id_fk",
+          "tableFrom": "setting",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "setting_user_id_unique": {
+          "name": "setting_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -998,34 +1162,6 @@
         "user",
         "admin",
         "super_admin"
-      ]
-    },
-    "public.aggregation_metric": {
-      "name": "aggregation_metric",
-      "schema": "public",
-      "values": [
-        "pageviews",
-        "unique_visitors",
-        "bounce_rate",
-        "avg_duration"
-      ]
-    },
-    "public.device_type": {
-      "name": "device_type",
-      "schema": "public",
-      "values": [
-        "desktop",
-        "mobile",
-        "tablet",
-        "unknown"
-      ]
-    },
-    "public.event_type": {
-      "name": "event_type",
-      "schema": "public",
-      "values": [
-        "pageview",
-        "custom"
       ]
     },
     "public.subscription_status": {

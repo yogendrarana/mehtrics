@@ -12,105 +12,137 @@ import {
 import { relations } from "drizzle-orm";
 import { site } from "./site.schema";
 
-// enums
-export const eventTypeEnum = pgEnum("event_type", ["pageview", "custom"]);
+export type TEventType = "pageview" | "custom";
 
-export const deviceTypeEnum = pgEnum("device_type", [
-  "desktop",
-  "mobile",
-  "tablet",
-  "unknown",
-]);
+export type TDeviceType = "desktop" | "mobile" | "tablet" | "unknown";
 
-export const aggregationMetricEnum = pgEnum("aggregation_metric", [
-  "pageviews",
-  "unique_visitors",
-  "bounce_rate",
-  "avg_duration",
-]);
+export type TAggregationMetric =
+  | "pageviews"
+  | "unique_visitors"
+  | "bounce_rate"
+  | "avg_duration";
 
-// event table
+/**
+ * EVENT TABLE
+ */
 export const event = pgTable(
   "event",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
+    // sequential PK (better than UUID for large event tables)
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+
     siteId: uuid("site_id")
       .notNull()
       .references(() => site.id, { onDelete: "cascade" }),
-    type: eventTypeEnum("type").default("pageview").notNull(),
 
-    // Page data
-    url: varchar("url", { length: 2048 }).notNull(),
-    referrer: varchar("referrer", { length: 2048 }),
-    pathname: varchar("pathname", { length: 1024 }),
+    // pageview | custom
+    type: varchar("type", { length: 32 })
+      .notNull()
+      .default("pageview")
+      .$type<TEventType>(),
 
-    // Visitor fingerprint (hashed — never store raw IP)
+    // session tracking
+    sessionId: varchar("session_id", { length: 64 }),
+    duration: smallint("duration"),
+
+    // visitor fingerprint (hashed, not a raw IP)
     visitorHash: varchar("visitor_hash", { length: 64 }),
 
-    // Geo
-    country: varchar("country", { length: 2 }), // ISO 3166-1 alpha-2
+    // page data
+    url: varchar("url", { length: 2048 }).notNull(),
+    referrer: varchar("referrer", { length: 2048 }),
+    pathname: varchar("pathname", { length: 1024 }).notNull(),
+    query: varchar("query", { length: 1024 }),
+
+    // geo
+    country: varchar("country", { length: 2 }),
     region: varchar("region", { length: 128 }),
     city: varchar("city", { length: 128 }),
 
-    // Device info (parsed from UA)
+    // device info / UA info
     browser: varchar("browser", { length: 64 }),
     browserVersion: varchar("browser_version", { length: 32 }),
     os: varchar("os", { length: 64 }),
-    device: deviceTypeEnum("device").default("unknown"),
+    device: varchar("device", { length: 32 })
+      .default("unknown")
+      .$type<TDeviceType>(),
 
-    // Screen
+    // screen
     screenWidth: smallint("screen_width"),
+    screenHeight: smallint("screen_height"),
 
-    // Session duration (in seconds, updated on exit)
-    duration: smallint("duration"),
-
-    // Custom event name (for type = "custom")
+    // custom event name (for type = "custom")
     eventName: varchar("event_name", { length: 255 }),
 
+    // timestamp
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
   (table) => [
-    // Primary query pattern: site + time range
-    index("event_site_id_created_at_idx").on(table.siteId, table.createdAt),
+    // primary query pattern: site + time range
+    index("event_site_created_at_idx").on(table.siteId, table.createdAt),
 
-    // Pathname breakdown
-    index("event_site_id_pathname_idx").on(table.siteId, table.pathname),
+    // page analytics
+    index("event_site_pathname_idx").on(table.siteId, table.pathname),
 
-    // Referrer breakdown
-    index("event_site_id_referrer_idx").on(table.siteId, table.referrer),
+    // referrer analytics
+    index("event_site_referrer_idx").on(table.siteId, table.referrer),
 
-    // Country breakdown
-    index("event_site_id_country_idx").on(table.siteId, table.country),
+    // country breakdown
+    index("event_site_country_idx").on(table.siteId, table.country),
+
+    // visitor queries
+    index("event_site_visitor_idx").on(table.siteId, table.visitorHash),
+
+    // session queries
+    index("event_session_idx").on(table.sessionId),
   ],
 );
 
-// aggregated daily stat table
+/**
+ * AGGREGATED DAILY STAT TABLE
+ */
 export const aggregatedDailyStat = pgTable(
   "aggregated_daily_stat",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
+    id: bigint("id", { mode: "number" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+
     siteId: uuid("site_id")
       .notNull()
       .references(() => site.id, { onDelete: "cascade" }),
+
     date: date("date").notNull(),
-    metric: aggregationMetricEnum("metric").notNull(),
-    value: bigint("value", { mode: "number" }).notNull().default(0),
-    // Breakdown dimension (e.g. "US" for country, "/blog" for pathname)
+
+    metric: varchar("metric", { length: 64 })
+      .notNull()
+      .$type<TAggregationMetric>(),
+
+    // dimension value (pathname / country / referrer / etc)
     dimension: varchar("dimension", { length: 512 }),
+
+    value: bigint("value", { mode: "number" }).notNull().default(0),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
   (table) => [
-    // Primary dashboard query: site + date range
-    index("aggregated_daily_stat_site_date_idx").on(table.siteId, table.date),
+    // primary dashboard query: site + date range
+    index("agg_site_date_idx").on(table.siteId, table.date),
 
-    // Metric-specific query
-    index("aggregated_daily_stat_site_metric_idx").on(
+    // metric query
+    index("agg_site_metric_idx").on(table.siteId, table.metric),
+
+    // metric over time
+    index("agg_site_metric_date_idx").on(
       table.siteId,
       table.metric,
+      table.date,
     ),
   ],
 );

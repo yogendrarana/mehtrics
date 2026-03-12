@@ -1,7 +1,4 @@
 CREATE TYPE "public"."user_role" AS ENUM('user', 'admin', 'super_admin');--> statement-breakpoint
-CREATE TYPE "public"."aggregation_metric" AS ENUM('pageviews', 'unique_visitors', 'bounce_rate', 'avg_duration');--> statement-breakpoint
-CREATE TYPE "public"."device_type" AS ENUM('desktop', 'mobile', 'tablet', 'unknown');--> statement-breakpoint
-CREATE TYPE "public"."event_type" AS ENUM('pageview', 'custom');--> statement-breakpoint
 CREATE TYPE "public"."subscription_status" AS ENUM('active', 'canceled', 'past_due', 'trialing', 'incomplete');--> statement-breakpoint
 CREATE TYPE "public"."plan_interval" AS ENUM('monthly', 'yearly');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -67,32 +64,35 @@ CREATE TABLE "site" (
 );
 --> statement-breakpoint
 CREATE TABLE "aggregated_daily_stat" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "aggregated_daily_stat_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
 	"site_id" uuid NOT NULL,
 	"date" date NOT NULL,
-	"metric" "aggregation_metric" NOT NULL,
-	"value" bigint DEFAULT 0 NOT NULL,
+	"metric" varchar(64) NOT NULL,
 	"dimension" varchar(512),
+	"value" bigint DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "event" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "event_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
 	"site_id" uuid NOT NULL,
-	"type" "event_type" DEFAULT 'pageview' NOT NULL,
+	"type" varchar(32) DEFAULT 'pageview' NOT NULL,
+	"session_id" varchar(64),
+	"duration" smallint,
+	"visitor_hash" varchar(64),
 	"url" varchar(2048) NOT NULL,
 	"referrer" varchar(2048),
-	"pathname" varchar(1024),
-	"visitor_hash" varchar(64),
+	"pathname" varchar(1024) NOT NULL,
+	"query" varchar(1024),
 	"country" varchar(2),
 	"region" varchar(128),
 	"city" varchar(128),
 	"browser" varchar(64),
 	"browser_version" varchar(32),
 	"os" varchar(64),
-	"device" "device_type" DEFAULT 'unknown',
+	"device" varchar(32) DEFAULT 'unknown',
 	"screen_width" smallint,
-	"duration" smallint,
+	"screen_height" smallint,
 	"event_name" varchar(255),
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -130,6 +130,15 @@ CREATE TABLE "plan" (
 	CONSTRAINT "plan_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
+CREATE TABLE "setting" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"appearance_settings" jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
+	CONSTRAINT "setting_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "site" ADD CONSTRAINT "site_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -137,9 +146,13 @@ ALTER TABLE "aggregated_daily_stat" ADD CONSTRAINT "aggregated_daily_stat_site_i
 ALTER TABLE "event" ADD CONSTRAINT "event_site_id_site_id_fk" FOREIGN KEY ("site_id") REFERENCES "public"."site"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscription" ADD CONSTRAINT "subscription_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscription" ADD CONSTRAINT "subscription_plan_id_plan_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plan"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "aggregated_daily_stat_site_date_idx" ON "aggregated_daily_stat" USING btree ("site_id","date");--> statement-breakpoint
-CREATE INDEX "aggregated_daily_stat_site_metric_idx" ON "aggregated_daily_stat" USING btree ("site_id","metric");--> statement-breakpoint
-CREATE INDEX "event_site_id_created_at_idx" ON "event" USING btree ("site_id","created_at");--> statement-breakpoint
-CREATE INDEX "event_site_id_pathname_idx" ON "event" USING btree ("site_id","pathname");--> statement-breakpoint
-CREATE INDEX "event_site_id_referrer_idx" ON "event" USING btree ("site_id","referrer");--> statement-breakpoint
-CREATE INDEX "event_site_id_country_idx" ON "event" USING btree ("site_id","country");
+ALTER TABLE "setting" ADD CONSTRAINT "setting_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "agg_site_date_idx" ON "aggregated_daily_stat" USING btree ("site_id","date");--> statement-breakpoint
+CREATE INDEX "agg_site_metric_idx" ON "aggregated_daily_stat" USING btree ("site_id","metric");--> statement-breakpoint
+CREATE INDEX "agg_site_metric_date_idx" ON "aggregated_daily_stat" USING btree ("site_id","metric","date");--> statement-breakpoint
+CREATE INDEX "event_site_created_at_idx" ON "event" USING btree ("site_id","created_at");--> statement-breakpoint
+CREATE INDEX "event_site_pathname_idx" ON "event" USING btree ("site_id","pathname");--> statement-breakpoint
+CREATE INDEX "event_site_referrer_idx" ON "event" USING btree ("site_id","referrer");--> statement-breakpoint
+CREATE INDEX "event_site_country_idx" ON "event" USING btree ("site_id","country");--> statement-breakpoint
+CREATE INDEX "event_site_visitor_idx" ON "event" USING btree ("site_id","visitor_hash");--> statement-breakpoint
+CREATE INDEX "event_session_idx" ON "event" USING btree ("session_id");

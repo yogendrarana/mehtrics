@@ -1,6 +1,8 @@
 /**
+ * ================================
  * Aggregation Worker
- * ==================
+ * ================================
+ *
  * Runs daily (typically at 00:05 UTC) to compute analytics rollups
  * from raw events and store them in aggregated_daily_stats.
  *
@@ -166,6 +168,52 @@ async function aggregateSite(
     });
   }
 
+  // 6. Region breakdown
+  const regions = await db
+    .select({
+      dimension: event.region,
+      value: count(),
+    })
+    .from(event)
+    .where(and(baseFilter, sql`${event.region} IS NOT NULL`))
+    .groupBy(event.region)
+    .orderBy(sql`count(*) DESC`)
+    .limit(100);
+
+  for (const r of regions) {
+    if (!r.dimension) continue;
+    rows.push({
+      siteId,
+      date: dateStr,
+      metric: "pageviews" as AggregationMetric,
+      value: r.value,
+      dimension: `region:${r.dimension}`,
+    });
+  }
+
+  // 7. City breakdown
+  const cities = await db
+    .select({
+      dimension: event.city,
+      value: count(),
+    })
+    .from(event)
+    .where(and(baseFilter, sql`${event.city} IS NOT NULL`))
+    .groupBy(event.city)
+    .orderBy(sql`count(*) DESC`)
+    .limit(100);
+
+  for (const city of cities) {
+    if (!city.dimension) continue;
+    rows.push({
+      siteId,
+      date: dateStr,
+      metric: "pageviews" as AggregationMetric,
+      value: city.value,
+      dimension: `city:${city.dimension}`,
+    });
+  }
+
   // 6. Browser breakdown
   const browsers = await db
     .select({
@@ -188,7 +236,7 @@ async function aggregateSite(
     });
   }
 
-  // 7. Device breakdown
+  // 8. Device breakdown
   const devices = await db
     .select({
       dimension: event.device,

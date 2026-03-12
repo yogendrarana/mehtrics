@@ -12,7 +12,7 @@ export const site = pgTable("site", {
   name: varchar("name", { length: 255 }).notNull(),
   domain: varchar("domain", { length: 255 }).notNull().unique(),
 
-  // tracking key — sent in the JS snippet
+  // tracking key - sent in the JS snippet
   publicKey: uuid("public_key").defaultRandom().notNull().unique(),
   timezone: varchar("timezone", { length: 64 }).default("UTC").notNull(),
 

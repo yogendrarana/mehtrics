@@ -22,9 +22,9 @@ export function ConfirmDeleteAccount() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
-        <Button variant="destructive">Delete Account</Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger
+        render={<Button variant="destructive">Delete Account</Button>}
+      />
 
       <AlertDialogPopup>
         <AlertDialogHeader className="pb-0">

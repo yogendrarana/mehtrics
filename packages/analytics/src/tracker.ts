@@ -1,6 +1,8 @@
 /**
+ * ======================================
  * Mehtrics Tracking Script
- * ========================
+ * ======================================
+ *
  * Minimal, privacy-first analytics tracker.
  * Target: < 3 KB gzipped.
  *
@@ -40,6 +42,10 @@
     return window.innerWidth || screen.width || 0;
   }
 
+  function getScreenHeight(): number {
+    return window.innerHeight || screen.height || 0;
+  }
+
   function getReferrer(): string | null {
     const ref = document.referrer;
     if (!ref) return null;
@@ -51,6 +57,22 @@
       return null;
     }
     return ref;
+  }
+
+  function getSessionId(): string {
+    const key = "mehtrics_sid";
+    try {
+      let sid = window.sessionStorage.getItem(key);
+      if (!sid) {
+        sid = Math.random().toString(36).substring(2, 15) + 
+              Math.random().toString(36).substring(2, 15);
+        window.sessionStorage.setItem(key, sid);
+      }
+      return sid;
+    } catch {
+      // Fallback for browsers with disabled storage
+      return "anon";
+    }
   }
 
   // --------------------------------------------------------
@@ -66,6 +88,8 @@
       url: getUrl(),
       referrer: getReferrer(),
       screenWidth: getScreenWidth(),
+      screenHeight: getScreenHeight(),
+      sessionId: getSessionId(),
       ...extra,
     };
 

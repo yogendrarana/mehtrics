@@ -165,15 +165,6 @@ export default function NewSitePage() {
           </div>
 
           <div className="p-4 flex justify-end gap-3 border-t border-border bg-muted">
-            <Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting ? "Creating…" : "Create Site"}
-                </Button>
-              )}
-            />
-
             <Button
               type="button"
               variant="ghost"
@@ -182,6 +173,15 @@ export default function NewSitePage() {
             >
               Cancel
             </Button>
+
+            <Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                  {isSubmitting ? "Creating…" : "Create Site"}
+                </Button>
+              )}
+            />
           </div>
         </form>
       </div>

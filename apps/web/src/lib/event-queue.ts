@@ -20,11 +20,17 @@ export type QueuedEvent = {
   pathname?: string | null;
   visitorHash?: string | null;
   country?: string | null;
+  region?: string | null;
+  city?: string | null;
   browser?: string | null;
   browserVersion?: string | null;
   os?: string | null;
   device?: "desktop" | "mobile" | "tablet" | "unknown" | null;
   screenWidth?: number | null;
+  screenHeight?: number | null;
+  query?: string | null;
+  sessionId?: string | null;
+  duration?: number | null;
   eventName?: string | null;
   enqueuedAt: number;
 };

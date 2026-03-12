@@ -33,7 +33,7 @@ export default async function SitesPage() {
 
       <div className="p-4 space-y-4">
         {data.length === 0 ? (
-          <div className="border border-dashed border-border rounded-xl p-12 text-center space-y-3">
+          <div className="border border-dashed border-border rounded-xl py-20 text-center space-y-3">
             <p className="text-muted-foreground">No sites yet.</p>
             <Link href="/dashboard/sites/new">
               <Button>Add your first site</Button>

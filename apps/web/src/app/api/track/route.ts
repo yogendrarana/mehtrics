@@ -44,6 +44,14 @@ function extractPathname(url: string): string | null {
   }
 }
 
+function extractQuery(url: string): string | null {
+  try {
+    return new URL(url).search || null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * In-memory cache for site validation.
  * Avoids hitting DB on every request for site validation.
@@ -167,23 +175,36 @@ export async function POST(request: NextRequest) {
     referrer: payload.referrer ?? null,
     pathname: extractPathname(payload.url),
     visitorHash,
-    country: null, // Set by worker using ip2country or Cloudflare header
+    country: null,
+    region: null,
+    city: null,
     browser: browser.name ?? null,
     browserVersion: browser.version ?? null,
     os: os.name ?? null,
     device: deviceType,
     screenWidth: payload.screenWidth ?? null,
+    screenHeight: payload.screenHeight ?? null,
+    query: extractQuery(payload.url),
+    sessionId: payload.sessionId ?? null,
+    duration: payload.duration ?? null,
     eventName: payload.eventName ?? null,
     enqueuedAt: Date.now(),
   };
-
-  console.log("\nremaining\n", remaining);
-  console.log("\nqueuedEvent\n", queuedEvent);
 
   // Overwrite country from Cloudflare header if available
   const cfCountry = request.headers.get("cf-ipcountry");
   if (cfCountry && cfCountry !== "XX") {
     queuedEvent.country = cfCountry.toUpperCase().slice(0, 2);
+  }
+
+  const cfRegion = request.headers.get("cf-region");
+  if (cfRegion) {
+    queuedEvent.region = cfRegion;
+  }
+
+  const cfCity = request.headers.get("cf-ipcity");
+  if (cfCity) {
+    queuedEvent.city = cfCity;
   }
 
   // 10. Push to Redis queue

@@ -73,15 +73,18 @@ const columns: ColumnDef<Site>[] = [
 
       return (
         <Menu>
-          <MenuTrigger>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0 border-(--theme(--color-border))"
-            >
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </MenuTrigger>
+          <MenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0 border-(--theme(--color-border))"
+              >
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+          />
+
           <MenuPopup align="end">
             <MenuItem className="hover:bg-accent/10 focus:bg-accent/10">
               <Link

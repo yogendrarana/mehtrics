@@ -22,14 +22,17 @@ export function ConfirmDeactivateAccount() {
       open={isDeactivateDialogOpen}
       onOpenChange={setIsDeactivateDialogOpen}
     >
-      <DialogTrigger>
-        <Button
-          variant="outline"
-          className="border-orange-300 text-orange-700 hover:bg-orange-50 bg-transparent"
-        >
-          Deactivate Account
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button
+            variant="outline"
+            className="border-orange-300 text-orange-700 hover:bg-orange-50 bg-transparent"
+          >
+            Deactivate Account
+          </Button>
+        }
+      />
+
       <DialogPopup>
         <DialogHeader className="pb-0">
           <DialogTitle className="flex items-center gap-2">
