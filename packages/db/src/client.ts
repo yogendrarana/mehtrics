@@ -16,14 +16,9 @@ const pool = new Pool({
 });
 
 // exports
-const db = drizzle(pool, {
+export const db = drizzle(pool, {
   schema,
   logger: process.env.NODE_ENV === "development",
 });
 
-type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
-
-export {
-  db, 
-  type Transaction,
-}
+export type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];

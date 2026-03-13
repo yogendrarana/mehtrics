@@ -1,19 +1,10 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import Link from "next/link";
+
+import { db } from "@mehtrics/db";
 import { getSessionFromRequest } from "@mehtrics/auth";
-import {
-  db,
-  site as siteTable,
-  event as eventTable,
-  eq,
-  and,
-  gte,
-  lt,
-  count,
-  sql,
-  desc,
-} from "@mehtrics/db";
+import { site as siteTable, event as eventTable } from "@mehtrics/db/schema";
+import { eq, and, gte, lt, count, sql, desc } from "@mehtrics/db/drizzle";
 
 import { SectionHeader } from "@/components/section-header";
 

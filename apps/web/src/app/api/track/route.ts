@@ -1,10 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
-import { db, site, eq } from "@mehtrics/db";
-import { checkRateLimit } from "@/lib/rate-limiter";
-import { shouldIgnoreRequest } from "@/lib/bot-filter";
-import { enqueueEvent, type QueuedEvent } from "@/lib/event-queue";
-import { trackPayloadSchema, type TrackPayload } from "@/lib/validation/track";
+import {
+  checkRateLimit,
+  shouldIgnoreRequest,
+  enqueueEvent,
+  trackPayloadSchema,
+  type QueuedEvent,
+} from "@mehtrics/analytics";
+import { db } from "@mehtrics/db";
+import { site } from "@mehtrics/db/schema";
+import { eq } from "@mehtrics/db/drizzle";
+import { type TEventType } from "@mehtrics/shared/types";
+import { ANALYTICS_CONFIG } from "@mehtrics/shared/constants";
 
 /**
  * Hashes IP + UA + site to create a daily anonymous visitor ID.
@@ -59,7 +66,7 @@ function extractQuery(url: string): string | null {
  */
 
 const siteCache = new Map<string, { valid: boolean; ts: number }>();
-const SITE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const { SITE_CACHE_TTL } = ANALYTICS_CONFIG;
 
 async function isSiteValid(siteId: string): Promise<boolean> {
   const cached = siteCache.get(siteId);
@@ -113,7 +120,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const payload: TrackPayload = parsed.data;
+  const payload = parsed.data;
 
   // 3. Get IP and User-Agent
   const ip = getClientIP(request);
@@ -170,10 +177,10 @@ export async function POST(request: NextRequest) {
   // 9. Build queued event
   const queuedEvent: QueuedEvent = {
     siteId: payload.siteId,
-    type: payload.type,
+    type: payload.type as TEventType,
     url: payload.url,
     referrer: payload.referrer ?? null,
-    pathname: extractPathname(payload.url),
+    pathname: extractPathname(payload.url) ?? "/",
     visitorHash,
     country: null,
     region: null,

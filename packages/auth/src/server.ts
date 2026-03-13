@@ -2,8 +2,8 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
-import * as schema from "@mehtrics/db";
-import { db } from "@mehtrics/db/client";
+import * as schema from "@mehtrics/db/schema";
+import { db } from "@mehtrics/db";
 import { serverEnv } from "@mehtrics/env";
 
 export const auth = betterAuth({

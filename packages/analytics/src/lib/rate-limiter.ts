@@ -1,4 +1,4 @@
-import { getRedisClient } from "./redis";
+import { getRedisClient } from "../queue/redis";
 
 /**
  * Sliding window rate limiter backed by Redis

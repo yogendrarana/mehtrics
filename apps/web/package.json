@@ -10,9 +10,11 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@mehtrics/analytics": "workspace:*",
     "@mehtrics/auth": "workspace:*",
     "@mehtrics/db": "workspace:*",
     "@mehtrics/env": "workspace:*",
+    "@mehtrics/shared": "workspace:*",
     "@mehtrics/ui": "workspace:*",
     "@mehtrics/utils": "workspace:*",
     "@tanstack/react-form": "^1.28.3",
