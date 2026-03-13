@@ -18,22 +18,9 @@ import {
   site,
   event,
   aggregatedDailyStat,
-  eq,
-  and,
-  gte,
-  lt,
-  count,
-  sql,
+  type AggregatedDailyStatInsert,
 } from "@mehtrics/db";
-
-// ---- Types ----
-type AggregationMetric =
-  | "pageviews"
-  | "unique_visitors"
-  | "bounce_rate"
-  | "avg_duration";
-
-type InsertableAgg = typeof aggregatedDailyStat.$inferInsert;
+import { eq, and, gte, lt, count, sql } from "@mehtrics/db/drizzle";
 
 // ============================================================
 // Get the date range for yesterday
@@ -60,7 +47,7 @@ async function aggregateSite(
   end: Date,
   dateStr: string,
 ): Promise<void> {
-  const rows: InsertableAgg[] = [];
+  const rows: AggregatedDailyStatInsert[] = [];
 
   const baseFilter = and(
     eq(event.siteId, siteId),
@@ -78,7 +65,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: pvResult.value,
     });
   }
@@ -95,7 +82,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "unique_visitors" as AggregationMetric,
+      metric: "unique_visitors",
       value: uvResult.value,
     });
   }
@@ -117,7 +104,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: page.value,
       dimension: page.dimension,
     });
@@ -140,7 +127,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: ref.value,
       dimension: `referrer:${ref.dimension}`,
     });
@@ -162,7 +149,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: c.value,
       dimension: `country:${c.dimension}`,
     });
@@ -185,7 +172,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: r.value,
       dimension: `region:${r.dimension}`,
     });
@@ -208,7 +195,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: city.value,
       dimension: `city:${city.dimension}`,
     });
@@ -230,7 +217,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: b.value,
       dimension: `browser:${b.dimension}`,
     });
@@ -252,7 +239,7 @@ async function aggregateSite(
     rows.push({
       siteId,
       date: dateStr,
-      metric: "pageviews" as AggregationMetric,
+      metric: "pageviews",
       value: d.value,
       dimension: `device:${d.dimension}`,
     });
