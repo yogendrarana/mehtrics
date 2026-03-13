@@ -1,39 +1,12 @@
 import { getRedisClient } from "./redis";
+import { 
+  type TEventType, 
+  type TDeviceType, 
+  type QueuedEvent, 
+} from "@mehtrics/shared/types";
+import { EVENT_QUEUE_KEY } from "@mehtrics/shared/constants";
 
-/**
- * ======================================================
- * Event Queue
- * ======================================================
- *
- * Uses a Redis LIST as a simple FIFO queue.
- * Producer (track route) uses LPUSH.
- * Consumer (worker) uses BRPOP / batch RPOP.
- */
-
-export const EVENT_QUEUE_KEY = "mehtrics:event:queue";
-
-export type QueuedEvent = {
-  siteId: string;
-  type: "pageview" | "custom";
-  url: string;
-  referrer?: string | null;
-  pathname?: string | null;
-  visitorHash?: string | null;
-  country?: string | null;
-  region?: string | null;
-  city?: string | null;
-  browser?: string | null;
-  browserVersion?: string | null;
-  os?: string | null;
-  device?: "desktop" | "mobile" | "tablet" | "unknown" | null;
-  screenWidth?: number | null;
-  screenHeight?: number | null;
-  query?: string | null;
-  sessionId?: string | null;
-  duration?: number | null;
-  eventName?: string | null;
-  enqueuedAt: number;
-};
+export type { TEventType, TDeviceType, QueuedEvent };
 
 /**
  * Push a single event to the Redis queue.

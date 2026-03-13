@@ -1,6 +1,8 @@
 "use server";
 
-import { db, eq, setting, user } from "@mehtrics/db";
+import { db } from "@mehtrics/db";
+import { eq } from "@mehtrics/db/drizzle";
+import { setting, user } from "@mehtrics/db/schema";
 import { auth } from "@mehtrics/auth";
 import { headers } from "next/headers";
 

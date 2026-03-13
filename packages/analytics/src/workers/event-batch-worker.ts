@@ -1,20 +1,13 @@
-import { db, event, type EventInsert } from "@mehtrics/db";
-import { dequeueBatch, getQueueDepth, type QueuedEvent } from "./event-queue";
+import { db } from "@mehtrics/db";
+import { event, type EventInsert } from "@mehtrics/db/schema";
+import {
+  dequeueBatch,
+  getQueueDepth,
+  type QueuedEvent,
+} from "../queue/event-queue";
+import { ANALYTICS_CONFIG } from "@mehtrics/shared/constants";
 
-/**
- * ===================================================
- * Batch Worker
- * ===================================================
- *
- * Polls the Redis queue every POLL_INTERVAL_MS and bulk-inserts
- * up to BATCH_SIZE events per tick into PostgreSQL.
- *
- * Run as a standalone Bun process:
- *   bun run apps/web/src/lib/worker.ts
- */
-
-const POLL_INTERVAL_MS = 5_000; // 5 seconds
-const BATCH_SIZE = 500; // events per DB insert
+const { POLL_INTERVAL_MS, BATCH_SIZE } = ANALYTICS_CONFIG;
 
 function mapQueuedEventToInsert(e: QueuedEvent): EventInsert {
   return {

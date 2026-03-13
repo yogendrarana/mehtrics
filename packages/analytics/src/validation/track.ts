@@ -1,9 +1,12 @@
 import z from "zod";
+import type { TEventType } from "@mehtrics/shared/types";
+
+const EVENT_TYPES: [TEventType, ...TEventType[]] = ["pageview", "custom"];
 
 export const trackPayloadSchema = z.object({
-  siteId: z.uuid("Invalid siteId"),
+  siteId: z.string().uuid("Invalid siteId"),
   type: z.enum(["pageview", "custom"]).default("pageview"),
-  url: z.url("Invalid URL").max(2048),
+  url: z.string().url("Invalid URL").max(2048),
   referrer: z.string().max(2048).optional().nullable(),
   screenWidth: z.number().int().positive().max(8192).optional().nullable(),
   screenHeight: z.number().int().positive().max(8192).optional().nullable(),
