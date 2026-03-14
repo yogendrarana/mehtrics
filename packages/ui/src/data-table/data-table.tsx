@@ -2,6 +2,7 @@ import * as React from "react";
 import { flexRender, type Table as TanstackTable } from "@tanstack/react-table";
 
 import { cn } from "@mehtrics/utils/cn";
+
 import {
   Table,
   TableBody,
@@ -25,6 +26,7 @@ export function DataTable<TData>({
   return (
     <div className={cn("w-full rounded-md border overflow-hidden", className)}>
       <Table>
+        {/* table header */}
         <TableHeader className="bg-muted">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -43,10 +45,13 @@ export function DataTable<TData>({
             </TableRow>
           ))}
         </TableHeader>
+
+        {/* table body */}
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                className="hover:bg-background"
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
@@ -69,7 +74,8 @@ export function DataTable<TData>({
           )}
         </TableBody>
       </Table>
-
+      
+      {/* action bar */}
       <div className="flex flex-col gap-2.5">
         {actionBar &&
           table.getFilteredSelectedRowModel().rows.length > 0 &&

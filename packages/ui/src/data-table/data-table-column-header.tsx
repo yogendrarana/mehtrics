@@ -53,6 +53,7 @@ export function DataTableColumnHeader<TData, TValue>({
             <ChevronsUpDown className="h-4 w-4" />
           ))}
       </MenuTrigger>
+      
       <MenuPopup align="start" className="w-28">
         {column.getCanSort() && (
           <>

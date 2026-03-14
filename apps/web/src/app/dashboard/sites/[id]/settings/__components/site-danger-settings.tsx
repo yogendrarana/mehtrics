@@ -82,9 +82,9 @@ export function SiteDangerSettings({ site }: SiteDangerSettingsProps) {
         </div>
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger>
-            <Button variant="destructive">Delete Site</Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={<Button variant="destructive">Delete Site</Button>}
+          />
           <DialogPopup>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">

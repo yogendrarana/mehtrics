@@ -146,13 +146,13 @@ export function DashboardMenu() {
               </Link>
 
               <div className="px-4 py-3 flex flex-col bg-muted/50 border-y border-border">
-                  <span className="text-sm font-bold truncate text-foreground leading-tight">
-                    {siteData?.name || "Loading..."}
-                  </span>
-                  <span className="text-[10px] font-medium text-muted-foreground truncate leading-none mt-0.5">
-                    {siteData?.domain || "..."}
-                  </span>
-                </div>
+                <span className="text-sm font-bold truncate text-foreground leading-tight">
+                  {siteData?.name || "Loading..."}
+                </span>
+                <span className="text-[10px] font-medium text-muted-foreground truncate leading-none mt-0.5">
+                  {siteData?.domain || "..."}
+                </span>
+              </div>
             </div>
           )}
 

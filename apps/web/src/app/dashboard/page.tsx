@@ -116,13 +116,17 @@ export default async function DashboardPage() {
             </h2>
             <div className="border border-border rounded-sm overflow-hidden bg-card">
               {stats.topPages.length === 0 ? (
-                <p className="p-4 text-sm text-muted-foreground">No data yet.</p>
+                <p className="p-4 text-sm text-muted-foreground">
+                  No data yet.
+                </p>
               ) : (
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50 border-b border-border">
                     <tr>
                       <th className="text-left px-4 py-2 font-medium">Page</th>
-                      <th className="text-right px-4 py-2 font-medium">Views</th>
+                      <th className="text-right px-4 py-2 font-medium">
+                        Views
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -162,7 +166,9 @@ export default async function DashboardPage() {
                       <th className="text-left px-4 py-2 font-medium">
                         Referrer
                       </th>
-                      <th className="text-right px-4 py-2 font-medium">Visits</th>
+                      <th className="text-right px-4 py-2 font-medium">
+                        Visits
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -199,9 +205,7 @@ function StatCard({
 }) {
   return (
     <div className="border border-border rounded-sm p-4 bg-card space-y-1">
-      <p className="text-xs text-muted-foreground">
-        {label}
-      </p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className={`text-2xl font-bold ${mono ? "font-mono text-base" : ""}`}>
         {value}
       </p>
