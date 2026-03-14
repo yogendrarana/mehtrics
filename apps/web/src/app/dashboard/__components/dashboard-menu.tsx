@@ -151,8 +151,7 @@ export function DashboardMenu() {
                 <span>Back to Sites</span>
               </Link>
 
-              <div className="px-4 py-3 flex items-center justify-between gap-3 bg-muted/30 border-y border-border">
-                <div className="flex flex-col min-w-0">
+              <div className="px-4 py-3 flex flex-col bg-muted/50 border-y border-border">
                   <span className="text-sm font-bold truncate text-foreground leading-tight">
                     {siteData?.name || "Loading..."}
                   </span>
@@ -160,20 +159,6 @@ export function DashboardMenu() {
                     {siteData?.domain || "..."}
                   </span>
                 </div>
-
-                <Button
-                  variant="outline"
-                  size="icon-xs"
-                  onClick={copyId}
-                  title="Copy Site ID"
-                >
-                  {copied ? (
-                    <Check size={10} className="text-emerald-500" />
-                  ) : (
-                    <Copy size={10} />
-                  )}
-                </Button>
-              </div>
             </div>
           )}
 
