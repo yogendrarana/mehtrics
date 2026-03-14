@@ -4,34 +4,28 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname, useParams } from "next/navigation";
 import {
-  LayoutDashboard,
   Globe,
   CreditCard,
   Activity,
   Settings,
   BarChart3,
   Clock,
-  Share2,
   MousePointerClick,
   FileText,
-  Monitor,
-  MapPin,
   ChevronLeft,
-  Copy,
-  Check,
   User,
   Settings2,
   Terminal,
+  Home,
 } from "lucide-react";
 import { cn } from "@mehtrics/utils/cn";
 import { Card, CardContent } from "@mehtrics/ui/card";
 import { motion, AnimatePresence } from "motion/react";
-import { Button } from "@mehtrics/ui/button";
 
 const ACCOUNT_NAV_GROUPS = [
   {
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Overview", url: "/dashboard", icon: Home },
       { title: "Sites", url: "/dashboard/sites", icon: Globe },
     ],
   },
