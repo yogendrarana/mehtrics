@@ -13,13 +13,13 @@
  *   5 0 * * * bun run /app/packages/analytics/src/aggregation-worker.ts
  */
 
+import { db } from "@mehtrics/db";
 import {
-  db,
   site,
   event,
   aggregatedDailyStat,
   type AggregatedDailyStatInsert,
-} from "@mehtrics/db";
+} from "@mehtrics/db/schema";
 import { eq, and, gte, lt, count, sql } from "@mehtrics/db/drizzle";
 
 // ============================================================

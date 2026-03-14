@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Globe, Monitor } from "lucide-react";
 import { AnalyticsChart } from "./analytics-chart";
-import { TopListCard } from "./top-list-card";
+import { TopListCard } from "../../../__components/top-list-card";
 import { DateRangePicker } from "./date-range-picker";
 import { SectionHeader } from "@/components/section-header";
 

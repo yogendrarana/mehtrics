@@ -7,6 +7,7 @@ import { site as siteTable, event as eventTable } from "@mehtrics/db/schema";
 import { eq, and, gte, lt, count, sql, desc } from "@mehtrics/db/drizzle";
 import { Button } from "@mehtrics/ui/button";
 import { SectionHeader } from "@/components/section-header";
+import { TopListCard } from "./__components/top-list-card";
 
 // Date range helpers
 function getDateRange(days: number): { start: Date; end: Date } {
@@ -110,84 +111,23 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <h2 className="text-sm text-muted-foreground">
-              Top Pages (All Sites)
-            </h2>
-            <div className="border border-border rounded-sm overflow-hidden bg-card">
-              {stats.topPages.length === 0 ? (
-                <p className="p-4 text-sm text-muted-foreground">
-                  No data yet.
-                </p>
-              ) : (
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 border-b border-border">
-                    <tr>
-                      <th className="text-left px-4 py-2 font-medium">Page</th>
-                      <th className="text-right px-4 py-2 font-medium">
-                        Views
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.topPages.map((p, i) => (
-                      <tr
-                        key={i}
-                        className="border-b border-border last:border-0"
-                      >
-                        <td className="px-4 py-2 truncate max-w-[200px] text-xs">
-                          <span className="text-muted-foreground block">
-                            {p.domain}
-                          </span>
-                          <span className="font-mono">{p.pathname ?? "/"}</span>
-                        </td>
-                        <td className="px-4 py-2 text-right">{p.views}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
+          <TopListCard
+            title="Top Pages (All Sites)"
+            items={stats.topPages.map((p) => ({
+              label: `${p.domain}${p.pathname ?? "/"}`,
+              value: p.views,
+            }))}
+            limit={6}
+          />
 
-          <div className="space-y-3">
-            <h2 className="text-sm text-muted-foreground">
-              Top Referrers (All Sites)
-            </h2>
-            <div className="border border-border rounded-sm overflow-hidden bg-card">
-              {stats.topReferrers.length === 0 ? (
-                <p className="p-4 text-sm text-muted-foreground">
-                  No referrer data yet.
-                </p>
-              ) : (
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 border-b border-border">
-                    <tr>
-                      <th className="text-left px-4 py-2 font-medium">
-                        Referrer
-                      </th>
-                      <th className="text-right px-4 py-2 font-medium">
-                        Visits
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.topReferrers.map((r, i) => (
-                      <tr
-                        key={i}
-                        className="border-b border-border last:border-0"
-                      >
-                        <td className="px-4 py-2 truncate max-w-[200px] text-xs">
-                          {r.referrer ?? "Direct"}
-                        </td>
-                        <td className="px-4 py-2 text-right">{r.visits}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
+          <TopListCard
+            title="Top Referrers (All Sites)"
+            items={stats.topReferrers.map((r) => ({
+              label: r.referrer ?? "Direct",
+              value: r.visits,
+            }))}
+            limit={6}
+          />
         </div>
       </div>
     </div>
