@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getSessionFromRequest } from "@mehtrics/auth";
-import { db, site as siteTable, eq, and } from "@mehtrics/db";
+import { db } from "@mehtrics/db";
+import { eq, and } from "@mehtrics/db/drizzle";
+import { site as siteTable } from "@mehtrics/db/schema";
 import { SectionHeader } from "@/components/section-header";
 import { SiteGeneralSettings } from "@/app/dashboard/sites/[id]/settings/__components/site-general-settings";
 import { SiteDangerSettings } from "@/app/dashboard/sites/[id]/settings/__components/site-danger-settings";

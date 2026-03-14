@@ -6,9 +6,130 @@ import { getSessionFromRequest } from "@mehtrics/auth";
 import { site as siteTable, event as eventTable } from "@mehtrics/db/schema";
 import { eq, and, gte, lt, count, sql, desc } from "@mehtrics/db/drizzle";
 
-import { SectionHeader } from "@/components/section-header";
+import { OverviewClient } from "./__components/overview-client";
 
 type PageProps = { params: Promise<{ id: string }> };
+
+async function getAnalyticsData(siteId: string, start: Date, end: Date) {
+  const filter = and(
+    eq(eventTable.siteId, siteId),
+    gte(eventTable.createdAt, start),
+    lt(eventTable.createdAt, end),
+  );
+
+  // Run all breakdown queries in parallel
+  const [
+    [pvResult],
+    [uvResult],
+    chartData,
+    topPages,
+    topReferrers,
+    topCountries,
+    topDevices,
+    topBrowsers,
+    topOS,
+  ] = await Promise.all([
+    // Totals
+    db
+      .select({ value: count() })
+      .from(eventTable)
+      .where(filter),
+    db
+      .select({ value: sql<number>`COUNT(DISTINCT ${eventTable.visitorHash})` })
+      .from(eventTable)
+      .where(filter),
+
+    // Chart Data (Time series)
+    db
+      .select({
+        date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
+        value: count(),
+      })
+      .from(eventTable)
+      .where(filter)
+      .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
+      .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
+
+    // Top Pages
+    db
+      .select({ label: eventTable.pathname, value: count() })
+      .from(eventTable)
+      .where(filter)
+      .groupBy(eventTable.pathname)
+      .orderBy(desc(count()))
+      .limit(10),
+
+    // Top Referrers
+    db
+      .select({ label: eventTable.referrer, value: count() })
+      .from(eventTable)
+      .where(and(filter, sql`${eventTable.referrer} IS NOT NULL`))
+      .groupBy(eventTable.referrer)
+      .orderBy(desc(count()))
+      .limit(10),
+
+    // Top Countries
+    db
+      .select({ label: eventTable.country, value: count() })
+      .from(eventTable)
+      .where(and(filter, sql`${eventTable.country} IS NOT NULL`))
+      .groupBy(eventTable.country)
+      .orderBy(desc(count()))
+      .limit(10),
+
+    // Top Devices
+    db
+      .select({ label: eventTable.device, value: count() })
+      .from(eventTable)
+      .where(and(filter, sql`${eventTable.device} IS NOT NULL`))
+      .groupBy(eventTable.device)
+      .orderBy(desc(count())),
+
+    // Top Browsers
+    db
+      .select({ label: eventTable.browser, value: count() })
+      .from(eventTable)
+      .where(and(filter, sql`${eventTable.browser} IS NOT NULL`))
+      .groupBy(eventTable.browser)
+      .orderBy(desc(count())),
+
+    // Top OS
+    db
+      .select({ label: eventTable.os, value: count() })
+      .from(eventTable)
+      .where(and(filter, sql`${eventTable.os} IS NOT NULL`))
+      .groupBy(eventTable.os)
+      .orderBy(desc(count())),
+  ]);
+
+  return {
+    totals: {
+      pageviews: pvResult?.value ?? 0,
+      visitors: uvResult?.value ?? 0,
+    },
+    chartData: chartData.map((d) => ({ date: d.date, value: d.value })),
+    breakdowns: {
+      pages: topPages.map((p) => ({ label: p.label ?? "/", value: p.value })),
+      referrers: topReferrers.map((r) => ({
+        label: r.label ?? "Direct",
+        value: r.value,
+      })),
+      countries: topCountries.map((c) => ({
+        label: c.label || "Unknown",
+        value: c.value,
+      })),
+      devices: topDevices.map((d) => ({
+        label: d.label || "unknown",
+        value: d.value,
+      })),
+      browsers: topBrowsers.map((b) => ({
+        label: b.label || "unknown",
+        value: b.value,
+      })),
+      os: topOS.map((o) => ({ label: o.label || "unknown", value: o.value })),
+    },
+  };
+}
 
 // Date range helpers
 function getDateRange(days: number): { start: Date; end: Date } {
@@ -17,54 +138,6 @@ function getDateRange(days: number): { start: Date; end: Date } {
   start.setDate(start.getDate() - days);
   start.setHours(0, 0, 0, 0);
   return { start, end };
-}
-
-async function getOverviewStats(siteId: string, start: Date, end: Date) {
-  const filter = and(
-    eq(eventTable.siteId, siteId),
-    gte(eventTable.createdAt, start),
-    lt(eventTable.createdAt, end),
-  );
-
-  // Parallel queries
-  const [[pvResult], [uvResult], topPages, topReferrers] = await Promise.all([
-    // Total pageviews
-    db
-      .select({ value: count() })
-      .from(eventTable)
-      .where(filter),
-
-    // Unique visitors
-    db
-      .select({ value: sql<number>`COUNT(DISTINCT ${eventTable.visitorHash})` })
-      .from(eventTable)
-      .where(filter),
-
-    // Top 10 pages
-    db
-      .select({ pathname: eventTable.pathname, views: count() })
-      .from(eventTable)
-      .where(filter)
-      .groupBy(eventTable.pathname)
-      .orderBy(desc(count()))
-      .limit(10),
-
-    // Top 10 referrers
-    db
-      .select({ referrer: eventTable.referrer, visits: count() })
-      .from(eventTable)
-      .where(and(filter, sql`${eventTable.referrer} IS NOT NULL`))
-      .groupBy(eventTable.referrer)
-      .orderBy(desc(count()))
-      .limit(10),
-  ]);
-
-  return {
-    pageviews: pvResult?.value ?? 0,
-    uniqueVisitors: uvResult?.value ?? 0,
-    topPages,
-    topReferrers,
-  };
 }
 
 export default async function SiteAnalyticsPage({ params }: PageProps) {
@@ -86,139 +159,11 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
   if (!siteData) notFound();
 
   const { start, end } = getDateRange(30);
-  const stats = await getOverviewStats(siteData.id, start, end);
+  const data = await getAnalyticsData(siteData.id, start, end);
 
   return (
-    <div className="flex flex-col min-h-full">
-      <SectionHeader
-        title={siteData.name}
-        subtitle={siteData.domain}
-        className="sticky top-0 z-10"
-      />
-
-      <div className="flex-1 divide-y">
-        <div className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard
-              label="Pageviews (30d)"
-              value={stats.pageviews.toLocaleString()}
-            />
-            <StatCard
-              label="Unique Visitors (30d)"
-              value={stats.uniqueVisitors.toLocaleString()}
-            />
-            <StatCard
-              label="Site ID"
-              value={siteData.id.slice(0, 8) + "…"}
-              mono
-            />
-            <StatCard label="Timezone" value={siteData.timezone} />
-          </div>
-        </div>
-
-        <div className="p-4">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <h2 className="font-semibold text-sm uppercase text-muted-foreground">
-                Top Pages
-              </h2>
-              <div className="border rounded-md overflow-hidden bg-card">
-                {stats.topPages.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">
-                    No data yet.
-                  </p>
-                ) : (
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/50 border-b">
-                      <tr>
-                        <th className="text-left px-4 py-2 font-medium">
-                          Page
-                        </th>
-                        <th className="text-right px-4 py-2 font-medium">
-                          Views
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {stats.topPages.map((p, i) => (
-                        <tr
-                          key={i}
-                          className="border-b last:border-0 hover:bg-muted/30 transition-colors"
-                        >
-                          <td className="px-4 py-2 truncate max-w-[200px] font-mono text-xs">
-                            {p.pathname ?? "/"}
-                          </td>
-                          <td className="px-4 py-2 text-right">{p.views}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h2 className="font-semibold text-sm uppercase text-muted-foreground">
-                Top Referrers
-              </h2>
-              <div className="border rounded-md overflow-hidden bg-card">
-                {stats.topReferrers.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">
-                    No referrer data yet.
-                  </p>
-                ) : (
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/50 border-b">
-                      <tr>
-                        <th className="text-left px-4 py-2 font-medium">
-                          Referrer
-                        </th>
-                        <th className="text-right px-4 py-2 font-medium">
-                          Visits
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {stats.topReferrers.map((r, i) => (
-                        <tr
-                          key={i}
-                          className="border-b last:border-0 hover:bg-muted/30 transition-colors"
-                        >
-                          <td className="px-4 py-2 truncate max-w-[200px] text-xs">
-                            {r.referrer ?? "Direct"}
-                          </td>
-                          <td className="px-4 py-2 text-right">{r.visits}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  mono = false,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="border rounded-md p-4 bg-card shadow-xs space-y-1">
-      <p className="text-xs text-muted-foreground uppercase font-medium">
-        {label}
-      </p>
-      <p className={`text-2xl font-bold ${mono ? "font-mono text-base" : ""}`}>
-        {value}
-      </p>
+    <div className="flex flex-col w-full h-full relative">
+      <OverviewClient initialData={data} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ export default async function EventsAnalyticsPage() {
       <SectionHeader
         title="Event Tracking"
         subtitle="Track button clicks, video views, and custom events."
+        className="sticky top-0 z-10"
       />
       <div className="flex-1 p-8 flex flex-col items-center justify-center text-center space-y-4">
         <div className="h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center text-foreground">

@@ -1,8 +1,9 @@
 import { headers } from "next/headers";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 
-import { db, site, eq } from "@mehtrics/db";
+import { db } from "@mehtrics/db";
+import { site } from "@mehtrics/db/schema";
+import { eq } from "@mehtrics/db/drizzle";
 import { Button } from "@mehtrics/ui/button";
 import { getSessionFromRequest } from "@mehtrics/auth";
 import { SectionHeader } from "@/components/section-header";

@@ -100,7 +100,7 @@ function DialogPopup({
   );
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -117,7 +117,7 @@ function DialogFooter({
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & {
+}: React.HTMLAttributes<HTMLDivElement> & {
   variant?: "default" | "bare";
 }) {
   return (
@@ -165,7 +165,7 @@ function DialogPanel({
   className,
   scrollFade = true,
   ...props
-}: React.ComponentProps<"div"> & { scrollFade?: boolean }) {
+}: React.HTMLAttributes<HTMLDivElement> & { scrollFade?: boolean }) {
   return (
     <ScrollArea scrollFade={scrollFade}>
       <div

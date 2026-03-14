@@ -60,41 +60,20 @@ const getSiteNavGroups = (siteId: string) => [
   {
     title: "ANALYTICS",
     items: [
-      { title: "Overview", url: `/dashboard/sites/${siteId}`, icon: BarChart3 },
+      {
+        title: "Analytics",
+        url: `/dashboard/sites/${siteId}`,
+        icon: BarChart3,
+      },
       {
         title: "Realtime",
         url: `/dashboard/sites/${siteId}/realtime`,
         icon: Clock,
       },
       {
-        title: "Pages",
-        url: `/dashboard/sites/${siteId}/pages`,
-        icon: FileText,
-      },
-      {
-        title: "Referrers",
-        url: `/dashboard/sites/${siteId}/referrers`,
-        icon: Share2,
-      },
-      {
         title: "Events",
         url: `/dashboard/sites/${siteId}/events`,
         icon: MousePointerClick,
-      },
-    ],
-  },
-  {
-    title: "AUDIENCE",
-    items: [
-      {
-        title: "Devices",
-        url: `/dashboard/sites/${siteId}/devices`,
-        icon: Monitor,
-      },
-      {
-        title: "Locations",
-        url: `/dashboard/sites/${siteId}/locations`,
-        icon: MapPin,
       },
     ],
   },

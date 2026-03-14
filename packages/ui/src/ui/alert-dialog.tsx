@@ -82,7 +82,7 @@ function AlertDialogPopup({
 function AlertDialogHeader({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -99,7 +99,7 @@ function AlertDialogFooter({
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & {
+}: React.HTMLAttributes<HTMLDivElement> & {
   variant?: "default" | "bare";
 }) {
   return (

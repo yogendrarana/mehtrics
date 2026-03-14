@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { db, site, eq, and } from "@mehtrics/db";
+import { db } from "@mehtrics/db";
+import { eq, and } from "@mehtrics/db/drizzle";
+import { site } from "@mehtrics/db/schema";
 import { getSessionFromRequest } from "@mehtrics/auth";
 
 // GET /api/site/[id] — Get single site details

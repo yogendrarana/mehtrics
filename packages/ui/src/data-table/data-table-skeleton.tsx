@@ -9,7 +9,7 @@ import {
 } from "../ui/table";
 import { cn } from "@mehtrics/utils/cn";
 
-interface DataTableSkeletonProps extends React.ComponentProps<"div"> {
+interface DataTableSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   columnCount: number;
   rowCount?: number;
   filterCount?: number;

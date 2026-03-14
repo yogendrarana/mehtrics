@@ -2,7 +2,9 @@ import { SectionHeader } from "@/components/section-header";
 import { SiteTrackingSettings } from "./_components/site-tracking-settings";
 import { headers } from "next/headers";
 import { getSessionFromRequest } from "@mehtrics/auth";
-import { db, site as siteTable, and, eq } from "@mehtrics/db";
+import { db } from "@mehtrics/db";
+import { site as siteTable } from "@mehtrics/db/schema";
+import { and, eq } from "@mehtrics/db/drizzle";
 import { notFound } from "next/navigation";
 
 type PageProps = { params: Promise<{ id: string }> };

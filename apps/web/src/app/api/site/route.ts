@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { db, site, eq } from "@mehtrics/db";
+import { db } from "@mehtrics/db";
+import { eq } from "@mehtrics/db/drizzle";
+import { site } from "@mehtrics/db/schema";
 import { getSessionFromRequest } from "@mehtrics/auth";
 
 // ---- Schema ----
