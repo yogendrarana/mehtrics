@@ -1,13 +1,12 @@
+import { getSessionFromRequest } from "@mehtrics/auth";
+import { db } from "@mehtrics/db";
+import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
+import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
+import { Button } from "@mehtrics/ui/button";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { getSessionFromRequest } from "@mehtrics/auth";
-
-import { db } from "@mehtrics/db";
-import { site as siteTable, event as eventTable } from "@mehtrics/db/schema";
-import { eq, and, gte, lt, count, sql, desc } from "@mehtrics/db/drizzle";
-import { Button } from "@mehtrics/ui/button";
+import { TopListCard } from "@/components/dashboard/top-list-card";
 import { SectionHeader } from "@/components/section-header";
-import { TopListCard } from "./__components/top-list-card";
 
 // Date range helpers
 function getDateRange(days: number): { start: Date; end: Date } {
@@ -26,13 +25,20 @@ async function getGlobalStats(userId: string, start: Date, end: Date) {
     lt(eventTable.createdAt, end),
   );
 
-  const [[pvResult], [uvResult], topPages, topReferrers] = await Promise.all([
+  const [
+    [pvResult],
+    [uvResult],
+    [evResult],
+    [siteCount],
+    topPages,
+    topReferrers,
+  ] = await Promise.all([
     // Total pageviews across all sites
     db
       .select({ value: count() })
       .from(eventTable)
       .innerJoin(siteTable, eq(eventTable.siteId, siteTable.id))
-      .where(filter),
+      .where(and(filter, eq(eventTable.type, "pageview"))),
 
     // Total unique visitors across all sites
     db
@@ -40,6 +46,19 @@ async function getGlobalStats(userId: string, start: Date, end: Date) {
       .from(eventTable)
       .innerJoin(siteTable, eq(eventTable.siteId, siteTable.id))
       .where(filter),
+
+    // Total custom events across all sites
+    db
+      .select({ value: count() })
+      .from(eventTable)
+      .innerJoin(siteTable, eq(eventTable.siteId, siteTable.id))
+      .where(and(filter, eq(eventTable.type, "custom"))),
+
+    // Active sites
+    db
+      .select({ value: count() })
+      .from(siteTable)
+      .where(eq(siteTable.userId, userId)),
 
     // Top 10 pages across all sites
     db
@@ -50,7 +69,7 @@ async function getGlobalStats(userId: string, start: Date, end: Date) {
       })
       .from(eventTable)
       .innerJoin(siteTable, eq(eventTable.siteId, siteTable.id))
-      .where(filter)
+      .where(and(filter, eq(eventTable.type, "pageview")))
       .groupBy(eventTable.pathname, siteTable.domain)
       .orderBy(desc(count()))
       .limit(10),
@@ -60,7 +79,13 @@ async function getGlobalStats(userId: string, start: Date, end: Date) {
       .select({ referrer: eventTable.referrer, visits: count() })
       .from(eventTable)
       .innerJoin(siteTable, eq(eventTable.siteId, siteTable.id))
-      .where(and(filter, sql`${eventTable.referrer} IS NOT NULL`))
+      .where(
+        and(
+          filter,
+          eq(eventTable.type, "pageview"),
+          sql`${eventTable.referrer} IS NOT NULL`,
+        ),
+      )
       .groupBy(eventTable.referrer)
       .orderBy(desc(count()))
       .limit(10),
@@ -69,6 +94,8 @@ async function getGlobalStats(userId: string, start: Date, end: Date) {
   return {
     pageviews: pvResult?.value ?? 0,
     uniqueVisitors: uvResult?.value ?? 0,
+    events: evResult?.value ?? 0,
+    activeSites: siteCount?.value ?? 0,
     topPages,
     topReferrers,
   };
@@ -105,9 +132,14 @@ export default async function DashboardPage() {
             label="Total Visitors (30d)"
             value={stats.uniqueVisitors.toLocaleString()}
           />
-          {/* Placeholder cards for other global metrics */}
-          <StatCard label="Active Sites" value={"..."} />
-          <StatCard label="Avg. Duration" value={"--"} />
+          <StatCard
+            label="Custom Events (30d)"
+            value={stats.events.toLocaleString()}
+          />
+          <StatCard
+            label="Active Sites"
+            value={stats.activeSites.toLocaleString()}
+          />
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">

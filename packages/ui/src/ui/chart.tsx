@@ -8,7 +8,7 @@ import { cn } from "@mehtrics/utils/cn"
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
 
-export type ChartConfig = {
+type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode
     icon?: React.ComponentType
@@ -61,7 +61,7 @@ function ChartContainer({
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
           {children}
         </RechartsPrimitive.ResponsiveContainer>
       </div>
@@ -84,17 +84,17 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
         __html: Object.entries(THEMES)
           .map(
             ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
-  })
-  .join("\n")}
-}
-`
+              ${prefix} [data-chart=${id}] {
+              ${colorConfig
+                .map(([key, itemConfig]) => {
+                  const color =
+                    itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+                    itemConfig.color
+                  return color ? `  --color-${key}: ${color};` : null
+                })
+                .join("\n")}
+              }
+            `
           )
           .join("\n"),
       }}
@@ -346,6 +346,15 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+
+// Re-export the Recharts primitives that we use in the app so everything
+// (ChartContainer + charts) consumes the same internal ResponsiveContainer context.
+const CartesianGrid = RechartsPrimitive.CartesianGrid
+const Line = RechartsPrimitive.Line
+const LineChart = RechartsPrimitive.LineChart
+const XAxis = RechartsPrimitive.XAxis
+const YAxis = RechartsPrimitive.YAxis
+
 export {
   ChartContainer,
   ChartTooltip,
@@ -353,4 +362,10 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  type ChartConfig
 }

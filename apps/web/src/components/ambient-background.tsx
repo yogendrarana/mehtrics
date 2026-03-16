@@ -2,14 +2,23 @@
 
 import { motion, useReducedMotion } from "motion/react";
 
-const particles = Array.from({ length: 24 }, (_, index) => ({
-  id: index,
-  left: `${Math.random() * 100}%`,
-  top: `${Math.random() * 100}%`,
-  delay: Math.random() * 6,
-  duration: 8 + Math.random() * 8,
-  size: 2 + Math.random() * 3,
-}));
+// Deterministic particle field to avoid SSR/client hydration mismatches.
+const particles = Array.from({ length: 24 }, (_, index) => {
+  const left = (index * 37) % 100;
+  const top = (index * 53) % 100;
+  const delay = ((index * 11) % 60) / 10; // 0.0 .. 5.9
+  const duration = 8 + ((index * 7) % 9); // 8 .. 16
+  const size = 2 + ((index * 5) % 4); // 2 .. 5
+
+  return {
+    id: index,
+    left: `${left}%`,
+    top: `${top}%`,
+    delay,
+    duration,
+    size,
+  };
+});
 
 export function AmbientBackground() {
   const prefersReducedMotion = useReducedMotion();

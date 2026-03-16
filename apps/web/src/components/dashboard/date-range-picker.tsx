@@ -1,14 +1,13 @@
 "use client";
 
-import * as React from "react";
-import { format, subDays, addDays, isToday, isAfter } from "date-fns";
-import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import type { DateRange } from "react-day-picker";
-
-import { cn } from "@mehtrics/utils/cn";
 import { Button } from "@mehtrics/ui/button";
 import { Calendar } from "@mehtrics/ui/calendar";
 import { Popover, PopoverPopup, PopoverTrigger } from "@mehtrics/ui/popover";
+import { cn } from "@mehtrics/utils/cn";
+import { addDays, format, isAfter, isToday, subDays } from "date-fns";
+import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import * as React from "react";
+import type { DateRange } from "react-day-picker";
 
 export function DateRangePicker({
   className,
@@ -69,9 +68,9 @@ export function DateRangePicker({
           render={
             <Button
               id="date"
-              variant={"outline"}
+              variant="outline"
               className={cn(
-                "w-[240px] h-8 justify-start text-left font-normal text-xs",
+                "w-60 h-8 justify-start text-left font-normal text-xs",
                 !date && "text-muted-foreground",
               )}
             />
@@ -91,6 +90,7 @@ export function DateRangePicker({
             <span>Pick a date range</span>
           )}
         </PopoverTrigger>
+
         <PopoverPopup align="end">
           <div className="flex max-sm:flex-col p-2">
             <div className="relative py-1 ps-1 max-sm:order-1 max-sm:border-t">
@@ -132,6 +132,7 @@ export function DateRangePicker({
                 </Button>
               </div>
             </div>
+
             <Calendar
               className="max-sm:pb-3 sm:ps-2"
               mode="range"

@@ -1,12 +1,11 @@
-import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-
-import { db } from "@mehtrics/db";
 import { getSessionFromRequest } from "@mehtrics/auth";
-import { site as siteTable, event as eventTable } from "@mehtrics/db/schema";
-import { eq, and, gte, lt, count, sql, desc } from "@mehtrics/db/drizzle";
+import { db } from "@mehtrics/db";
+import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
+import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
+import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 
-import { OverviewClient } from "./__components/overview-client";
+import { SiteOverviewWrapper } from "./__components/site-overview-wrapper";
 
 type PageProps = { params: Promise<{ id: string }> };
 
@@ -16,12 +15,17 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     gte(eventTable.createdAt, start),
     lt(eventTable.createdAt, end),
   );
+  const pageviewFilter = and(filter, eq(eventTable.type, "pageview"));
+  const customEventFilter = and(filter, eq(eventTable.type, "custom"));
 
   // Run all breakdown queries in parallel
   const [
     [pvResult],
     [uvResult],
-    chartData,
+    [evResult],
+    viewsSeries,
+    visitorsSeries,
+    eventsSeries,
     topPages,
     topReferrers,
     topCountries,
@@ -33,20 +37,43 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ value: count() })
       .from(eventTable)
-      .where(filter),
+      .where(pageviewFilter),
     db
       .select({ value: sql<number>`COUNT(DISTINCT ${eventTable.visitorHash})` })
       .from(eventTable)
       .where(filter),
+    db.select({ value: count() }).from(eventTable).where(customEventFilter),
 
-    // Chart Data (Time series)
+    // Pageviews per day
     db
       .select({
         date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
         value: count(),
       })
       .from(eventTable)
+      .where(pageviewFilter)
+      .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
+      .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
+
+    // Unique visitors per day
+    db
+      .select({
+        date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
+        value: sql<number>`COUNT(DISTINCT ${eventTable.visitorHash})`,
+      })
+      .from(eventTable)
       .where(filter)
+      .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
+      .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
+
+    // Custom events per day
+    db
+      .select({
+        date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
+        value: count(),
+      })
+      .from(eventTable)
+      .where(customEventFilter)
       .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
       .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
 
@@ -54,7 +81,7 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ label: eventTable.pathname, value: count() })
       .from(eventTable)
-      .where(filter)
+      .where(pageviewFilter)
       .groupBy(eventTable.pathname)
       .orderBy(desc(count()))
       .limit(10),
@@ -63,7 +90,7 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ label: eventTable.referrer, value: count() })
       .from(eventTable)
-      .where(and(filter, sql`${eventTable.referrer} IS NOT NULL`))
+      .where(and(pageviewFilter, sql`${eventTable.referrer} IS NOT NULL`))
       .groupBy(eventTable.referrer)
       .orderBy(desc(count()))
       .limit(10),
@@ -72,7 +99,7 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ label: eventTable.country, value: count() })
       .from(eventTable)
-      .where(and(filter, sql`${eventTable.country} IS NOT NULL`))
+      .where(and(pageviewFilter, sql`${eventTable.country} IS NOT NULL`))
       .groupBy(eventTable.country)
       .orderBy(desc(count()))
       .limit(10),
@@ -81,7 +108,7 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ label: eventTable.device, value: count() })
       .from(eventTable)
-      .where(and(filter, sql`${eventTable.device} IS NOT NULL`))
+      .where(and(pageviewFilter, sql`${eventTable.device} IS NOT NULL`))
       .groupBy(eventTable.device)
       .orderBy(desc(count())),
 
@@ -89,7 +116,7 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ label: eventTable.browser, value: count() })
       .from(eventTable)
-      .where(and(filter, sql`${eventTable.browser} IS NOT NULL`))
+      .where(and(pageviewFilter, sql`${eventTable.browser} IS NOT NULL`))
       .groupBy(eventTable.browser)
       .orderBy(desc(count())),
 
@@ -97,7 +124,7 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     db
       .select({ label: eventTable.os, value: count() })
       .from(eventTable)
-      .where(and(filter, sql`${eventTable.os} IS NOT NULL`))
+      .where(and(pageviewFilter, sql`${eventTable.os} IS NOT NULL`))
       .groupBy(eventTable.os)
       .orderBy(desc(count())),
   ]);
@@ -106,8 +133,13 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     totals: {
       pageviews: pvResult?.value ?? 0,
       visitors: uvResult?.value ?? 0,
+      events: evResult?.value ?? 0,
     },
-    chartData: chartData.map((d) => ({ date: d.date, value: d.value })),
+    series: {
+      views: viewsSeries.map((d) => ({ date: d.date, value: d.value })),
+      visitors: visitorsSeries.map((d) => ({ date: d.date, value: d.value })),
+      events: eventsSeries.map((d) => ({ date: d.date, value: d.value })),
+    },
     breakdowns: {
       pages: topPages.map((p) => ({ label: p.label ?? "/", value: p.value })),
       referrers: topReferrers.map((r) => ({
@@ -163,7 +195,7 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      <OverviewClient initialData={data} />
+      <SiteOverviewWrapper initialData={data} />
     </div>
   );
 }
