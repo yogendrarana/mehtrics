@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "bun build src/tracker.ts --outfile dist/tracker.js --minify --target browser",
-    "worker:event": "bun run src/workers/event-batch-worker.ts",
-    "worker:agg": "bun run src/workers/aggregation-worker.ts"
+    "worker:event": "bun --env-file ../../.env src/workers/event-worker.ts",
+    "worker:aggregation": "bun --env-file ../../.env src/workers/aggregation-worker.ts"
   },
   "dependencies": {
     "@mehtrics/db": "workspace:*",

@@ -30,6 +30,9 @@
     "db:migrate": "bun --filter @mehtrics/db db:migrate",
     "db:seed": "bun --filter @mehtrics/db db:seed",
     "db:studio": "bun --filter @mehtrics/db db:studio",
-    "db:push": "bun --filter @mehtrics/db db:push"
+    "db:push": "bun --filter @mehtrics/db db:push",
+
+    "worker:event": "bun --filter @mehtrics/analytics worker:event",
+    "worker:aggregation": "bun --filter @mehtrics/analytics worker:aggregation"
   }
 }

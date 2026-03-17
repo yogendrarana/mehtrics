@@ -20,6 +20,7 @@ export const serverEnv = createEnv({
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   onValidationError: (error) => {
+    console.error("❌ Invalid environment variables:");
     for (const issue of (error as any).issues || []) {
       console.error(`  - ${issue.path.join(".")}: ${issue.message}`);
     }
