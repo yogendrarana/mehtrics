@@ -47,9 +47,9 @@ export function UserButton() {
   return (
     <Menu>
       <MenuTrigger className="rounded-full cursor-pointer">
-        <Avatar className="size-8">
+        <Avatar className="size-8 rounded-md">
           <AvatarImage src={user.image || undefined} alt={user.name} />
-          <AvatarFallback>
+          <AvatarFallback className="rounded-md border">
             {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
           </AvatarFallback>
         </Avatar>
@@ -83,33 +83,6 @@ export function UserButton() {
           >
             <Globe className="size-4" />
             <span>Sites</span>
-          </MenuItem>
-        </MenuGroup>
-
-        <MenuSeparator />
-
-        <MenuGroup>
-          <MenuGroupLabel>Billing</MenuGroupLabel>
-          <MenuItem
-            render={<Link href="/dashboard/billing" />}
-            className="cursor-pointer"
-          >
-            <CreditCard className="size-4" />
-            <span>Subscription</span>
-          </MenuItem>
-          <MenuItem
-            render={<Link href="/dashboard/billing/usage" />}
-            className="cursor-pointer"
-          >
-            <Activity className="size-4" />
-            <span>Usage</span>
-          </MenuItem>
-          <MenuItem
-            render={<Link href="/dashboard/billing/invoices" />}
-            className="cursor-pointer"
-          >
-            <FileText className="size-4" />
-            <span>Invoices</span>
           </MenuItem>
         </MenuGroup>
 

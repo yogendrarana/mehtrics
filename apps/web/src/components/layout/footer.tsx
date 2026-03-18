@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { Logo } from "@/components/logo";
 import { Container } from "@mehtrics/ui/container";
+import { SiteConfig } from "@/config/site";
+import { GitHub } from "@mehtrics/ui/icons";
 
 export function Footer() {
   return (
@@ -44,17 +46,13 @@ export function Footer() {
             <div className="text-xs text-muted-foreground">
               © 2026 Mehtrics. Built for privacy.
             </div>
-            <div className="text-xs text-muted-foreground flex items-center gap-4">
-              <Link href="/pricing" className="hover:text-foreground transition-colors">
-                Pricing
-              </Link>
-              <Link href="/docs" className="hover:text-foreground transition-colors">
-                Docs
-              </Link>
-              <Link href="#features" className="hover:text-foreground transition-colors">
-                Features
-              </Link>
-            </div>
+            <Link
+              target="_blank"
+              href={SiteConfig.links.github}
+              className="hover:text-foreground transition-colors"
+            >
+              <GitHub className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </footer>

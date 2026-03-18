@@ -1,12 +1,15 @@
-import { getSessionFromRequest } from "@mehtrics/auth";
+import Link from "next/link";
+import { headers } from "next/headers";
+
+import { SectionHeader } from "@/components/section-header";
+import { TopListCard } from "@/components/dashboard/top-list-card";
+
 import { db } from "@mehtrics/db";
+import { Button } from "@mehtrics/ui/button";
+import { getSessionFromRequest } from "@mehtrics/auth";
 import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
 import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
-import { Button } from "@mehtrics/ui/button";
-import { headers } from "next/headers";
-import Link from "next/link";
-import { TopListCard } from "@/components/dashboard/top-list-card";
-import { SectionHeader } from "@/components/section-header";
+import { DateRangePicker } from "@/components/dashboard/date-range-picker";
 
 // Date range helpers
 function getDateRange(days: number): { start: Date; end: Date } {
@@ -117,9 +120,7 @@ export default async function DashboardPage() {
         title="Global Overview"
         subtitle="Aggregated analytics across all your sites."
       >
-        <Link href="/dashboard/sites/new">
-          <Button variant="default">Add Site</Button>
-        </Link>
+        <DateRangePicker />
       </SectionHeader>
 
       <div className="p-4 space-y-4">

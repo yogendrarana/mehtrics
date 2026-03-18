@@ -64,21 +64,13 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
       Icon={User}
     >
       <div className="p-4 space-y-4">
-        <div className="flex items-center gap-4">
+        <div>
           <Avatar className="h-14 w-14">
             <AvatarImage src={user.image ?? undefined} />
             <AvatarFallback className="text-lg bg-muted text-foreground">
               {profileData.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="space-y-2">
-            <Button variant="outline" size="sm">
-              Change Photo
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Your avatar visible to public.
-            </p>
-          </div>
         </div>
 
         {/* Name Field */}

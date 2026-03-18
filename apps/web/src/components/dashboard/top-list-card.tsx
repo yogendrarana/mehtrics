@@ -1,10 +1,11 @@
 "use client";
 
+import type * as React from "react";
+import { ExternalLink, Maximize2 } from "lucide-react";
+
+import { cn } from "@mehtrics/utils/cn";
 import { Button } from "@mehtrics/ui/button";
 import { Card, CardContent } from "@mehtrics/ui/card";
-import { cn } from "@mehtrics/utils/cn";
-import { ExternalLink, Maximize2 } from "lucide-react";
-import type * as React from "react";
 
 export type TopListItem = {
   label: string;
@@ -75,7 +76,14 @@ export function TopListCard({
         )}
       </CardContent>
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto">
+      <div
+        className={cn(
+          items.length < 5 && "hidden",
+          "absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 translate-y-2 ",
+          "transition-all duration-300 ease-out pointer-events-none ",
+          "group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto",
+        )}
+      >
         <div className="flex items-center gap-1 p-1 bg-background/80 backdrop-blur-md border border-border shadow-lg rounded-full">
           <Button
             variant="ghost"
