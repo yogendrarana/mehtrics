@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   CartesianGrid,
   type ChartConfig,
@@ -48,6 +49,21 @@ export function AnalyticsChart({
       color: "var(--chart-1, #3b82f6)",
     },
   } satisfies ChartConfig;
+
+  const isHourly = React.useMemo(() => {
+    if (!data || data.length === 0) return false;
+    const firstDate = data[0]?.date;
+    return (
+      typeof firstDate === "string" &&
+      (firstDate.includes("AM") || firstDate.includes("PM"))
+    );
+  }, [data]);
+
+  const xAxisInterval = React.useMemo(() => {
+    if (isHourly) return 2;
+    if (data.length <= 7) return 0;
+    return "preserveStart";
+  }, [isHourly, data.length]);
 
   return (
     <div className="w-full overflow-hidden rounded-sm border bg-card text-card-foreground shadow-xs">
@@ -109,36 +125,53 @@ export function AnalyticsChart({
               }}
             >
               <CartesianGrid vertical={false} />
-              <YAxis hide domain={["auto", "auto"]} />
+
+              <YAxis
+                hide={false}
+                axisLine={false}
+                tickLine={false}
+                tickMargin={8}
+                fontSize={12}
+                className="text-muted-foreground"
+                domain={["auto", "auto"]}
+                tickFormatter={(val) => val.toLocaleString()}
+              />
+
               <XAxis
                 type="category"
                 dataKey="date"
                 tickLine={false}
-                axisLine
-                tickMargin={8}
+                axisLine={false}
+                tickMargin={20}
                 minTickGap={32}
+                interval={xAxisInterval}
                 tickFormatter={(value) => {
                   const date = new Date(value);
+                  if (isNaN(date.getTime())) return value;
                   return date.toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
                   });
                 }}
               />
+
               <ChartTooltip
                 content={
                   <ChartTooltipContent
                     className="w-37.5"
-                    labelFormatter={(value) =>
-                      new Date(value).toLocaleDateString("en-US", {
+                    labelFormatter={(value) => {
+                      const date = new Date(value);
+                      if (isNaN(date.getTime())) return value;
+                      return date.toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
-                      })
-                    }
+                      });
+                    }}
                   />
                 }
               />
+
               <Line
                 dataKey="value"
                 type="monotone"

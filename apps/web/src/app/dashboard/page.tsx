@@ -10,15 +10,7 @@ import { getSessionFromRequest } from "@mehtrics/auth";
 import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
 import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
 import { DateRangePicker } from "@/components/dashboard/date-range-picker";
-
-// Date range helpers
-function getDateRange(days: number): { start: Date; end: Date } {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(start.getDate() - days);
-  start.setHours(0, 0, 0, 0);
-  return { start, end };
-}
+import { parseSearchParams } from "@/lib/analytics-utils";
 
 async function getGlobalStats(userId: string, start: Date, end: Date) {
   // We need to join events with sites to filter by userId
@@ -104,15 +96,20 @@ async function getGlobalStats(userId: string, start: Date, end: Date) {
   };
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const h = await headers();
   const reqHeaders = new Headers(h);
   const session = await getSessionFromRequest({ headers: reqHeaders } as never);
 
   if (!session?.user) return null;
 
-  const { start, end } = getDateRange(30);
-  const stats = await getGlobalStats(session.user.id, start, end);
+  const sParams = await searchParams;
+  const { from, to } = parseSearchParams(sParams);
+  const stats = await getGlobalStats(session.user.id, from, to);
 
   return (
     <div className="flex flex-col min-h-full">
@@ -126,15 +123,15 @@ export default async function DashboardPage() {
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <StatCard
-            label="Total Pageviews (30d)"
+            label="Total Pageviews"
             value={stats.pageviews.toLocaleString()}
           />
           <StatCard
-            label="Total Visitors (30d)"
+            label="Total Visitors"
             value={stats.uniqueVisitors.toLocaleString()}
           />
           <StatCard
-            label="Custom Events (30d)"
+            label="Custom Events"
             value={stats.events.toLocaleString()}
           />
           <StatCard

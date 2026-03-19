@@ -4,12 +4,24 @@ import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
 import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { differenceInHours } from "date-fns";
 
 import { SiteOverviewWrapper } from "./__components/site-overview-wrapper";
+import { fillSeriesGaps, parseSearchParams } from "@/lib/analytics-utils";
 
-type PageProps = { params: Promise<{ id: string }> };
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
 async function getAnalyticsData(siteId: string, start: Date, end: Date) {
+  const diffHours = differenceInHours(end, start);
+  const granularity = diffHours <= 24 ? "hour" : "day";
+  const truncSql =
+    granularity === "hour"
+      ? sql`DATE_TRUNC('hour', ${eventTable.createdAt})`
+      : sql`DATE_TRUNC('day', ${eventTable.createdAt})`;
+
   const filter = and(
     eq(eventTable.siteId, siteId),
     gte(eventTable.createdAt, start),
@@ -44,38 +56,38 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
       .where(filter),
     db.select({ value: count() }).from(eventTable).where(customEventFilter),
 
-    // Pageviews per day
+    // Pageviews per interval
     db
       .select({
-        date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
+        date: truncSql,
         value: count(),
       })
       .from(eventTable)
       .where(pageviewFilter)
-      .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
-      .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
+      .groupBy(truncSql)
+      .orderBy(truncSql),
 
-    // Unique visitors per day
+    // Unique visitors per interval
     db
       .select({
-        date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
+        date: truncSql,
         value: sql<number>`COUNT(DISTINCT ${eventTable.visitorHash})`,
       })
       .from(eventTable)
       .where(filter)
-      .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
-      .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
+      .groupBy(truncSql)
+      .orderBy(truncSql),
 
-    // Custom events per day
+    // Custom events per interval
     db
       .select({
-        date: sql<string>`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`,
+        date: truncSql,
         value: count(),
       })
       .from(eventTable)
       .where(customEventFilter)
-      .groupBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`)
-      .orderBy(sql`DATE_TRUNC('day', ${eventTable.createdAt})::DATE`),
+      .groupBy(truncSql)
+      .orderBy(truncSql),
 
     // Top Pages
     db
@@ -136,9 +148,9 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
       events: evResult?.value ?? 0,
     },
     series: {
-      views: viewsSeries.map((d) => ({ date: d.date, value: d.value })),
-      visitors: visitorsSeries.map((d) => ({ date: d.date, value: d.value })),
-      events: eventsSeries.map((d) => ({ date: d.date, value: d.value })),
+      views: fillSeriesGaps(viewsSeries as any, start, end),
+      visitors: fillSeriesGaps(visitorsSeries as any, start, end),
+      events: fillSeriesGaps(eventsSeries as any, start, end),
     },
     breakdowns: {
       pages: topPages.map((p) => ({ label: p.label ?? "/", value: p.value })),
@@ -163,17 +175,12 @@ async function getAnalyticsData(siteId: string, start: Date, end: Date) {
   };
 }
 
-// Date range helpers
-function getDateRange(days: number): { start: Date; end: Date } {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(start.getDate() - days);
-  start.setHours(0, 0, 0, 0);
-  return { start, end };
-}
-
-export default async function SiteAnalyticsPage({ params }: PageProps) {
+export default async function SiteAnalyticsPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
+  const sParams = await searchParams;
 
   // Auth check
   const h = await headers();
@@ -190,8 +197,8 @@ export default async function SiteAnalyticsPage({ params }: PageProps) {
 
   if (!siteData) notFound();
 
-  const { start, end } = getDateRange(30);
-  const data = await getAnalyticsData(siteData.id, start, end);
+  const { from, to } = parseSearchParams(sParams);
+  const data = await getAnalyticsData(siteData.id, from, to);
 
   return (
     <div className="flex flex-col w-full h-full relative">
