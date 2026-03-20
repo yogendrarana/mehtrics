@@ -6,8 +6,7 @@ import { site } from "@mehtrics/db/schema";
 import { eq } from "@mehtrics/db/drizzle";
 import { Button } from "@mehtrics/ui/button";
 import { getSessionFromRequest } from "@mehtrics/auth";
-import { SectionHeader } from "@/components/section-header";
-import { SitesTable } from "./__components/sites-table";
+import { SitesView } from "./__components/sites-view";
 
 async function getSiteList(userId: string) {
   const sites = await db
@@ -30,24 +29,7 @@ export default async function SitesPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <SectionHeader title="Sites" subtitle="Manage your analytics sites.">
-        <Link href="/dashboard/sites/new">
-          <Button variant="default">Add Site</Button>
-        </Link>
-      </SectionHeader>
-
-      <div className="p-4 space-y-4">
-        {data.length === 0 ? (
-          <div className="border border-dashed border-border rounded-xl py-20 text-center space-y-3">
-            <p className="text-muted-foreground">No sites yet.</p>
-            <Link href="/dashboard/sites/new">
-              <Button>Add your first site</Button>
-            </Link>
-          </div>
-        ) : (
-          <SitesTable data={data} />
-        )}
-      </div>
+      <SitesView data={data} />
     </div>
   );
 }

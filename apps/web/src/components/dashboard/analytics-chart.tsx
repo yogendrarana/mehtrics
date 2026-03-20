@@ -142,6 +142,7 @@ export function AnalyticsChart({
                 dataKey="date"
                 tickLine={false}
                 axisLine={false}
+                padding={{ right: 20 }}
                 tickMargin={20}
                 minTickGap={32}
                 interval={xAxisInterval}
