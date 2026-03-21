@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@mehtrics/db";
 import { eq, and } from "@mehtrics/db/drizzle";
 import { site } from "@mehtrics/db/schema";
-import { getSessionFromRequest } from "@mehtrics/auth";
+import { getUserIdFromRequest } from "@/lib/auth";
 
 // GET /api/site/[id] — Get single site details
 export async function GET(
@@ -11,16 +11,15 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const session = await getSessionFromRequest(request);
-
-  if (!session?.user) {
+  const userId = await getUserIdFromRequest(request);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const [siteData] = await db
     .select()
     .from(site)
-    .where(and(eq(site.id, id), eq(site.userId, session.user.id)))
+    .where(and(eq(site.id, id), eq(site.userId, userId)))
     .limit(1);
 
   if (!siteData) {
@@ -51,9 +50,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const session = await getSessionFromRequest(request);
-
-  if (!session?.user) {
+  const userId = await getUserIdFromRequest(request);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -71,7 +69,7 @@ export async function PATCH(
   const [existingSite] = await db
     .select()
     .from(site)
-    .where(and(eq(site.id, id), eq(site.userId, session.user.id)))
+    .where(and(eq(site.id, id), eq(site.userId, userId)))
     .limit(1);
 
   if (!existingSite) {
@@ -92,9 +90,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const session = await getSessionFromRequest(request);
-
-  if (!session?.user) {
+  const userId = await getUserIdFromRequest(request);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -102,7 +99,7 @@ export async function DELETE(
   const [existingSite] = await db
     .select()
     .from(site)
-    .where(and(eq(site.id, id), eq(site.userId, session.user.id)))
+    .where(and(eq(site.id, id), eq(site.userId, userId)))
     .limit(1);
 
   if (!existingSite) {

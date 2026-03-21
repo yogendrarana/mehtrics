@@ -1,8 +1,7 @@
-import { getSessionFromRequest } from "@mehtrics/auth";
+import { getUserId } from "@/lib/auth";
 import { db } from "@mehtrics/db";
 import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
 import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { differenceInHours } from "date-fns";
 
@@ -183,16 +182,14 @@ export default async function SiteAnalyticsPage({
   const sParams = await searchParams;
 
   // Auth check
-  const h = await headers();
-  const reqHeaders = new Headers(h);
-  const session = await getSessionFromRequest({ headers: reqHeaders } as never);
-  if (!session?.user) return null;
+  const userId = await getUserId();
+  if (!userId) return null;
 
   // Load site
   const [siteData] = await db
     .select()
     .from(siteTable)
-    .where(and(eq(siteTable.id, id), eq(siteTable.userId, session.user.id)))
+    .where(and(eq(siteTable.id, id), eq(siteTable.userId, userId)))
     .limit(1);
 
   if (!siteData) notFound();

@@ -3,12 +3,8 @@
 import { db } from "@mehtrics/db";
 import { eq } from "@mehtrics/db/drizzle";
 import { setting, user } from "@mehtrics/db/schema";
-import { auth } from "@mehtrics/auth";
-import { headers } from "next/headers";
+import { getUserId } from "@/lib/auth";
 
-/**
- * Update the user's theme mode (light or dark).
- */
 export async function updateMode(data: {
   userId: string;
   theme: "dark" | "light";
@@ -72,18 +68,15 @@ export async function updateMode(data: {
  */
 export async function getUserSetting() {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
-    if (!session) {
+    const userId = await getUserId();
+    if (!userId) {
       return { success: false, message: "Unauthorized" };
     }
 
     const preference = await db
       .select()
       .from(setting)
-      .where(eq(setting.userId, session.user.id))
+      .where(eq(setting.userId, userId))
       .limit(1)
       .then((res) => res[0]);
 

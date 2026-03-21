@@ -1,11 +1,7 @@
-import { headers } from "next/headers";
-import Link from "next/link";
-
+import { getUserId } from "@/lib/auth";
 import { db } from "@mehtrics/db";
 import { site } from "@mehtrics/db/schema";
 import { eq } from "@mehtrics/db/drizzle";
-import { Button } from "@mehtrics/ui/button";
-import { getSessionFromRequest } from "@mehtrics/auth";
 import { SitesView } from "./__components/sites-view";
 
 async function getSiteList(userId: string) {
@@ -19,13 +15,11 @@ async function getSiteList(userId: string) {
 }
 
 export default async function SitesPage() {
-  const h = await headers();
-  const reqHeaders = new Headers(h);
-  const session = await getSessionFromRequest({ headers: reqHeaders } as never);
+  const userId = await getUserId();
 
-  if (!session?.user) return null;
+  if (!userId) return null;
 
-  const data = await getSiteList(session.user.id);
+  const data = await getSiteList(userId);
 
   return (
     <div className="flex flex-col min-h-full">

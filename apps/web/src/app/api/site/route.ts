@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db } from "@mehtrics/db";
 import { eq } from "@mehtrics/db/drizzle";
 import { site } from "@mehtrics/db/schema";
-import { getSessionFromRequest } from "@mehtrics/auth";
+import { getUserIdFromRequest } from "@/lib/auth";
 
 // ---- Schema ----
 const createSiteSchema = z.object({
@@ -23,15 +23,15 @@ const createSiteSchema = z.object({
 
 // GET /api/site — List user's sites
 export async function GET(request: NextRequest) {
-  const session = await getSessionFromRequest(request);
-  if (!session?.user) {
+  const userId = await getUserIdFromRequest(request);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const userSiteList = await db
     .select()
     .from(site)
-    .where(eq(site.userId, session.user.id))
+    .where(eq(site.userId, userId))
     .orderBy(site.createdAt);
 
   return NextResponse.json({ site: userSiteList });
@@ -39,8 +39,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/site — Create a site
 export async function POST(request: NextRequest) {
-  const session = await getSessionFromRequest(request);
-  if (!session?.user) {
+  const userId = await getUserIdFromRequest(request);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
   const [createdSite] = await db
     .insert(site)
-    .values({ name, domain, timezone, userId: session.user.id })
+    .values({ name, domain, timezone, userId })
     .returning();
 
   return NextResponse.json({ site: createdSite }, { status: 201 });

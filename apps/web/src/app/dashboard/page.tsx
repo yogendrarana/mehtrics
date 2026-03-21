@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { headers } from "next/headers";
+import { getUserId } from "@/lib/auth";
 
 import { SectionHeader } from "@/components/section-header";
 import { TopListCard } from "@/components/dashboard/top-list-card";
 
 import { db } from "@mehtrics/db";
 import { Button } from "@mehtrics/ui/button";
-import { getSessionFromRequest } from "@mehtrics/auth";
 import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
 import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
 import { DateRangePicker } from "@/components/dashboard/date-range-picker";
@@ -101,15 +100,13 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const h = await headers();
-  const reqHeaders = new Headers(h);
-  const session = await getSessionFromRequest({ headers: reqHeaders } as never);
+  const userId = await getUserId();
 
-  if (!session?.user) return null;
+  if (!userId) return null;
 
   const sParams = await searchParams;
   const { from, to } = parseSearchParams(sParams);
-  const stats = await getGlobalStats(session.user.id, from, to);
+  const stats = await getGlobalStats(userId, from, to);
 
   return (
     <div className="flex flex-col min-h-full">

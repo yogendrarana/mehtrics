@@ -9,12 +9,16 @@ export async function proxy(request: NextRequest) {
 
     if (!session?.user) {
       const loginUrl = new URL("/signin", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
+      loginUrl.searchParams.set(
+        "callbackUrl",
+        request.nextUrl.pathname + request.nextUrl.search,
+      );
+
       return NextResponse.redirect(loginUrl);
     }
 
     const requestHeaders = new Headers(request.headers);
-    requestHeaders.set("x-tenant-id", session.user.id);
+    requestHeaders.set("x-user-id", session.user.id);
 
     return NextResponse.next({
       request: {
@@ -27,5 +31,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/billing/:path*"],
+  matcher: ["/dashboard/:path*"],
 };

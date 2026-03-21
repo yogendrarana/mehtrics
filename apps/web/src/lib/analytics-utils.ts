@@ -18,30 +18,39 @@ export function fillSeriesGaps(
   const granularity = diffHours <= 24 ? "hour" : "day";
 
   const formatStr = granularity === "day" ? "yyyy-MM-dd" : "h:mm a";
+  const matchFormat = granularity === "day" ? "yyyy-MM-dd" : "yyyy-MM-dd HH";
+
   const interval =
     granularity === "day"
       ? eachDayOfInterval({ start, end })
       : eachHourOfInterval({ start, end });
 
-  return interval.map((d) => {
-    const formattedDate = format(d, formatStr);
-    const match = series.find((s) => {
-      const sDate = s.date instanceof Date ? s.date : new Date(s.date);
-      // For matching accurately, we use a broader format that avoids sub-hour/sub-day noise
-      const matchFormat =
-        granularity === "day" ? "yyyy-MM-dd" : "yyyy-MM-dd HH";
-      return format(sDate, matchFormat) === format(d, matchFormat);
-    });
+  // lookup map
+  const map = new Map<string, number>();
+
+  series.forEach((s) => {
+    const sDate = s.date instanceof Date ? s.date : new Date(s.date);
+    const key = format(sDate, matchFormat);
+
+    // If duplicates should sum:
+    map.set(key, (map.get(key) ?? 0) + s.value);
+  });
+
+  const data = interval.map((d) => {
+    const key = format(d, matchFormat);
+
     return {
-      date: formattedDate,
-      value: match ? match.value : 0,
+      date: format(d, formatStr),
+      value: map.get(key) ?? 0,
     };
   });
+
+  return data;
 }
 
-export function parseSearchParams(searchParams: {
-  [key: string]: string | string[] | undefined;
-}) {
+export function parseSearchParams(
+  searchParams: Record<string, string | Array<string> | undefined>,
+) {
   const period =
     typeof searchParams.period === "string" ? searchParams.period : null;
   const fromStr =
