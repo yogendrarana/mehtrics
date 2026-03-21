@@ -23,7 +23,7 @@ export function Features() {
   return (
     <Container className="border-y border-border">
       <section id="features" className="border-x border-border bg-muted/30">
-        <div className="px-4 py-20 md:py-28">
+        <div className="py-10 md:py-20">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -40,9 +40,6 @@ export function Features() {
             }}
             className="mx-auto max-w-3xl text-center"
           >
-            <Badge variant="outline" className="rounded-full px-4 py-2">
-              Bento features
-            </Badge>
             <h2 className="mt-6 text-3xl md:text-4xl font-bold tracking-tight text-balance">
               Everything you need for modern traffic analytics.
             </h2>
@@ -68,7 +65,6 @@ export function Features() {
           >
             <BentoCard
               className="md:col-span-7"
-              icon={<Gauge className="size-4" />}
               title="Fast by default"
               description="A tiny script and a dashboard that stays snappy, even at scale."
               bullets={[
@@ -76,11 +72,11 @@ export function Features() {
                 "No sampling and no guesswork",
                 "Built for modern stacks",
               ]}
-              prefersReducedMotion={prefersReducedMotion}
+              prefersReducedMotion={Boolean(prefersReducedMotion)}
             />
+
             <BentoCard
               className="md:col-span-5"
-              icon={<Fingerprint className="size-4" />}
               title="Privacy-first"
               description="No cookies. No fingerprinting. No surprises."
               bullets={[
@@ -88,12 +84,11 @@ export function Features() {
                 "No raw IP storage",
                 "Respectful analytics",
               ]}
-              prefersReducedMotion={prefersReducedMotion}
+              prefersReducedMotion={Boolean(prefersReducedMotion)}
             />
 
             <BentoCard
               className="md:col-span-5"
-              icon={<Layers3 className="size-4" />}
               title="Events and conversions"
               description="Track what matters with clean events and flexible filters."
               bullets={[
@@ -101,11 +96,11 @@ export function Features() {
                 "UTM and referrer breakdowns",
                 "Device and geo insights",
               ]}
-              prefersReducedMotion={prefersReducedMotion}
+              prefersReducedMotion={Boolean(prefersReducedMotion)}
             />
+
             <BentoCard
               className="md:col-span-7"
-              icon={<ShieldCheck className="size-4" />}
               title="Own your data"
               description="Self-host in minutes and keep analytics inside your boundary."
               bullets={[
@@ -113,50 +108,25 @@ export function Features() {
                 "Multiple sites per account",
                 "Clean UI that your team will use",
               ]}
-              prefersReducedMotion={prefersReducedMotion}
+              prefersReducedMotion={Boolean(prefersReducedMotion)}
               highlight
             />
 
             <BentoSmall
               className="md:col-span-6"
-              prefersReducedMotion={prefersReducedMotion}
+              prefersReducedMotion={Boolean(prefersReducedMotion)}
               icon={<Sparkles className="size-4" />}
               title="Developer-friendly"
               description="Thoughtful defaults, solid docs, predictable behavior."
             />
+
             <BentoSmall
               className="md:col-span-6"
-              prefersReducedMotion={prefersReducedMotion}
+              prefersReducedMotion={Boolean(prefersReducedMotion)}
               icon={<CircleCheck className="size-4" />}
               title="Simple setup"
               description="Add one script tag, verify, and ship."
             />
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={{
-              hidden: prefersReducedMotion
-                ? { opacity: 1 }
-                : { opacity: 0, y: 12 },
-              show: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.55, ease: "easeOut" },
-              },
-            }}
-            className="mt-12 flex items-center justify-center"
-          >
-            <Button
-              variant="outline"
-              className="bg-background/60"
-              render={<Link href="/pricing" />}
-            >
-              See pricing
-              <ArrowRight className="size-4" />
-            </Button>
           </motion.div>
         </div>
       </section>
@@ -165,7 +135,6 @@ export function Features() {
 }
 
 function BentoCard({
-  icon,
   title,
   description,
   bullets,
@@ -173,7 +142,6 @@ function BentoCard({
   prefersReducedMotion,
   highlight,
 }: {
-  icon: React.ReactNode;
   title: string;
   description: string;
   bullets: string[];
@@ -192,7 +160,7 @@ function BentoCard({
         },
       }}
       className={cn(
-        "relative overflow-hidden rounded-3xl border border-border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/50 p-6",
+        "relative overflow-hidden rounded-xl border border-border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/50 p-6",
         "shadow-[0_12px_40px_-32px_rgba(0,0,0,0.45)]",
         highlight &&
           "border-foreground/15 bg-[radial-gradient(800px_circle_at_20%_20%,rgba(0,0,0,0.08),transparent_55%)] dark:bg-[radial-gradient(800px_circle_at_20%_20%,rgba(255,255,255,0.08),transparent_55%)]",
@@ -205,13 +173,9 @@ function BentoCard({
 
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-3 py-1 text-xs text-muted-foreground">
-              <span className="text-foreground/80">{icon}</span>
-              <span>Feature</span>
-            </div>
+          <div className="space-y-1">
             <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-            <p className="text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground text-sm">{description}</p>
           </div>
         </div>
 
@@ -254,7 +218,7 @@ function BentoSmall({
         },
       }}
       className={cn(
-        "rounded-3xl border border-border bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50 p-6",
+        "px-4 py-5 rounded-xl border border-border bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50",
         className,
       )}
     >
