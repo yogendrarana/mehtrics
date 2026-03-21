@@ -1,18 +1,6 @@
 import { getUserId } from "@/lib/auth";
-import { db } from "@mehtrics/db";
-import { site } from "@mehtrics/db/schema";
-import { eq } from "@mehtrics/db/drizzle";
+import { getSiteList } from "@/lib/services/site";
 import { SitesView } from "./__components/sites-view";
-
-async function getSiteList(userId: string) {
-  const sites = await db
-    .select()
-    .from(site)
-    .where(eq(site.userId, userId))
-    .orderBy(site.createdAt);
-
-  return sites;
-}
 
 export default async function SitesPage() {
   const userId = await getUserId();
