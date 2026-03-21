@@ -7,7 +7,7 @@
     "react-dom": "^19.2.4"
   },
   "dependencies": {
-    "@base-ui/react": "^1.2.0",
+    "@base-ui/react": "^1.3.0",
     "@mehtrics/hooks": "workspace:*",
     "@mehtrics/utils": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
@@ -36,7 +36,6 @@
     "./icons": "./src/icons.ts",
     "./data-table": "./src/data-table.ts",
     "./container": "./src/components/container.tsx",
-
     "./accordion": "./src/ui/accordion.tsx",
     "./alert-dialog": "./src/ui/alert-dialog.tsx",
     "./autocomplete": "./src/ui/autocomplete.tsx",
@@ -50,6 +49,7 @@
     "./checkbox": "./src/ui/checkbox.tsx",
     "./command": "./src/ui/command.tsx",
     "./dialog": "./src/ui/dialog.tsx",
+    "./drawer": "./src/ui/drawer.tsx",
     "./input": "./src/ui/input.tsx",
     "./label": "./src/ui/label.tsx",
     "./menu": "./src/ui/menu.tsx",
