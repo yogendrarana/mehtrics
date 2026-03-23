@@ -34,7 +34,6 @@
     ".": "./index.ts",
     "./globals.css": "./src/styles/globals.css",
     "./icons": "./src/icons.ts",
-    "./data-table": "./src/data-table.ts",
     "./container": "./src/components/container.tsx",
     "./accordion": "./src/ui/accordion.tsx",
     "./alert-dialog": "./src/ui/alert-dialog.tsx",

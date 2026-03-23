@@ -88,21 +88,22 @@ function SitesListView({ data }: { data: SiteSelect[] }) {
       <Table>
         <TableHeader className="bg-muted/30">
           <TableRow className="hover:bg-transparent">
-            <TableHead className="font-semibold text-foreground h-11">
+            <TableHead className="font-semibold text-foreground">
               Name
             </TableHead>
-            <TableHead className="font-semibold text-foreground h-11">
+            <TableHead className="font-semibold text-foreground">
               Domain
             </TableHead>
-            <TableHead className="font-semibold text-foreground h-11">
+            <TableHead className="font-semibold text-foreground">
               Created At
             </TableHead>
             <TableHead className="w-[50px]"></TableHead>
           </TableRow>
         </TableHeader>
+        
         <TableBody>
           {data.map((site) => (
-            <TableRow key={site.id} className="group transition-colors h-14">
+            <TableRow key={site.id} className="group transition-colors">
               <TableCell>
                 <Link
                   href={`/dashboard/sites/${site.id}`}
