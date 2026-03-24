@@ -7,10 +7,7 @@
  * from raw events and store them in aggregated_daily_stats.
  *
  * Run with:
- *   bun run packages/analytics/src/aggregation-worker.ts
- *
- * Or schedule with cron:
- *   5 0 * * * bun run /app/packages/analytics/src/aggregation-worker.ts
+ *   bun run src/workers/aggregation-worker.ts
  */
 
 import { db } from "@mehtrics/db";

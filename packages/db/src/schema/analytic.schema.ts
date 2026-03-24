@@ -10,7 +10,14 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import type { TEventType, TDeviceType, TAggregationMetric } from "@mehtrics/shared/types";
+type TEventType = "pageview" | "custom";
+type TDeviceType = "desktop" | "mobile" | "tablet" | "unknown";
+type TAggregationMetric =
+  | "pageviews"
+  | "unique_visitors"
+  | "bounce_rate"
+  | "avg_duration";
+
 import { site } from "./site.schema";
 
 /**

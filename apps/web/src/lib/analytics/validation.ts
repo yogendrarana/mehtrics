@@ -1,7 +1,5 @@
 import z from "zod";
-import type { TEventType } from "@mehtrics/shared/types";
-
-const EVENT_TYPES: [TEventType, ...TEventType[]] = ["pageview", "custom"];
+import type { TEventType } from "@/lib/types";
 
 export const trackPayloadSchema = z.object({
   siteId: z.string().uuid("Invalid siteId"),

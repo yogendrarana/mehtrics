@@ -24,6 +24,7 @@ export type StatTab = {
   label: string;
   value: string | number;
   change?: number;
+  icon?: React.ReactNode;
 };
 
 type AnalyticsChartProps = {
@@ -67,28 +68,34 @@ export function AnalyticsChart({
 
   return (
     <div className="w-full overflow-hidden rounded-sm border bg-card text-card-foreground shadow-xs">
-      <div className="flex w-full overflow-x-auto border-b no-scrollbar">
+      <div className="grid grid-cols-2 sm:flex w-full border-b divide-x divide-y sm:divide-y-0">
         {stats.map((stat) => (
           <button
             key={stat.id}
             data-active={activeTab === stat.id}
-            className="min-w-37.5 cursor-pointer flex flex-col justify-center gap-1 border-r px-6 py-4 text-left data-[active=true]:bg-muted/50 sm:px-8 sm:py-6 hover:bg-muted/30 transition-colors"
+            className={cn(
+              "px-5 py-4 cursor-pointer flex flex-col justify-center gap-1 text-left transition-colors sm:w-auto",
+              "data-[active=true]:bg-muted/50 hover:bg-muted/30",
+              stat.id === "events" && "col-span-2 sm:col-span-1 border-r-0 sm:border-r",
+              "sm:min-w-[170px]",
+            )}
             onClick={() => onTabChange(stat.id)}
             type="button"
           >
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
+            <span className="text-xs text-muted-foreground whitespace-nowrap flex items-center gap-1.5">
+              {stat.icon}
               {stat.label}
             </span>
 
             <div className="flex items-center gap-2">
-              <span className="text-lg leading-none font-bold sm:text-xl">
+              <span className="text-xl font-bold tabular-nums sm:text-2xl">
                 {stat.value}
               </span>
 
               {stat.change !== undefined ? (
                 <span
                   className={cn(
-                    "text-[10px] px-1.5 py-0.5 rounded-sm whitespace-nowrap",
+                    "text-[10px] px-1.5 py-0.5 rounded-sm whitespace-nowrap font-medium",
                     stat.change > 0
                       ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400"
                       : "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400",

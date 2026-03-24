@@ -1,17 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
-import {
-  checkRateLimit,
-  shouldIgnoreRequest,
-  enqueueEvent,
-  trackPayloadSchema,
-  type QueuedEvent,
-} from "@mehtrics/analytics";
+import { checkRateLimit } from "@/lib/analytics/rate-limiter";
+import { shouldIgnoreRequest } from "@/lib/analytics/bot-filter";
+import { enqueueEvent, type QueuedEvent } from "@/lib/analytics/event-queue";
+
+import { trackPayloadSchema } from "@/lib/analytics/validation";
 import { db } from "@mehtrics/db";
 import { site } from "@mehtrics/db/schema";
 import { eq } from "@mehtrics/db/drizzle";
-import { type TEventType } from "@mehtrics/shared/types";
-import { ANALYTICS_CONFIG } from "@mehtrics/shared/constants";
+import { type TEventType } from "@/lib/types";
+import { ANALYTICS_CONFIG } from "@/lib/constants";
 
 /**
  * Hashes IP + UA + site to create a daily anonymous visitor ID.
@@ -216,6 +214,8 @@ export async function POST(request: NextRequest) {
 
   // 10. Push to Redis queue
   await enqueueEvent(queuedEvent);
+
+
 
   const origin = request.headers.get("origin") || "*";
 

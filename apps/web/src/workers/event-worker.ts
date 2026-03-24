@@ -4,8 +4,8 @@ import {
   dequeueBatch,
   getQueueDepth,
   type QueuedEvent,
-} from "../queue/event-queue";
-import { ANALYTICS_CONFIG } from "@mehtrics/shared/constants";
+} from "@/lib/analytics/event-queue";
+import { ANALYTICS_CONFIG } from "@/lib/constants";
 
 const { POLL_INTERVAL_MS, BATCH_SIZE } = ANALYTICS_CONFIG;
 

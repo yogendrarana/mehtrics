@@ -100,7 +100,7 @@ function SitesListView({ data }: { data: SiteSelect[] }) {
             <TableHead className="w-[50px]"></TableHead>
           </TableRow>
         </TableHeader>
-        
+
         <TableBody>
           {data.map((site) => (
             <TableRow key={site.id} className="group transition-colors">

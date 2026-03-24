@@ -70,10 +70,9 @@ export function DateRangePicker({
             </span>
           )}
         </PopoverTrigger>
-        <PopoverPopup align="end" className="p-0">
-          <div className="flex flex-col border rounded-lg overflow-hidden bg-popover">
+        <PopoverPopup align="end" className="p-0 w-auto h-auto">
+          <div className="p-1 flex flex-col border rounded-lg overflow-hidden bg-popover">
             <Calendar
-              className="max-sm:pb-3 sm:ps-2"
               mode="range"
               month={month}
               onMonthChange={setMonth}

@@ -1,10 +1,10 @@
-import { getRedisClient } from "./redis";
+import { getRedisClient } from "@/config/redis";
 import { 
   type TEventType, 
   type TDeviceType, 
   type QueuedEvent, 
-} from "@mehtrics/shared/types";
-import { EVENT_QUEUE_KEY } from "@mehtrics/shared/constants";
+} from "@/lib/types";
+import { EVENT_QUEUE_KEY } from "@/lib/constants";
 
 export type { TEventType, TDeviceType, QueuedEvent };
 

@@ -4,6 +4,7 @@ import { TopListCard } from "@/components/dashboard/top-list-card";
 import { DateRangePicker } from "@/components/dashboard/date-range-picker";
 import { parseSearchParams } from "@/lib/analytics-utils";
 import { getGlobalStats } from "@/lib/services/analytics";
+import { Users, FileText, MousePointerClick, Globe } from "lucide-react";
 
 export default async function DashboardPage({
   searchParams,
@@ -31,18 +32,24 @@ export default async function DashboardPage({
           <StatCard
             label="Total Pageviews"
             value={stats.pageviews.toLocaleString()}
+            icon={<FileText className="h-4 w-4 text-muted-foreground" />}
           />
           <StatCard
             label="Total Visitors"
             value={stats.uniqueVisitors.toLocaleString()}
+            icon={<Users className="h-4 w-4 text-muted-foreground" />}
           />
           <StatCard
             label="Custom Events"
             value={stats.events.toLocaleString()}
+            icon={
+              <MousePointerClick className="h-4 w-4 text-muted-foreground" />
+            }
           />
           <StatCard
             label="Active Sites"
             value={stats.activeSites.toLocaleString()}
+            icon={<Globe className="h-4 w-4 text-muted-foreground" />}
           />
         </div>
 
@@ -73,16 +80,25 @@ export default async function DashboardPage({
 function StatCard({
   label,
   value,
+  icon,
   mono = false,
 }: {
   label: string;
   value: string | number;
+  icon?: React.ReactNode;
   mono?: boolean;
 }) {
   return (
-    <div className="border border-border rounded-sm p-4 bg-card space-y-1">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-2xl font-bold ${mono ? "font-mono text-base" : ""}`}>
+    <div className="border border-border rounded-sm p-4 bg-card space-y-1 hover:border-muted-foreground/30 transition-colors">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-tight">
+          {label}
+        </p>
+        {icon}
+      </div>
+      <p
+        className={`text-2xl font-bold tracking-tight ${mono ? "font-mono text-base" : ""}`}
+      >
         {value}
       </p>
     </div>

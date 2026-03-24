@@ -1,6 +1,12 @@
 "use client";
 
-import { Globe, Monitor } from "lucide-react";
+import {
+  Globe,
+  Monitor,
+  Users,
+  FileText,
+  MousePointerClick,
+} from "lucide-react";
 import * as React from "react";
 import {
   AnalyticsChart,
@@ -56,16 +62,19 @@ export function SiteOverview({
       id: "visitors",
       label: "Visitors",
       value: initialData.totals.visitors.toLocaleString(),
+      icon: <Users className="h-3 w-3" />,
     },
     {
       id: "views",
       label: "Pageviews",
       value: initialData.totals.pageviews.toLocaleString(),
+      icon: <FileText className="h-3 w-3" />,
     },
     {
       id: "events",
       label: "Events",
       value: (initialData.totals.events ?? 0).toLocaleString(),
+      icon: <MousePointerClick className="h-3 w-3" />,
     },
   ];
 

@@ -19,7 +19,7 @@
 
     "build": "bun --filter '*' build",
     "build:web": "bun --filter @mehtrics/web build",
-    "build:analytics": "bun --filter @mehtrics/analytics build",
+    "build:tracker": "bun build apps/web/src/lib/analytics/tracker.ts --outfile apps/web/public/tracker.js --minify",
     "build:docs": "bun --filter @mehtrics/docs build",
 
     "dev:web": "bun --filter @mehtrics/web dev",
@@ -32,7 +32,7 @@
     "db:studio": "bun --filter @mehtrics/db db:studio",
     "db:push": "bun --filter @mehtrics/db db:push",
 
-    "worker:event": "bun --filter @mehtrics/analytics worker:event",
-    "worker:aggregation": "bun --filter @mehtrics/analytics worker:aggregation"
+    "worker:event": "bun --env-file .env apps/web/src/workers/event-worker.ts",
+    "worker:aggregation": "bun --env-file .env apps/web/src/workers/aggregation-worker.ts"
   }
 }

@@ -59,11 +59,7 @@ const getSiteNavGroups = (siteId: string) => [
         url: `/dashboard/sites/${siteId}`,
         icon: BarChart3,
       },
-      {
-        title: "Realtime",
-        url: `/dashboard/sites/${siteId}/realtime`,
-        icon: Clock,
-      },
+
       {
         title: "Events",
         url: `/dashboard/sites/${siteId}/events`,
