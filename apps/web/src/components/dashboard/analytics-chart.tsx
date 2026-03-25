@@ -76,8 +76,8 @@ export function AnalyticsChart({
             className={cn(
               "px-5 py-4 cursor-pointer flex flex-col justify-center gap-1 text-left transition-colors sm:w-auto",
               "data-[active=true]:bg-muted/50 hover:bg-muted/30",
-              stat.id === "events" && "col-span-2 sm:col-span-1 border-r-0 sm:border-r",
               "sm:min-w-[170px]",
+              "last:border-r-0 lg:last:border-r",
             )}
             onClick={() => onTabChange(stat.id)}
             type="button"

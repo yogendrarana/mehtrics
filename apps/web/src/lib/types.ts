@@ -6,7 +6,9 @@ export type TAggregationMetric =
   | "pageviews"
   | "unique_visitors"
   | "bounce_rate"
-  | "avg_duration";
+  | "avg_duration"
+  | "sessions"
+  | "bounces";
 
 export type QueuedEvent = {
   siteId: string;

@@ -21,6 +21,7 @@ export async function getGlobalStats(userId: string, start: Date, end: Date) {
     [siteCount],
     topPages,
     topReferrers,
+    globalBounceResult,
   ] = await Promise.all([
     db
       .select({ value: count() })
@@ -72,13 +73,38 @@ export async function getGlobalStats(userId: string, start: Date, end: Date) {
       .groupBy(eventTable.referrer)
       .orderBy(desc(count()))
       .limit(10),
+
+    // Global Bounce Rate Calculation
+    db.execute(sql`
+      WITH session_pvs AS (
+        SELECT session_id, COUNT(*) as pv_count
+        FROM event
+        INNER JOIN site ON event.site_id = site.id
+        WHERE site.user_id = ${userId} AND event.type = 'pageview' 
+          AND event.created_at >= ${start.toISOString()} AND event.created_at < ${end.toISOString()}
+        GROUP BY session_id
+      )
+      SELECT 
+        COUNT(*)::float as total_sessions,
+        COUNT(*) FILTER (WHERE pv_count = 1)::float as bounces
+      FROM session_pvs
+    `),
   ]);
+
+  const bounceData = (globalBounceResult as any)?.rows?.[0] || {
+    total_sessions: 0,
+    bounces: 0,
+  };
+  const totalSessions = Number(bounceData.total_sessions);
+  const bounces = Number(bounceData.bounces);
+  const bounceRate = totalSessions > 0 ? (bounces / totalSessions) * 100 : 0;
 
   return {
     pageviews: pvResult?.value ?? 0,
     uniqueVisitors: uvResult?.value ?? 0,
     events: evResult?.value ?? 0,
     activeSites: siteCount?.value ?? 0,
+    bounceRate: Math.round(bounceRate * 10) / 10,
     topPages,
     topReferrers,
   };
@@ -116,6 +142,7 @@ export async function getAnalyticsData(siteId: string, start: Date, end: Date) {
     topDevices,
     topBrowsers,
     topOS,
+    bounceResult,
   ] = await Promise.all([
     db.select({ value: count() }).from(eventTable).where(pageviewFilter),
     db
@@ -192,13 +219,37 @@ export async function getAnalyticsData(siteId: string, start: Date, end: Date) {
       .where(and(pageviewFilter, sql`${eventTable.os} IS NOT NULL`))
       .groupBy(eventTable.os)
       .orderBy(desc(count())),
+
+    // Bounce Rate Calculation
+    db.execute(sql`
+      WITH session_pvs AS (
+        SELECT session_id, COUNT(*) as pv_count
+        FROM event
+        WHERE site_id = ${siteId} AND type = 'pageview' 
+          AND created_at >= ${start.toISOString()} AND created_at < ${end.toISOString()}
+        GROUP BY session_id
+      )
+      SELECT 
+        COUNT(*)::float as total_sessions,
+        COUNT(*) FILTER (WHERE pv_count = 1)::float as bounces
+      FROM session_pvs
+    `),
   ]);
+
+  const bounceData = (bounceResult as any)?.rows?.[0] || {
+    total_sessions: 0,
+    bounces: 0,
+  };
+  const totalSessions = Number(bounceData.total_sessions);
+  const bounces = Number(bounceData.bounces);
+  const bounceRate = totalSessions > 0 ? (bounces / totalSessions) * 100 : 0;
 
   return {
     totals: {
       pageviews: pvResult?.value ?? 0,
       visitors: uvResult?.value ?? 0,
       events: evResult?.value ?? 0,
+      bounceRate: Math.round(bounceRate * 10) / 10,
     },
     series: {
       views: fillSeriesGaps(viewsSeries as any, start, end),
@@ -223,7 +274,10 @@ export async function getAnalyticsData(siteId: string, start: Date, end: Date) {
         label: b.label || "unknown",
         value: b.value,
       })),
-      os: topOS.map((o) => ({ label: o.label || "unknown", value: o.value })),
+      os: (topOS as any).map((o: any) => ({
+        label: o.label || "unknown",
+        value: o.value,
+      })),
     },
   };
 }

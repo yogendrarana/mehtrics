@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "worker:event": "bun --env-file ../../.env src/workers/event-worker.ts",
+    "worker:aggregation": "bun --env-file ../../.env src/workers/aggregation-worker.ts"
   },
   "dependencies": {
     "@mehtrics/auth": "workspace:*",

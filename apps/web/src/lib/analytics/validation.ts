@@ -1,10 +1,9 @@
 import z from "zod";
-import type { TEventType } from "@/lib/types";
 
 export const trackPayloadSchema = z.object({
-  siteId: z.string().uuid("Invalid siteId"),
+  siteId: z.uuid("Invalid siteId"),
   type: z.enum(["pageview", "custom"]).default("pageview"),
-  url: z.string().url("Invalid URL").max(2048),
+  url: z.url("Invalid URL").max(2048),
   referrer: z.string().max(2048).optional().nullable(),
   screenWidth: z.number().int().positive().max(8192).optional().nullable(),
   screenHeight: z.number().int().positive().max(8192).optional().nullable(),

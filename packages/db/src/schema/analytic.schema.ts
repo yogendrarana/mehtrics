@@ -16,7 +16,9 @@ type TAggregationMetric =
   | "pageviews"
   | "unique_visitors"
   | "bounce_rate"
-  | "avg_duration";
+  | "avg_duration"
+  | "sessions"
+  | "bounces";
 
 import { site } from "./site.schema";
 

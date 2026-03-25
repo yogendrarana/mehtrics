@@ -35,18 +35,28 @@ function mapQueuedEventToInsert(e: QueuedEvent): EventInsert {
 }
 
 async function processBatch(): Promise<void> {
-  const batch = await dequeueBatch(BATCH_SIZE);
+  let batch: QueuedEvent[] = [];
+  try {
+    batch = await dequeueBatch(BATCH_SIZE);
+  } catch (err) {
+    console.error("[Worker] Failed to dequeue batch:", err);
+    return;
+  }
+  
   if (batch.length === 0) return;
 
   const rows = batch.map(mapQueuedEventToInsert);
 
   try {
     // Bulk insert — Drizzle uses $batches internally for large inserts
+    console.log(`[Worker] Attempting to insert ${rows.length} events...`);
     await db.insert(event).values(rows);
-    console.log(`[Worker] Inserted ${rows.length} events.`);
+    console.log(`[Worker] Successfully inserted ${rows.length} events.`);
   } catch (err) {
     console.error("[Worker] Bulk insert failed:", err);
-    // TODO: Push failed batch to a dead-letter queue for retry
+    // If bulk fails, we've already popped them from Redis!
+    // TODO: Consider inserting one-by-one or pushing to DLQ to avoid losing whole batch
+    // For now, at least we log the error.
   }
 }
 
@@ -61,6 +71,8 @@ async function runWorker(): Promise<void> {
       if (depth > 0) {
         console.log(`[Worker] Queue depth: ${depth}`);
         await processBatch();
+      } else {
+        console.log("[Worker] Queue is empty.");
       }
     } catch (err) {
       console.error("[Worker] Tick error:", err);

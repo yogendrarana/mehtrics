@@ -1,8 +1,8 @@
 import { getRedisClient } from "@/config/redis";
-import { 
-  type TEventType, 
-  type TDeviceType, 
-  type QueuedEvent, 
+import {
+  type TEventType,
+  type TDeviceType,
+  type QueuedEvent,
 } from "@/lib/types";
 import { EVENT_QUEUE_KEY } from "@/lib/constants";
 
@@ -34,11 +34,15 @@ export async function dequeueBatch(batchSize = 500): Promise<QueuedEvent[]> {
 
   const eventList: QueuedEvent[] = [];
   for (const [err, value] of results) {
-    if (!err && value && typeof value === "string") {
+    if (err) {
+      console.error("[Redis] Pipeline error:", err);
+      continue;
+    }
+    if (value && typeof value === "string") {
       try {
         eventList.push(JSON.parse(value) as QueuedEvent);
-      } catch {
-        // skip malformed
+      } catch (err) {
+        console.warn("[Redis] Failed to parse queued event:", err);
       }
     }
   }
