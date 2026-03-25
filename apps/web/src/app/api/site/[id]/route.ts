@@ -5,7 +5,7 @@ import { eq, and } from "@mehtrics/db/drizzle";
 import { site } from "@mehtrics/db/schema";
 import { getUserIdFromRequest } from "@/lib/auth";
 
-// GET /api/site/[id] — Get single site details
+// GET /api/site/[id] - Get single site details
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -28,6 +28,8 @@ export async function GET(
 
   return NextResponse.json({ site: siteData });
 }
+
+// PATCH /api/site/[id] - Update site
 
 const updateSiteSchema = z.object({
   name: z.string().min(1).max(255).optional(),
@@ -60,7 +62,7 @@ export async function PATCH(
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
+      { error: "Validation failed", details: z.treeifyError(parsed.error) },
       { status: 422 },
     );
   }
@@ -85,6 +87,7 @@ export async function PATCH(
   return NextResponse.json({ site: updated[0] });
 }
 
+// DELETE /api/site/[id] - Delete site
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

@@ -2,7 +2,7 @@ import { getUserId } from "@/lib/auth";
 import { SectionHeader } from "@/components/section-header";
 import { TopListCard } from "@/components/dashboard/top-list-card";
 import { DateRangePicker } from "@/components/dashboard/date-range-picker";
-import { parseSearchParams } from "@/lib/analytics-utils";
+import { parseSearchParams } from "@/lib/utils/analytics-utils";
 import { getGlobalStats } from "@/services/analytics";
 import {
   Users,

@@ -2,7 +2,7 @@ import { db } from "@mehtrics/db";
 import { and, count, desc, eq, gte, lt, sql } from "@mehtrics/db/drizzle";
 import { event as eventTable, site as siteTable } from "@mehtrics/db/schema";
 import { differenceInHours } from "date-fns";
-import { fillSeriesGaps } from "@/lib/analytics-utils";
+import { fillSeriesGaps } from "@/lib/utils/analytics-utils";
 
 /**
  * Fetch global analytics stats for a specific user across all their sites.

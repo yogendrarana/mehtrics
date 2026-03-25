@@ -21,10 +21,16 @@ export async function GET() {
       },
     });
   } catch (err) {
-    console.error("[API] Failed to serve tracker.js. Ensure you have run 'bun run build:tracker'. Error:", err);
-    return new NextResponse(`/* Mehtrics tracker - Error: tracker.js not found. Run 'bun run build:tracker' on the server. */`, {
-      status: 404,
-      headers: { "Content-Type": "application/javascript" },
-    });
+    console.error(
+      "[API] Failed to serve tracker.js. Ensure you have run 'bun run build:tracker'. Error:",
+      err,
+    );
+    return new NextResponse(
+      `/* Mehtrics tracker - Error: tracker.js not found. Run 'bun run build:tracker' on the server. */`,
+      {
+        status: 404,
+        headers: { "Content-Type": "application/javascript" },
+      },
+    );
   }
 }

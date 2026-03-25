@@ -3,7 +3,7 @@ import { getSiteOrThrow } from "@/services/site";
 import { getAnalyticsData } from "@/services/analytics";
 import { notFound } from "next/navigation";
 import { SiteOverviewWrapper } from "./__components/site-overview-wrapper";
-import { parseSearchParams } from "@/lib/analytics-utils";
+import { parseSearchParams } from "@/lib/utils/analytics-utils";
 
 type PageProps = {
   params: Promise<{ id: string }>;

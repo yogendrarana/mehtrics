@@ -4,7 +4,7 @@ import {
   dequeueBatch,
   getQueueDepth,
   type QueuedEvent,
-} from "@/lib/analytics/event-queue";
+} from "@/lib/event-queue";
 import { ANALYTICS_CONFIG } from "@/constants";
 
 const { POLL_INTERVAL_MS, BATCH_SIZE } = ANALYTICS_CONFIG;

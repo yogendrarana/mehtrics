@@ -5,7 +5,7 @@ import { eq } from "@mehtrics/db/drizzle";
 import { site } from "@mehtrics/db/schema";
 import { getUserIdFromRequest } from "@/lib/auth";
 
-// ---- Schema ----
+// Schema
 const createSiteSchema = z.object({
   name: z.string().min(1).max(255),
   domain: z
@@ -21,7 +21,7 @@ const createSiteSchema = z.object({
   timezone: z.string().default("UTC"),
 });
 
-// GET /api/site — List user's sites
+// GET /api/site - List user's sites
 export async function GET(request: NextRequest) {
   const userId = await getUserIdFromRequest(request);
   if (!userId) {
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ site: userSiteList });
 }
 
-// POST /api/site — Create a site
+// POST /api/site - Create a site
 export async function POST(request: NextRequest) {
   const userId = await getUserIdFromRequest(request);
   if (!userId) {
