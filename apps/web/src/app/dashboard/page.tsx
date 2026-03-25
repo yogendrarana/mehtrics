@@ -3,7 +3,7 @@ import { SectionHeader } from "@/components/section-header";
 import { TopListCard } from "@/components/dashboard/top-list-card";
 import { DateRangePicker } from "@/components/dashboard/date-range-picker";
 import { parseSearchParams } from "@/lib/analytics-utils";
-import { getGlobalStats } from "@/lib/services/analytics";
+import { getGlobalStats } from "@/services/analytics";
 import {
   Users,
   FileText,

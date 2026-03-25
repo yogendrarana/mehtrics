@@ -1,5 +1,5 @@
 import { getUserId } from "@/lib/auth";
-import { getSiteList } from "@/lib/services/site";
+import { getSiteList } from "@/services/site";
 import { SitesView } from "./__components/sites-view";
 
 export default async function SitesPage() {

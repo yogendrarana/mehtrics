@@ -19,7 +19,7 @@
 
     "build": "bun --filter '*' build",
     "build:web": "bun --filter @mehtrics/web build",
-    "build:tracker": "bun build apps/web/src/lib/analytics/tracker.ts --outfile apps/web/public/tracker.js --minify",
+    "build:tracker": "bun build apps/web/src/tracker/index.ts --outfile apps/web/public/tracker.js --minify",
     "build:docs": "bun --filter @mehtrics/docs build",
 
     "dev:web": "bun --filter @mehtrics/web dev",

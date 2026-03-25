@@ -8,8 +8,8 @@ import { trackPayloadSchema } from "@/lib/analytics/validation";
 import { db } from "@mehtrics/db";
 import { site } from "@mehtrics/db/schema";
 import { eq } from "@mehtrics/db/drizzle";
-import { type TEventType } from "@/lib/types";
-import { ANALYTICS_CONFIG } from "@/lib/constants";
+import { type TEventType } from "@/types";
+import { ANALYTICS_CONFIG } from "@/constants";
 
 async function hashVisitor({
   ip,

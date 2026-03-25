@@ -1,10 +1,6 @@
 import { getRedisClient } from "@/config/redis";
-import {
-  type TEventType,
-  type TDeviceType,
-  type QueuedEvent,
-} from "@/lib/types";
-import { EVENT_QUEUE_KEY } from "@/lib/constants";
+import { type TEventType, type TDeviceType, type QueuedEvent } from "@/types";
+import { EVENT_QUEUE_KEY } from "@/constants";
 
 export type { TEventType, TDeviceType, QueuedEvent };
 

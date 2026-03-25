@@ -5,7 +5,7 @@ import {
   getQueueDepth,
   type QueuedEvent,
 } from "@/lib/analytics/event-queue";
-import { ANALYTICS_CONFIG } from "@/lib/constants";
+import { ANALYTICS_CONFIG } from "@/constants";
 
 const { POLL_INTERVAL_MS, BATCH_SIZE } = ANALYTICS_CONFIG;
 
@@ -42,7 +42,7 @@ async function processBatch(): Promise<void> {
     console.error("[Worker] Failed to dequeue batch:", err);
     return;
   }
-  
+
   if (batch.length === 0) return;
 
   const rows = batch.map(mapQueuedEventToInsert);

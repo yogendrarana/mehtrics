@@ -1,6 +1,6 @@
 import { getUserId } from "@/lib/auth";
-import { getSiteOrThrow } from "@/lib/services/site";
-import { getAnalyticsData } from "@/lib/services/analytics";
+import { getSiteOrThrow } from "@/services/site";
+import { getAnalyticsData } from "@/services/analytics";
 import { notFound } from "next/navigation";
 import { SiteOverviewWrapper } from "./__components/site-overview-wrapper";
 import { parseSearchParams } from "@/lib/analytics-utils";
