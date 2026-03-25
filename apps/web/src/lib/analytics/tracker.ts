@@ -64,8 +64,9 @@
     try {
       let sid = window.sessionStorage.getItem(key);
       if (!sid) {
-        sid = Math.random().toString(36).substring(2, 15) + 
-              Math.random().toString(36).substring(2, 15);
+        sid =
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15);
         window.sessionStorage.setItem(key, sid);
       }
       return sid;

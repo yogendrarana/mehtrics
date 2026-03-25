@@ -11,12 +11,6 @@ import { eq } from "@mehtrics/db/drizzle";
 import { type TEventType } from "@/lib/types";
 import { ANALYTICS_CONFIG } from "@/lib/constants";
 
-/**
- * Hashes IP + UA + site to create a daily anonymous visitor ID.
- *
- * @param param0
- * @returns
- */
 async function hashVisitor({
   ip,
   ua,
@@ -28,6 +22,36 @@ async function hashVisitor({
 }): Promise<string> {
   const today = new Date().toISOString().slice(0, 10);
   const raw = `${ip}|${ua}|${siteId}|${today}`;
+
+  const buffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(raw),
+  );
+
+  return Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 64);
+}
+
+/**
+ * Hashes IP + UA + site + current hour to create a session ID.
+ */
+async function hashSession({
+  ip,
+  ua,
+  siteId,
+}: {
+  ip: string;
+  ua: string;
+  siteId: string;
+}): Promise<string> {
+  const now = new Date();
+  const hourStart = new Date(now);
+  hourStart.setUTCMinutes(0, 0, 0);
+  const sessionTS = hourStart.toISOString();
+
+  const raw = `${ip}|${ua}|${siteId}|${sessionTS}`;
 
   const buffer = await crypto.subtle.digest(
     "SHA-256",
@@ -165,12 +189,19 @@ export async function POST(request: NextRequest) {
     return "unknown";
   })();
 
-  // 8. Hash visitor fingerprint
-  const visitorHash = await hashVisitor({
-    ip,
-    ua: userAgent ?? "",
-    siteId: payload.siteId,
-  });
+  // 8. Hash visitor fingerprint & session
+  const [visitorHash, sessionId] = await Promise.all([
+    hashVisitor({
+      ip,
+      ua: userAgent ?? "",
+      siteId: payload.siteId,
+    }),
+    hashSession({
+      ip,
+      ua: userAgent ?? "",
+      siteId: payload.siteId,
+    }),
+  ]);
 
   // 9. Build queued event
   const queuedEvent: QueuedEvent = {
@@ -190,7 +221,7 @@ export async function POST(request: NextRequest) {
     screenWidth: payload.screenWidth ?? null,
     screenHeight: payload.screenHeight ?? null,
     query: extractQuery(payload.url),
-    sessionId: payload.sessionId ?? null,
+    sessionId,
     duration: payload.duration ?? null,
     eventName: payload.eventName ?? null,
     enqueuedAt: Date.now(),
@@ -214,8 +245,6 @@ export async function POST(request: NextRequest) {
 
   // 10. Push to Redis queue
   await enqueueEvent(queuedEvent);
-
-
 
   const origin = request.headers.get("origin") || "*";
 

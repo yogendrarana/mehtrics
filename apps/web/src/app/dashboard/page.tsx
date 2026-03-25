@@ -4,7 +4,13 @@ import { TopListCard } from "@/components/dashboard/top-list-card";
 import { DateRangePicker } from "@/components/dashboard/date-range-picker";
 import { parseSearchParams } from "@/lib/analytics-utils";
 import { getGlobalStats } from "@/lib/services/analytics";
-import { Users, FileText, MousePointerClick, Globe } from "lucide-react";
+import {
+  Users,
+  FileText,
+  MousePointerClick,
+  Globe,
+  Activity,
+} from "lucide-react";
 
 export default async function DashboardPage({
   searchParams,
@@ -28,7 +34,7 @@ export default async function DashboardPage({
       </SectionHeader>
 
       <div className="p-4 space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard
             label="Total Pageviews"
             value={stats.pageviews.toLocaleString()}
@@ -45,6 +51,11 @@ export default async function DashboardPage({
             icon={
               <MousePointerClick className="h-4 w-4 text-muted-foreground" />
             }
+          />
+          <StatCard
+            label="Bounce Rate"
+            value={`${stats.bounceRate}%`}
+            icon={<Activity className="h-4 w-4 text-muted-foreground" />}
           />
           <StatCard
             label="Active Sites"

@@ -32,7 +32,7 @@
     "db:studio": "bun --filter @mehtrics/db db:studio",
     "db:push": "bun --filter @mehtrics/db db:push",
 
-    "worker:event": "bun --env-file .env apps/web/src/workers/event-worker.ts",
-    "worker:aggregation": "bun --env-file .env apps/web/src/workers/aggregation-worker.ts"
+    "worker:event": "bun --filter @mehtrics/web worker:event",
+    "worker:aggregation": "bun --filter @mehtrics/web worker:aggregation"
   }
 }

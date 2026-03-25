@@ -84,6 +84,46 @@ async function aggregateSite(
     });
   }
 
+  // 10. Sessions and Bounces (Bounce Rate)
+  const sessionPageviews = await db
+    .select({
+      sessionId: event.sessionId,
+      pvCount: count(),
+    })
+    .from(event)
+    .where(and(baseFilter, eq(event.type, "pageview")))
+    .groupBy(event.sessionId);
+
+  const totalSessions = sessionPageviews.length;
+  const bounces = sessionPageviews.filter((s) => s.pvCount === 1).length;
+
+  if (totalSessions > 0) {
+    // We store sessions count
+    rows.push({
+      siteId,
+      date: dateStr,
+      metric: "sessions",
+      value: totalSessions,
+    });
+
+    // We store bounce count
+    rows.push({
+      siteId,
+      date: dateStr,
+      metric: "bounces",
+      value: bounces,
+    });
+
+    // We store avg bounce rate as percentage (0-100)
+    const bounceRate = (bounces / totalSessions) * 100;
+    rows.push({
+      siteId,
+      date: dateStr,
+      metric: "bounce_rate",
+      value: Math.round(bounceRate * 100) / 100, // 2 decimal places
+    });
+  }
+
   // 3. Top pages (pathname breakdown)
   const topPages = await db
     .select({

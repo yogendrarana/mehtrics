@@ -6,6 +6,7 @@ import {
   Users,
   FileText,
   MousePointerClick,
+  Activity,
 } from "lucide-react";
 import * as React from "react";
 import {
@@ -22,6 +23,7 @@ export type SiteOverviewData = {
     pageviews: number;
     visitors: number;
     events?: number;
+    bounceRate: number;
   };
   series: {
     views: ChartPoint[];
@@ -54,7 +56,7 @@ export function SiteOverview({
   subtitle = "Detailed analytics for your site over the selected period.",
 }: SiteOverviewProps) {
   const [activeMetric, setActiveMetric] = React.useState<
-    "visitors" | "views" | "events"
+    "visitors" | "views" | "events" | "bounce"
   >("visitors");
 
   const statTabs: StatTab[] = [
@@ -76,6 +78,12 @@ export function SiteOverview({
       value: (initialData.totals.events ?? 0).toLocaleString(),
       icon: <MousePointerClick className="h-3 w-3" />,
     },
+    {
+      id: "bounce",
+      label: "Bounce Rate",
+      value: `${initialData.totals.bounceRate}%`,
+      icon: <Activity className="h-3 w-3" />,
+    },
   ];
 
   const chartData =
@@ -92,7 +100,7 @@ export function SiteOverview({
         stats={statTabs}
         activeTab={activeMetric}
         onTabChange={(id) =>
-          setActiveMetric(id as "visitors" | "views" | "events")
+          setActiveMetric(id as "visitors" | "views" | "events" | "bounce")
         }
         title={statTabs.find((s) => s.id === activeMetric)?.label ?? "Metric"}
       />

@@ -6,35 +6,25 @@ import { NextResponse } from "next/server";
  * GET /api/script.js - Serve the tracking script
  *
  * In production, serve pre-built dist/tracker.js.
- * In development, serve a stub.
  */
 
 export async function GET() {
-  let scriptContent: string;
-
   try {
-    if (process.env["NODE_ENV"] === "development") {
-      const scriptPath = path.join(
-        process.cwd(),
-        "../../packages/analytics/dist/tracker.js",
-      );
-      scriptContent = await readFile(scriptPath, "utf-8");
-    } else {
-      scriptContent = `/* Mehtrics tracker - development mode */
-        (function(){
-          console.log('[Mehtrics] Tracker loaded (dev mode)');
-          window.mehtrics = { track: function(name){ console.log('[Mehtrics] track:', name); } };
-        })();`;
-    }
-  } catch {
-    scriptContent = `/* Mehtrics tracker - error loading script */`;
-  }
+    const scriptPath = path.join(process.cwd(), "public", "tracker.js");
+    const scriptContent = await readFile(scriptPath, "utf-8");
 
-  return new NextResponse(scriptContent, {
-    headers: {
-      "Content-Type": "application/javascript",
-      "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+    return new NextResponse(scriptContent, {
+      headers: {
+        "Content-Type": "application/javascript",
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=3600",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+  } catch (err) {
+    console.error("[API] Failed to serve tracker.js. Ensure you have run 'bun run build:tracker'. Error:", err);
+    return new NextResponse(`/* Mehtrics tracker - Error: tracker.js not found. Run 'bun run build:tracker' on the server. */`, {
+      status: 404,
+      headers: { "Content-Type": "application/javascript" },
+    });
+  }
 }
