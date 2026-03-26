@@ -31,10 +31,6 @@
     "typescript": "^5.9.3"
   },
   "exports": {
-    ".": "./index.ts",
-    "./globals.css": "./src/styles/globals.css",
-    "./icons": "./src/icons.ts",
-    "./container": "./src/components/container.tsx",
     "./accordion": "./src/ui/accordion.tsx",
     "./alert-dialog": "./src/ui/alert-dialog.tsx",
     "./autocomplete": "./src/ui/autocomplete.tsx",
@@ -63,6 +59,9 @@
     "./table": "./src/ui/table.tsx",
     "./tabs": "./src/ui/tabs.tsx",
     "./toast": "./src/ui/toast.tsx",
-    "./tooltip": "./src/ui/tooltip.tsx"
+    "./tooltip": "./src/ui/tooltip.tsx",
+    "./globals.css": "./src/styles/globals.css",
+    "./icons": "./src/icons.ts",
+    "./container": "./src/components/container.tsx"
   }
 }
