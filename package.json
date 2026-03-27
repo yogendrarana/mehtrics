@@ -23,9 +23,8 @@
     "build:tracker": "bun build apps/app/src/tracker/index.ts --outfile apps/app/public/tracker.js --minify",
     "build:docs": "bun --filter @mehtrics/docs build",
 
-    "dev": "bun dev:www & bun dev:app",
+    "dev:all": "bun dev:www & bun dev:app",
     "dev:app": "bun --filter @mehtrics/app dev",
-
     "dev:www": "bun --filter @mehtrics/www dev",
     "dev:docs": "bun --filter @mehtrics/docs dev",
     "dev:worker": "bun run --watch apps/app/src/lib/worker.ts",

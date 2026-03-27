@@ -67,17 +67,16 @@ export function AnalyticsLineChart({
   }, [isHourly, data.length]);
 
   return (
-    <div className="w-full overflow-hidden rounded-sm border bg-card text-card-foreground shadow-xs">
-      <div className="grid grid-cols-2 sm:flex w-full border-b divide-x divide-y sm:divide-y-0">
+    <div className="w-full space-y-2 overflow-hidden rounded-sm bg-card text-card-foreground shadow-xs">
+      <div className="flex flex-wrap gap-2">
         {stats.map((stat) => (
           <button
             key={stat.id}
             data-active={activeTab === stat.id}
             className={cn(
-              "px-5 py-4 cursor-pointer flex flex-col justify-center gap-1 text-left transition-colors sm:w-auto",
-              "data-[active=true]:bg-muted/50 hover:bg-muted/30",
-              "sm:min-w-[170px]",
-              "last:border-r-0 lg:last:border-r",
+              "w-full px-5 py-4 cursor-pointer border flex flex-col justify-center gap-1 rounded-sm",
+              "sm:w-[calc(50%-0.25rem)] lg:w-auto lg:min-w-42.5",
+              "data-[active=true]:bg-muted hover:bg-muted",
             )}
             onClick={() => onTabChange(stat.id)}
             type="button"
@@ -110,7 +109,7 @@ export function AnalyticsLineChart({
         ))}
       </div>
 
-      <div className="p-6 px-2 sm:p-6">
+      <div className="p-6 px-2 sm:p-6 border rounded-sm">
         <div className="sr-only">{description}</div>
         {!data || data.length === 0 ? (
           <div className="flex aspect-auto h-72 w-full flex-col items-center justify-center gap-2 rounded-sm border border-dashed text-muted-foreground">
