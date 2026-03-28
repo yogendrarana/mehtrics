@@ -115,7 +115,7 @@
   }
 
   // --------------------------------------------------------
-  // SPA support — intercept history API
+  // SPA support - intercept history API
   // --------------------------------------------------------
   let lastUrl = getUrl();
 

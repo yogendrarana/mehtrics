@@ -1,3 +1,4 @@
+import * as z from "zod";
 import { UAParser } from "ua-parser-js";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -6,15 +7,12 @@ import { checkRateLimit } from "@/lib/rate-limiter";
 import { shouldIgnoreRequest } from "@/lib/bot-filter";
 import { enqueueEvent, type QueuedEvent } from "@/lib/event-queue";
 
-import {
-  trackPayloadSchema,
-  hashVisitor,
-  hashSession,
-  extractPathname,
-  extractQuery,
-  isSiteValid,
-  getClientIP,
-} from "@/lib/utils/track-utils";
+import { trackPayloadSchema } from "@/lib/schema";
+import { hashVisitor, hashSession } from "@/lib/hash";
+import { extractPathname, extractQuery } from "@/lib/url";
+import { isSiteValid } from "@/lib/site";
+import { getGeolocation } from "@/lib/geo";
+import { getClientIP } from "@/lib/ip";
 
 // POST /api/track
 export async function POST(request: NextRequest) {
@@ -30,7 +28,7 @@ export async function POST(request: NextRequest) {
   const parsed = trackPayloadSchema.safeParse(rawBody);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
+      { error: "Validation failed", details: z.treeifyError(parsed.error) },
       { status: 422 },
     );
   }
@@ -70,15 +68,18 @@ export async function POST(request: NextRequest) {
 
   // 7. Parse UA for device info
   const parser = new UAParser(userAgent ?? "");
-  const browser = parser.getBrowser();
+
   const os = parser.getOS();
+  const browser = parser.getBrowser();
   const deviceResult = parser.getDevice();
 
   const deviceType = ((): QueuedEvent["device"] => {
     const type = deviceResult.type;
     if (type === "mobile") return "mobile";
     if (type === "tablet") return "tablet";
-    if (!type) return "desktop"; // No device type = desktop
+    if (!type) return "desktop";
+    if (type === "smarttv" || type === "console") return "desktop";
+
     return "unknown";
   })();
 
@@ -99,41 +100,37 @@ export async function POST(request: NextRequest) {
   // 9. Build queued event
   const queuedEvent: QueuedEvent = {
     siteId: payload.siteId,
-    type: payload.type as TEventType,
     url: payload.url,
-    referrer: payload.referrer ?? null,
+    device: deviceType,
+    enqueuedAt: Date.now(),
+    query: extractQuery(payload.url),
+    type: payload.type as TEventType,
     pathname: extractPathname(payload.url) ?? "/",
     visitorHash,
+    sessionId,
     country: null,
     region: null,
     city: null,
-    browser: browser.name ?? null,
-    browserVersion: browser.version ?? null,
     os: os.name ?? null,
-    device: deviceType,
+    browser: browser.name ?? null,
+    duration: payload.duration ?? null,
+    referrer: payload.referrer ?? null,
+    eventName: payload.eventName ?? null,
+    browserVersion: browser.version ?? null,
     screenWidth: payload.screenWidth ?? null,
     screenHeight: payload.screenHeight ?? null,
-    query: extractQuery(payload.url),
-    sessionId,
-    duration: payload.duration ?? null,
-    eventName: payload.eventName ?? null,
-    enqueuedAt: Date.now(),
   };
 
-  // Overwrite country from Cloudflare header if available
-  const cfCountry = request.headers.get("cf-ipcountry");
-  if (cfCountry && cfCountry !== "XX") {
-    queuedEvent.country = cfCountry.toUpperCase().slice(0, 2);
+  // Extract country, region, city from request headers or geo object
+  const geo = await getGeolocation(request, ip);
+  if (geo.country && geo.country !== "XX") {
+    queuedEvent.country = geo.country.toUpperCase().slice(0, 2);
   }
-
-  const cfRegion = request.headers.get("cf-region");
-  if (cfRegion) {
-    queuedEvent.region = cfRegion;
+  if (geo.region) {
+    queuedEvent.region = geo.region;
   }
-
-  const cfCity = request.headers.get("cf-ipcity");
-  if (cfCity) {
-    queuedEvent.city = cfCity;
+  if (geo.city) {
+    queuedEvent.city = geo.city;
   }
 
   // 10. Push to Redis queue
@@ -154,7 +151,7 @@ export async function POST(request: NextRequest) {
   );
 }
 
-// OPTIONS /api/track — CORS preflight
+// OPTIONS /api/track - CORS preflight
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get("origin") || "*";
   return new NextResponse(null, {

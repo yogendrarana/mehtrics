@@ -7,7 +7,7 @@ import { getRedisClient } from "@/config/redis";
  */
 
 const WINDOW_MS = 60_000; // 1 minute
-const MAX_REQUESTS = 300; // per window per key
+const MAX_REQUESTS = 1000; // per window per key
 
 export async function checkRateLimit(key: string): Promise<{
   allowed: boolean;

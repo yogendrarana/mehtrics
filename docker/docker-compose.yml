@@ -95,6 +95,8 @@ services:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3001}
     ports:
       - "${WEB_PORT:-3001}:3001"
+    volumes:
+      - /opt/geolite:/opt/geolite
     networks:
       - mehtrics-net
     healthcheck:
