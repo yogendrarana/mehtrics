@@ -65,13 +65,14 @@ docker compose -f "$DOCKER_COMPOSE_FILE" down 2>/dev/null || true
 success "Containers removed."
 
 # =============================================================
-# Step 3: Remove volumes
+# Step 3: Remove volumes and DB
 # =============================================================
-log "Removing volumes..."
+log "Removing volumes & data..."
 docker compose -f "$DOCKER_COMPOSE_FILE" down -v 2>/dev/null || true
 # Fallback: remove by name
 docker volume rm mehtrics_postgres-data mehtrics_redis-data 2>/dev/null || true
-success "Volumes removed."
+sudo rm -rf /opt/geolite
+success "Volumes and internal data removed."
 
 # =============================================================
 # Step 4: Remove networks

@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 # ---- Config ----
 INSTALL_DIR="${MEHTRICS_DIR:-$HOME/.mehtrics}"
-REPO_URL="https://github.com/yourusername/mehtrics"
+REPO_URL="https://github.com/yogendrarana/mehtrics"
 DOCKER_COMPOSE_FILE="$INSTALL_DIR/docker/docker-compose.yml"
 ENV_FILE="$INSTALL_DIR/.env"
 WEB_PORT="${WEB_PORT:-3001}"
@@ -109,6 +109,26 @@ setup_files() {
 }
 
 # =============================================================
+# Step 4.5: Download MaxMind Database
+# =============================================================
+download_maxmind() {
+  log "Downloading MaxMind GeoLite2 database for IP geolocation..."
+  sudo mkdir -p /opt/geolite
+  
+  if [ -f "/opt/geolite/GeoLite2-City.mmdb" ]; then
+    success "MaxMind database already exists in /opt/geolite."
+    return
+  fi
+
+  local url="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
+  if sudo curl -L -f -s -o "/opt/geolite/GeoLite2-City.mmdb" "$url"; then
+    success "MaxMind GeoLite2 database downloaded successfully into /opt/geolite."
+  else
+    warn "Failed to download GeoLite2 database. Geolocation fallback may not work."
+  fi
+}
+
+# =============================================================
 # Step 5: Generate .env file
 # =============================================================
 generate_env() {
@@ -143,6 +163,9 @@ BETTER_AUTH_SECRET=${AUTH_SECRET}
 
 # Ports
 WEB_PORT=${WEB_PORT}
+
+# Maxmind GeoLite
+GEOLITE_DB_PATH=/opt/geolite/GeoLite2-City.mmdb
 EOF
 
   success ".env file generated."
@@ -224,6 +247,7 @@ main() {
   install_docker
   install_docker_compose
   setup_files
+  download_maxmind
   generate_env
   start_services
   wait_healthy

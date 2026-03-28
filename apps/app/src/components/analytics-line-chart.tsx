@@ -109,7 +109,7 @@ export function AnalyticsLineChart({
         ))}
       </div>
 
-      <div className="p-6 px-2 sm:p-6 border rounded-sm">
+      <div className="py-6 sm:py-12 border rounded-sm">
         <div className="sr-only">{description}</div>
         {!data || data.length === 0 ? (
           <div className="flex aspect-auto h-72 w-full flex-col items-center justify-center gap-2 rounded-sm border border-dashed text-muted-foreground">

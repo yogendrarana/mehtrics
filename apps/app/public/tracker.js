@@ -1,5 +1,4 @@
 (function () {
-  console.log("[Mehtrics] Tracker initializing...");
   let z = document.currentScript,
     E = z?.dataset.siteId,
     F = z ? new URL("/api/track", z.src).toString() : "/api/track";
