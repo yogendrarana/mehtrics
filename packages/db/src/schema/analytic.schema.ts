@@ -7,7 +7,6 @@ import {
   index,
   date,
   bigint,
-  pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 type TEventType = "pageview" | "custom";
