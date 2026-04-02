@@ -47,7 +47,7 @@ export function Footer() {
             </div>
             <Link
               target="_blank"
-              href="https://github.com/yogendrarana"
+              href="https://github.com/yogendrarana/mehtrics"
               className="hover:text-foreground transition-colors"
             >
               <GitHub className="h-4 w-4" />
