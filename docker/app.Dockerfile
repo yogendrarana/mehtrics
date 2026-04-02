@@ -6,8 +6,8 @@ WORKDIR /app
 # ---- Install dependencies ----
 FROM base AS deps
 COPY package.json bun.lock ./
-COPY apps/dashboard/package.json ./apps/dashboard/
-COPY apps/web/package.json ./apps/web/
+COPY apps/app/package.json ./apps/app/
+COPY apps/www/package.json ./apps/www/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/db/package.json ./packages/db/
 COPY packages/auth/package.json ./packages/auth/
@@ -23,17 +23,18 @@ FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build dashboard (default target)
-ARG APP=dashboard
+# Build main app (default target)
+ARG APP=app
 RUN bun --filter @mehtrics/${APP} build
 
 # ---- Production runner ----
 FROM base AS runner
 ENV NODE_ENV=production
 
-COPY --from=builder /app/apps/${APP:-dashboard}/.next/standalone ./
-COPY --from=builder /app/apps/${APP:-dashboard}/.next/static ./.next/static
-COPY --from=builder /app/apps/${APP:-dashboard}/public ./public
+COPY --from=builder /app/apps/${APP:-app}/.next/standalone ./
+COPY --from=builder /app/apps/${APP:-app}/.next/static ./.next/static
+COPY --from=builder /app/apps/${APP:-app}/public ./public
 
-EXPOSE 3001
+ENV PORT 8080
+EXPOSE 8080
 CMD ["node", "server.js"]

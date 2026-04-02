@@ -71,15 +71,15 @@ services:
       start_period: 5s
 
   # ----------------------------------------------------------
-  # Web App (self-hosted)
+  # Main App (self-hosted)
   # ----------------------------------------------------------
-  web:
+  app:
     build:
       context: ..
       dockerfile: docker/app.Dockerfile
       args:
-        APP: web
-    container_name: mehtrics-web
+        APP: app
+    container_name: mehtrics-app
     restart: unless-stopped
     depends_on:
       postgres:
@@ -91,16 +91,16 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
       REDIS_URL: redis://redis:6379
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3001}
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3001}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:8080}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:8080}
     ports:
-      - "${WEB_PORT:-3001}:3001"
+      - "${APP_PORT:-8080}:8080"
     volumes:
       - /opt/geolite:/opt/geolite
     networks:
       - mehtrics-net
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
