@@ -38,7 +38,7 @@ detect_os() {
   case "$OS" in
     Linux)  OS_TYPE="linux" ;;
     Darwin) OS_TYPE="macos" ;;
-    *) error "Unsupported OS: $OS. Mehtrics supports Linux and macOS." ;;
+    *) error "Unsupported OS: $OS ($ARCH). Mehtrics supports Linux and macOS only." ;;
   esac
 
   success "Detected: $OS_TYPE ($ARCH)"
@@ -113,18 +113,43 @@ setup_files() {
 # =============================================================
 download_maxmind() {
   log "Downloading MaxMind GeoLite2 database for IP geolocation..."
+
   sudo mkdir -p /opt/geolite
-  
+
   if [ -f "/opt/geolite/GeoLite2-City.mmdb" ]; then
     success "MaxMind database already exists in /opt/geolite."
     return
   fi
 
-  local url="https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
-  if sudo curl -L -f -s -o "/opt/geolite/GeoLite2-City.mmdb" "$url"; then
-    success "MaxMind GeoLite2 database downloaded successfully into /opt/geolite."
+  # Require env vars
+  if [ -z "$MAXMIND_ACCOUNT_ID" ] || [ -z "$MAXMIND_LICENSE_KEY" ]; then
+    warn "MaxMind credentials not set. Skipping GeoLite2 download."
+    warn "Set MAXMIND_ACCOUNT_ID and MAXMIND_LICENSE_KEY environment variables."
+    return
+  fi
+
+  local tmp_file="/tmp/geolite.tar.gz"
+  local url="https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz"
+
+  if curl -fL -u "$MAXMIND_ACCOUNT_ID:$MAXMIND_LICENSE_KEY" \
+    "$url" \
+    -o "$tmp_file"; then
+
+    tar -xzf "$tmp_file" -C /tmp
+
+    local extracted_dir
+    extracted_dir=$(find /tmp -type d -name "GeoLite2-City_*" | head -n 1)
+
+    if [ -f "$extracted_dir/GeoLite2-City.mmdb" ]; then
+      sudo mv "$extracted_dir/GeoLite2-City.mmdb" /opt/geolite/
+      success "MaxMind GeoLite2 database installed to /opt/geolite."
+    else
+      warn "Extraction failed: .mmdb file not found."
+    fi
+
+    rm -rf "$tmp_file" "$extracted_dir"
   else
-    warn "Failed to download GeoLite2 database. Geolocation fallback may not work."
+    warn "Failed to download GeoLite2 database from MaxMind."
   fi
 }
 
