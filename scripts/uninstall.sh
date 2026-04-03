@@ -39,7 +39,7 @@ echo ""
 read -r -p "Are you sure? This is IRREVERSIBLE. Type 'yes' to continue: " CONFIRM
 if [ "$CONFIRM" != "yes" ]; then
   echo "Aborted."
-  exit 0
+  exit 1
 fi
 
 # Optional: remove images too
@@ -54,7 +54,7 @@ if [ -f "$DOCKER_COMPOSE_FILE" ]; then
   docker compose -f "$DOCKER_COMPOSE_FILE" --env-file "${ENV_FILE:-/dev/null}" stop 2>/dev/null || true
   success "Containers stopped."
 else
-  warn "docker-compose.yml not found — skipping."
+  warn "docker-compose.yml not found - skipping."
 fi
 
 # =============================================================
@@ -68,26 +68,52 @@ success "Containers removed."
 # Step 3: Remove volumes and DB
 # =============================================================
 log "Removing volumes & data..."
+
 docker compose -f "$DOCKER_COMPOSE_FILE" down -v 2>/dev/null || true
+
 # Fallback: remove by name
-docker volume rm mehtrics_postgres-data mehtrics_redis-data 2>/dev/null || true
-sudo rm -rf /opt/geolite
+if ! docker volume rm mehtrics_postgres-data mehtrics_redis-data 2>/dev/null; then
+  warn "Some volumes could not be removed."
+fi
+
+if [ -d /opt/geolite ]; then
+  sudo rm -rf /opt/geolite
+  success "GeoLite data removed."
+else
+  warn "/opt/geolite not found."
+fi
+
 success "Volumes and internal data removed."
 
 # =============================================================
 # Step 4: Remove networks
 # =============================================================
 log "Removing networks..."
-docker network rm mehtrics_mehtrics-net 2>/dev/null || true
+
+if docker network inspect mehtrics_mehtrics-net >/dev/null 2>&1; then
+  docker network rm mehtrics_mehtrics-net
+  success "Network removed."
+else
+  warn "Network mehtrics_mehtrics-net not found."
+fi
+
 success "Networks removed."
 
 # =============================================================
 # Step 5: Remove images (optional)
 # =============================================================
-if [[ "$REMOVE_IMAGES" =~ ^[Yy]$ ]]; then
+if [[ "$REMOVE_IMAGES" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
   log "Removing images..."
-  docker images --filter "label=maintainer=mehtrics" -q | xargs -r docker rmi -f 2>/dev/null || true
-  docker rmi mehtrics-postgres mehtrics-redis mehtrics-app 2>/dev/null || true
+
+  if ! docker images --filter "label=maintainer=mehtrics" -q | xargs -r docker rmi -f 2>/dev/null; then
+    warn "Some images could not be removed."
+  fi
+
+  # Fallback: remove by name
+  if ! docker rmi mehtrics-postgres mehtrics-redis mehtrics-app 2>/dev/null; then
+    warn "Some images could not be removed."
+  fi
+
   success "Images removed."
 fi
 
