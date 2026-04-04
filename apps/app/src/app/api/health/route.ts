@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@mehtrics/db";
-import { getRedisClient } from "@/config/redis";
+import { getRedisClient } from "@mehtrics/redis";
 
 /**
  * GET /api/health

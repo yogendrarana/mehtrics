@@ -178,9 +178,11 @@ BETTER_AUTH_URL=http://localhost:${APP_PORT}
 POSTGRES_USER=mehtrics
 POSTGRES_PASSWORD=${DB_PASSWORD}
 POSTGRES_DB=mehtrics
+POSTGRES_PORT=5432
 DATABASE_URL=postgresql://mehtrics:${DB_PASSWORD}@postgres:5432/mehtrics
 
 # Redis
+REDIS_PORT=6379
 REDIS_URL=redis://redis:6379
 
 # Auth

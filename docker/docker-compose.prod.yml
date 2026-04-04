@@ -19,12 +19,24 @@ services:
     volumes:
       - /opt/mehtrics/data/redis:/data
 
-  web:
+  app:
     extends:
       file: docker-compose.yml
-      service: web
+      service: app
     restart: always
     environment:
       - NODE_ENV=production
     ports:
-      - "80:3001" # Direct port 80 for production if no reverse proxy
+      - "80:8080"
+
+  event-worker:
+    extends:
+      file: docker-compose.yml
+      service: event-worker
+    restart: always
+
+  aggregation-worker:
+    extends:
+      file: docker-compose.yml
+      service: aggregation-worker
+    restart: always

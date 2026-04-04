@@ -2,10 +2,13 @@ import * as z from "zod";
 import { UAParser } from "ua-parser-js";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { type TEventType } from "@/types";
+import {
+  type TEventType,
+  enqueueEvent,
+  type QueuedEvent,
+} from "@mehtrics/redis";
 import { checkRateLimit } from "@/lib/rate-limiter";
 import { shouldIgnoreRequest } from "@/lib/bot-filter";
-import { enqueueEvent, type QueuedEvent } from "@/lib/event-queue";
 
 import { trackPayloadSchema } from "@/lib/schema";
 import { hashVisitor, hashSession } from "@/lib/hash";

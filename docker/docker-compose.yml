@@ -105,3 +105,44 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+
+  # ----------------------------------------------------------
+  # Event Worker
+  # ----------------------------------------------------------
+  event-worker:
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+    container_name: mehtrics-event-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
+      REDIS_URL: redis://redis:6379
+    command: ["bun", "run", "start:event"]
+    networks:
+      - mehtrics-net
+
+  # ----------------------------------------------------------
+  # Aggregation Worker
+  # ----------------------------------------------------------
+  aggregation-worker:
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+    container_name: mehtrics-aggregation-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
+    command: ["bun", "run", "start:aggregation"]
+    networks:
+      - mehtrics-net

@@ -110,7 +110,7 @@ if [[ "$REMOVE_IMAGES" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
   fi
 
   # Fallback: remove by name
-  if ! docker rmi mehtrics-postgres mehtrics-redis mehtrics-app 2>/dev/null; then
+  if ! docker rmi mehtrics-postgres mehtrics-redis mehtrics-app mehtrics-event-worker mehtrics-aggregation-worker 2>/dev/null; then
     warn "Some images could not be removed."
   fi
 

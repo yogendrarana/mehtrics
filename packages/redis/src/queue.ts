@@ -1,14 +1,11 @@
-import { getRedisClient } from "@/config/redis";
-import { EVENT_QUEUE_KEY } from "@/constants";
-import { type TEventType, type TDeviceType, type QueuedEvent } from "@/types";
-
-export type { TEventType, TDeviceType, QueuedEvent };
+import type Redis from "ioredis";
+import { EVENT_QUEUE_KEY } from "./constants";
+import { type QueuedEvent } from "./types";
 
 /**
  * Push a single event to the Redis queue.
  */
-export async function enqueueEvent(event: QueuedEvent): Promise<void> {
-  const redis = getRedisClient();
+export async function enqueueEvent(redis: Redis, event: QueuedEvent): Promise<void> {
   await redis.lpush(EVENT_QUEUE_KEY, JSON.stringify(event));
 }
 
@@ -16,8 +13,7 @@ export async function enqueueEvent(event: QueuedEvent): Promise<void> {
  * Pop a batch of events from the queue for processing.
  * Returns at most `batchSize` events.
  */
-export async function dequeueBatch(batchSize = 500): Promise<QueuedEvent[]> {
-  const redis = getRedisClient();
+export async function dequeueBatch(redis: Redis, batchSize = 500): Promise<QueuedEvent[]> {
   const pipeline = redis.pipeline();
 
   // RPOP multiple from the list atomically
@@ -49,7 +45,6 @@ export async function dequeueBatch(batchSize = 500): Promise<QueuedEvent[]> {
 /**
  * Get the current queue depth (for monitoring).
  */
-export async function getQueueDepth(): Promise<number> {
-  const redis = getRedisClient();
+export async function getQueueDepth(redis: Redis): Promise<number> {
   return redis.llen(EVENT_QUEUE_KEY);
 }

@@ -27,7 +27,7 @@
     "dev:app": "bun --filter @mehtrics/app dev",
     "dev:www": "bun --filter @mehtrics/www dev",
     "dev:docs": "bun --filter @mehtrics/docs dev",
-    "dev:worker": "bun run --watch apps/app/src/lib/worker.ts",
+    "dev:worker": "bun --filter @mehtrics/worker start:event --watch",
 
     "db:generate": "bun --filter @mehtrics/db db:generate",
     "db:migrate": "bun --filter @mehtrics/db db:migrate",
@@ -35,8 +35,8 @@
     "db:studio": "bun --filter @mehtrics/db db:studio",
     "db:push": "bun --filter @mehtrics/db db:push",
 
-    "worker:event": "bun --filter @mehtrics/app worker:event",
-    "worker:aggregation": "bun --filter @mehtrics/app worker:aggregation"
+    "worker:event": "bun --filter @mehtrics/worker start:event",
+    "worker:aggregation": "bun --filter @mehtrics/worker start:aggregation"
 
   }
 }

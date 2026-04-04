@@ -16,8 +16,6 @@ async function getGeoFromMaxmind(ip: string) {
         process.env.GEOLITE_DB_PATH ||
         path.join(process.cwd(), "geolite", "GeoLite2-City.mmdb");
 
-      console.log("dbPath", dbPath);
-
       if (fs.existsSync(dbPath)) {
         try {
           return await maxmind.open<CityResponse>(dbPath);

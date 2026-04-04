@@ -18,6 +18,7 @@
         "@mehtrics/auth": "workspace:*",
         "@mehtrics/db": "workspace:*",
         "@mehtrics/env": "workspace:*",
+        "@mehtrics/redis": "workspace:*",
         "@mehtrics/ui": "workspace:*",
         "@mehtrics/utils": "workspace:*",
         "@tanstack/react-form": "^1.28.3",
@@ -138,6 +139,16 @@
         "react-dom": "^19.2.4",
       },
     },
+    "packages/redis": {
+      "name": "@mehtrics/redis",
+      "version": "0.1.0",
+      "dependencies": {
+        "ioredis": "^5.6.1",
+      },
+      "devDependencies": {
+        "typescript": "^5",
+      },
+    },
     "packages/ts-config": {
       "name": "@mehtrics/ts-config",
       "version": "0.0.0",
@@ -184,6 +195,19 @@
         "@types/bun": "latest",
       },
       "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
+    "packages/worker": {
+      "name": "@mehtrics/worker",
+      "version": "0.1.0",
+      "dependencies": {
+        "@mehtrics/db": "workspace:*",
+        "@mehtrics/env": "workspace:*",
+        "@mehtrics/redis": "workspace:*",
+        "ioredis": "^5.6.1",
+      },
+      "devDependencies": {
         "typescript": "^5",
       },
     },
@@ -442,11 +466,15 @@
 
     "@mehtrics/hooks": ["@mehtrics/hooks@workspace:packages/hooks"],
 
+    "@mehtrics/redis": ["@mehtrics/redis@workspace:packages/redis"],
+
     "@mehtrics/ts-config": ["@mehtrics/ts-config@workspace:packages/ts-config"],
 
     "@mehtrics/ui": ["@mehtrics/ui@workspace:packages/ui"],
 
     "@mehtrics/utils": ["@mehtrics/utils@workspace:packages/utils"],
+
+    "@mehtrics/worker": ["@mehtrics/worker@workspace:packages/worker"],
 
     "@mehtrics/www": ["@mehtrics/www@workspace:apps/www"],
 

@@ -4,10 +4,13 @@ import {
   dequeueBatch,
   getQueueDepth,
   type QueuedEvent,
-} from "@/lib/event-queue";
-import { ANALYTICS_CONFIG } from "@/constants";
+  ANALYTICS_CONFIG,
+  getRedisClient,
+} from "@mehtrics/redis";
 
 const { POLL_INTERVAL_MS, BATCH_SIZE } = ANALYTICS_CONFIG;
+
+const redis = getRedisClient();
 
 function mapQueuedEventToInsert(e: QueuedEvent): EventInsert {
   return {
@@ -37,7 +40,7 @@ function mapQueuedEventToInsert(e: QueuedEvent): EventInsert {
 async function processBatch(): Promise<void> {
   let batch: QueuedEvent[] = [];
   try {
-    batch = await dequeueBatch(BATCH_SIZE);
+    batch = await dequeueBatch(redis, BATCH_SIZE);
   } catch (err) {
     console.error("[Worker] Failed to dequeue batch:", err);
     return;
@@ -48,15 +51,11 @@ async function processBatch(): Promise<void> {
   const rows = batch.map(mapQueuedEventToInsert);
 
   try {
-    // Bulk insert — Drizzle uses $batches internally for large inserts
     console.log(`[Worker] Attempting to insert ${rows.length} events...`);
     await db.insert(event).values(rows);
     console.log(`[Worker] Successfully inserted ${rows.length} events.`);
   } catch (err) {
     console.error("[Worker] Bulk insert failed:", err);
-    // If bulk fails, we've already popped them from Redis!
-    // TODO: Consider inserting one-by-one or pushing to DLQ to avoid losing whole batch
-    // For now, at least we log the error.
   }
 }
 
@@ -67,12 +66,10 @@ async function runWorker(): Promise<void> {
 
   const tick = async () => {
     try {
-      const depth = await getQueueDepth();
+      const depth = await getQueueDepth(redis);
       if (depth > 0) {
         console.log(`[Worker] Queue depth: ${depth}`);
         await processBatch();
-      } else {
-        console.log("[Worker] Queue is empty.");
       }
     } catch (err) {
       console.error("[Worker] Tick error:", err);
@@ -83,16 +80,15 @@ async function runWorker(): Promise<void> {
   await tick();
 }
 
-// Graceful shutdown
 const handleShutdown = async () => {
   console.log("[Worker] Shutting down gracefully...");
+  await redis.quit();
   process.exit(0);
 };
 
 process.on("SIGINT", handleShutdown);
 process.on("SIGTERM", handleShutdown);
 
-// Self-invoking when run directly
 runWorker().catch((err) => {
   console.error("[Worker] Fatal error:", err);
   process.exit(1);

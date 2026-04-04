@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM oven/bun:1.2-alpine AS base
+LABEL maintainer="mehtrics"
 
 WORKDIR /app
 
@@ -13,8 +14,9 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/utils/package.json ./packages/utils/
 COPY packages/hooks/package.json ./packages/hooks/
-COPY packages/analytics/package.json ./packages/analytics/
 COPY packages/env/package.json ./packages/env/
+COPY packages/worker/package.json ./packages/worker/
+COPY packages/redis/package.json ./packages/redis/
 
 RUN bun install --frozen-lockfile
 

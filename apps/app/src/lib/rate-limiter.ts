@@ -1,4 +1,4 @@
-import { getRedisClient } from "@/config/redis";
+import { getRedisClient } from "@mehtrics/redis";
 
 /**
  * Sliding window rate limiter backed by Redis

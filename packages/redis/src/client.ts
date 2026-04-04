@@ -3,9 +3,7 @@ import Redis from "ioredis";
 let redisClient: Redis | null = null;
 
 /**
- * Returns a singleton Redis client instance.
- * Initializes the client if not already created.
- * @returns Redis client instance
+ * Returns a singleton Redis client instance from environment variables.
  */
 export function getRedisClient(): Redis {
   if (redisClient) return redisClient;
