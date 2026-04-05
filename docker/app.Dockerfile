@@ -4,26 +4,10 @@ LABEL maintainer="mehtrics"
 
 WORKDIR /app
 
-# ---- Install dependencies ----
-FROM base AS deps
-COPY package.json bun.lock ./
-COPY apps/app/package.json ./apps/app/
-COPY apps/www/package.json ./apps/www/
-COPY packages/ui/package.json ./packages/ui/
-COPY packages/db/package.json ./packages/db/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/utils/package.json ./packages/utils/
-COPY packages/hooks/package.json ./packages/hooks/
-COPY packages/env/package.json ./packages/env/
-COPY packages/worker/package.json ./packages/worker/
-COPY packages/redis/package.json ./packages/redis/
-
-RUN bun install
-
 # ---- Build the app ----
 FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN bun install
 
 # Build main app (default target)
 ARG APP=app
