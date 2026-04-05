@@ -22,8 +22,12 @@ RUN bun install
 
 # ---- Build the app ----
 FROM base AS builder
+# Copy root node_modules from deps stage (hoisted packages)
 COPY --from=deps /app/node_modules ./node_modules
+# Copy full source
 COPY . .
+# Re-run bun install so workspace-level node_modules (e.g. apps/app/node_modules/.bin/next) are created
+RUN bun install --frozen-lockfile
 
 # Build main app (default target)
 ARG APP=app

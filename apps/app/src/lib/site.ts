@@ -1,7 +1,7 @@
 import { db } from "@mehtrics/db";
 import { site } from "@mehtrics/db/schema";
 import { eq } from "@mehtrics/db/drizzle";
-import { ANALYTICS_CONFIG } from "@mehtrics/worker";
+import { ANALYTICS_CONFIG } from "@mehtrics/redis";
 
 /**
  * In-memory cache for site validation.

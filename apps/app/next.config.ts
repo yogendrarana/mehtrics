@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@mehtrics/ui", "@mehtrics/auth", "@mehtrics/db"],
+  transpilePackages: ["@mehtrics/ui", "@mehtrics/auth", "@mehtrics/db", "@mehtrics/worker", "@mehtrics/utils", "@mehtrics/redis", "@mehtrics/hooks", "@mehtrics/env"],
   reactCompiler: true,
   serverExternalPackages: ["postgres", "ioredis"],
   async headers() {

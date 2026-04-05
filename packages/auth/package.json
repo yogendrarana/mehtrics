@@ -5,7 +5,8 @@
   "private": true,
   "dependencies": {
     "better-auth": "^1.2.8",
-    "@mehtrics/env": "workspace:*"
+    "@mehtrics/env": "workspace:*",
+    "@mehtrics/db": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest"

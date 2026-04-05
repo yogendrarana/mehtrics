@@ -85,6 +85,7 @@
     "packages/auth": {
       "name": "@mehtrics/auth",
       "dependencies": {
+        "@mehtrics/db": "workspace:*",
         "@mehtrics/env": "workspace:*",
         "better-auth": "^1.2.8",
       },

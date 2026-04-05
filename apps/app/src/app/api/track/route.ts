@@ -5,6 +5,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import {
   type TEventType,
   enqueueEvent,
+  getRedisClient,
   type QueuedEvent,
 } from "@mehtrics/redis";
 import { checkRateLimit } from "@/lib/rate-limiter";
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 10. Push to Redis queue
-  await enqueueEvent(queuedEvent);
+  await enqueueEvent(getRedisClient(), queuedEvent);
 
   const origin = request.headers.get("origin") || "*";
 

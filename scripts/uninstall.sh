@@ -16,6 +16,7 @@ NC='\033[0m'
 INSTALL_DIR="${MEHTRICS_DIR:-$HOME/.mehtrics}"
 DOCKER_COMPOSE_FILE="$INSTALL_DIR/docker/docker-compose.yml"
 ENV_FILE="$INSTALL_DIR/.env"
+GEOLITE_DIR="/opt/geolite"
 
 log() { echo -e "${BLUE}[Mehtrics]${NC} $1"; }
 success() { echo -e "${GREEN}[✓]${NC} $1"; }
@@ -162,5 +163,11 @@ echo ""
 if [[ ! "$REMOVE_DIR" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
   echo "  The installation directory was kept: $INSTALL_DIR"
   echo "  Remove it manually with: rm -rf $INSTALL_DIR"
+  echo ""
+fi
+
+if [[ ! "$REMOVE_GEOLITE" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
+  echo "  The GeoLite2 database was kept: $GEOLITE_DIR"
+  echo "  Remove it manually with: rm -rf $GEOLITE_DIR"
   echo ""
 fi
