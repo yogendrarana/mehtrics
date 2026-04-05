@@ -26,7 +26,7 @@ services:
   postgres:
     build:
       context: ..
-      dockerfile: postgres.Dockerfile
+      dockerfile: docker/postgres.Dockerfile
     container_name: mehtrics-postgres
     restart: unless-stopped
     environment:
@@ -52,7 +52,7 @@ services:
   redis:
     build:
       context: ..
-      dockerfile: redis.Dockerfile
+      dockerfile: docker/redis.Dockerfile
     container_name: mehtrics-redis
     restart: unless-stopped
     ports:

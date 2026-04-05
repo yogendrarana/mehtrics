@@ -3,6 +3,7 @@ FROM redis:7-alpine
 LABEL maintainer="mehtrics"
 
 # Enable persistence (AOF)
+RUN mkdir -p /usr/local/etc/redis
 RUN echo "appendonly yes" >> /usr/local/etc/redis/redis.conf
 RUN echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf
 RUN echo "maxmemory 256mb" >> /usr/local/etc/redis/redis.conf
