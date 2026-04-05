@@ -14,7 +14,7 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/utils/package.json ./packages/utils/
 COPY packages/env/package.json ./packages/env/
 
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # ---- Runner ----
 FROM base AS runner

@@ -18,7 +18,7 @@ COPY packages/env/package.json ./packages/env/
 COPY packages/worker/package.json ./packages/worker/
 COPY packages/redis/package.json ./packages/redis/
 
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # ---- Build the app ----
 FROM base AS builder
