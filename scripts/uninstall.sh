@@ -26,7 +26,7 @@ warn() { echo -e "${YELLOW}[!]${NC} $1"; }
 # =============================================================
 echo ""
 echo "======================================================"
-echo -e "  ${RED}Mehtrics Uninstaller${NC}"
+echo -e "Mehtrics Uninstaller"
 echo "======================================================"
 echo ""
 echo "  This will:"
@@ -45,6 +45,15 @@ fi
 # Optional: remove images too
 read -r -p "Also remove Docker images? (y/N): " REMOVE_IMAGES
 REMOVE_IMAGES="${REMOVE_IMAGES:-n}"
+
+# Optional: remove GeoLite2 data
+read -r -p "Also remove the GeoLite2 database in /opt/geolite? (y/N): " REMOVE_GEOLITE
+REMOVE_GEOLITE="${REMOVE_GEOLITE:-n}"
+
+# Optional: remove entire directory
+read -r -p "Also remove the entire installation directory ($INSTALL_DIR)? (y/N): " REMOVE_DIR
+REMOVE_DIR="${REMOVE_DIR:-n}"
+
 
 # =============================================================
 # Step 1: Stop containers
@@ -76,11 +85,16 @@ if ! docker volume rm mehtrics_postgres-data mehtrics_redis-data 2>/dev/null; th
   warn "Some volumes could not be removed."
 fi
 
-if [ -d /opt/geolite ]; then
-  sudo rm -rf /opt/geolite
-  success "GeoLite data removed."
+if [[ "$REMOVE_GEOLITE" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
+  if [ -d /opt/geolite ]; then
+    log "Removing GeoLite2 data..."
+    sudo rm -rf /opt/geolite
+    success "GeoLite data removed."
+  else
+    warn "/opt/geolite not found."
+  fi
 else
-  warn "/opt/geolite not found."
+  warn "Keeping GeoLite2 database in /opt/geolite."
 fi
 
 success "Volumes and internal data removed."
@@ -127,6 +141,16 @@ if [ -f "$ENV_FILE" ]; then
 fi
 
 # =============================================================
+# Step 7: Remove directory (optional)
+# =============================================================
+if [[ "$REMOVE_DIR" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
+  log "Removing installation directory..."
+  # Use head to avoid self-deletion issues if run from within
+  rm -rf "$INSTALL_DIR"
+  success "Installation directory removed."
+fi
+
+# =============================================================
 # Done
 # =============================================================
 echo ""
@@ -134,6 +158,9 @@ echo "======================================================"
 echo -e "${GREEN}  Mehtrics uninstalled successfully.${NC}"
 echo "======================================================"
 echo ""
-echo "  The installation directory was kept: $INSTALL_DIR"
-echo "  Remove it manually with: rm -rf $INSTALL_DIR"
-echo ""
+
+if [[ ! "$REMOVE_DIR" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
+  echo "  The installation directory was kept: $INSTALL_DIR"
+  echo "  Remove it manually with: rm -rf $INSTALL_DIR"
+  echo ""
+fi

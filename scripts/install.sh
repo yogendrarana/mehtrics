@@ -21,6 +21,8 @@ REPO_URL="https://github.com/yogendrarana/mehtrics"
 DOCKER_COMPOSE_FILE="$INSTALL_DIR/docker/docker-compose.yml"
 ENV_FILE="$INSTALL_DIR/.env"
 APP_PORT="${APP_PORT:-8080}"
+MAXMIND_ACCOUNT_ID="${MAXMIND_ACCOUNT_ID:-}"
+MAXMIND_LICENSE_KEY="${MAXMIND_LICENSE_KEY:-}"
 
 log() { echo -e "${BLUE}[Mehtrics]${NC} $1"; }
 success() { echo -e "${GREEN}[✓]${NC} $1"; }
@@ -112,21 +114,34 @@ setup_files() {
 # Step 4.5: Download MaxMind Database
 # =============================================================
 download_maxmind() {
-  log "Downloading MaxMind GeoLite2 database for IP geolocation..."
-
-  sudo mkdir -p /opt/geolite
-
   if [ -f "/opt/geolite/GeoLite2-City.mmdb" ]; then
     success "MaxMind database already exists in /opt/geolite."
     return
   fi
 
-  # Require env vars
-  if [ -z "$MAXMIND_ACCOUNT_ID" ] || [ -z "$MAXMIND_LICENSE_KEY" ]; then
-    warn "MaxMind credentials not set. Skipping GeoLite2 download."
-    warn "Set MAXMIND_ACCOUNT_ID and MAXMIND_LICENSE_KEY environment variables."
+  echo ""
+  read -r -p "Do you want to download MaxMind GeoLite2 for IP geolocation? (y/N): " DOWNLOAD_GEO
+  if [[ ! "$DOWNLOAD_GEO" =~ ^([Yy]|[Yy][Ee][Ss])$ ]]; then
+    warn "Skipping MaxMind download. Geolocation will be limited."
+    warn "To set it up later, place GeoLite2-City.mmdb in /opt/geolite/GeoLite2-City.mmdb"
     return
   fi
+
+  if [ -z "$MAXMIND_ACCOUNT_ID" ]; then
+    read -r -p "Enter MaxMind Account ID: " MAXMIND_ACCOUNT_ID
+  fi
+  if [ -z "$MAXMIND_LICENSE_KEY" ]; then
+    read -r -p "Enter MaxMind License Key: " MAXMIND_LICENSE_KEY
+  fi
+
+  # Require env vars if they chose to install
+  if [ -z "$MAXMIND_ACCOUNT_ID" ] || [ -z "$MAXMIND_LICENSE_KEY" ]; then
+    error "MaxMind Account ID and License Key are required to download the database. Aborting installation."
+  fi
+
+  log "Downloading MaxMind GeoLite2 database..."
+
+  sudo mkdir -p /opt/geolite
 
   local tmp_file="/tmp/geolite.tar.gz"
   local url="https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz"
@@ -193,6 +208,8 @@ WWW_PORT=3000
 APP_PORT=${APP_PORT}
 
 # Maxmind GeoLite
+MAXMIND_ACCOUNT_ID=${MAXMIND_ACCOUNT_ID}
+MAXMIND_LICENSE_KEY=${MAXMIND_LICENSE_KEY}
 GEOLITE_DB_PATH=/opt/geolite/GeoLite2-City.mmdb
 EOF
 
