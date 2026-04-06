@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+ARG APP=app
 FROM oven/bun:alpine AS base
 LABEL maintainer="mehtrics"
 
@@ -8,7 +9,6 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json bun.lock ./
 COPY apps/app/package.json ./apps/app/
-COPY apps/www/package.json ./apps/www/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/db/package.json ./packages/db/
 COPY packages/auth/package.json ./packages/auth/
@@ -27,20 +27,23 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy full source
 COPY . .
 # Re-run bun install so workspace-level node_modules (e.g. apps/app/node_modules/.bin/next) are created
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Build main app (default target)
-ARG APP=app
+ARG APP
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+ENV SKIP_ENV_VALIDATION=1
 RUN bun --filter @mehtrics/${APP} build
 
 # ---- Production runner ----
 FROM base AS runner
+ARG APP
 ENV NODE_ENV=production
 
-COPY --from=builder /app/apps/${APP:-app}/.next/standalone ./
-COPY --from=builder /app/apps/${APP:-app}/.next/static ./.next/static
-COPY --from=builder /app/apps/${APP:-app}/public ./public
+COPY --from=builder /app/apps/${APP}/.next/standalone ./
+COPY --from=builder /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
+COPY --from=builder /app/apps/${APP}/public ./apps/${APP}/public
 
-ENV PORT 8080
+ENV PORT=8080
 EXPOSE 8080
-CMD ["node", "server.js"]
+CMD ["node", "apps/app/server.js"]
