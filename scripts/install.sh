@@ -100,6 +100,11 @@ install_docker_compose() {
 setup_files() {
   log "Setting up Mehtrics files in $INSTALL_DIR..."
 
+  if [ "${SKIP_GIT:-0}" = "1" ]; then
+    warn "SKIP_GIT=1 detected. Using existing files without updating from GitHub."
+    return
+  fi
+
   if [ -d "$INSTALL_DIR/.git" ]; then
     warn "Mehtrics directory already exists. Pulling latest..."
     git -C "$INSTALL_DIR" pull --quiet
