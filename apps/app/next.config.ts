@@ -2,16 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  transpilePackages: ["@mehtrics/ui", "@mehtrics/auth", "@mehtrics/db", "@mehtrics/worker", "@mehtrics/utils", "@mehtrics/redis", "@mehtrics/hooks", "@mehtrics/env"],
+  transpilePackages: [
+    "@mehtrics/ui",
+    "@mehtrics/auth",
+    "@mehtrics/db",
+    "@mehtrics/worker",
+    "@mehtrics/utils",
+    "@mehtrics/redis",
+    "@mehtrics/hooks",
+    "@mehtrics/env",
+  ],
   reactCompiler: true,
   serverExternalPackages: ["postgres", "ioredis"],
   typescript: {
     ignoreBuildErrors: true,
-  },
-  experimental: {
-    turbo: {
-      rules: {},
-    },
   },
   async headers() {
     return [

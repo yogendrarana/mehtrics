@@ -17,26 +17,26 @@
     "lint": "bunx biome lint --write",
     "format": "bun --filter @mehtrics/app format && bun --filter @mehtrics/www format",
 
-    "build": "bun --filter '*' build",
-    "build:app": "bun --filter @mehtrics/app build",
-    "build:www": "bun --filter @mehtrics/www build",
-    "build:tracker": "bun build apps/app/src/tracker/index.ts --outfile apps/app/public/tracker.js --minify",
-    "build:docs": "bun --filter @mehtrics/docs build",
+    "build": "bun --env-file .env --filter '*' build",
+    "build:app": "bun --env-file .env --filter @mehtrics/app build",
+    "build:www": "bun --env-file .env --filter @mehtrics/www build",
+    "build:tracker": "bun --env-file .env build apps/app/src/tracker/index.ts --outfile apps/app/public/tracker.js --minify",
+    "build:docs": "bun --env-file .env --filter @mehtrics/docs build",
 
     "dev:all": "bun dev:www & bun dev:app",
-    "dev:app": "bun --filter @mehtrics/app dev",
-    "dev:www": "bun --filter @mehtrics/www dev",
-    "dev:docs": "bun --filter @mehtrics/docs dev",
-    "dev:worker": "bun --filter @mehtrics/worker start:event --watch",
+    "dev:app": "bun --env-file .env --filter @mehtrics/app dev",
+    "dev:www": "bun --env-file .env --filter @mehtrics/www dev",
+    "dev:docs": "bun --env-file .env --filter @mehtrics/docs dev",
+    "dev:worker": "bun --env-file .env --filter @mehtrics/worker start:event --watch",
 
-    "db:generate": "bun --filter @mehtrics/db db:generate",
-    "db:migrate": "bun --filter @mehtrics/db db:migrate",
-    "db:seed": "bun --filter @mehtrics/db db:seed",
-    "db:studio": "bun --filter @mehtrics/db db:studio",
-    "db:push": "bun --filter @mehtrics/db db:push",
+    "db:generate": "bun --env-file .env --filter @mehtrics/db db:generate",
+    "db:migrate": "bun --env-file .env --filter @mehtrics/db db:migrate",
+    "db:seed": "bun --env-file .env --filter @mehtrics/db db:seed",
+    "db:studio": "bun --env-file .env --filter @mehtrics/db db:studio",
+    "db:push": "bun --env-file .env --filter @mehtrics/db db:push",
 
-    "worker:event": "bun --filter @mehtrics/worker start:event",
-    "worker:aggregation": "bun --filter @mehtrics/worker start:aggregation"
+    "worker:event": "bun --env-file .env --filter @mehtrics/worker start:event",
+    "worker:aggregation": "bun --env-file .env --filter @mehtrics/worker start:aggregation"
 
   }
 }

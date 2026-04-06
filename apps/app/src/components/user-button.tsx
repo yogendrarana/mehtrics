@@ -3,18 +3,12 @@
 import Link from "next/link";
 import {
   LogOut,
-  Settings,
-  LayoutDashboard,
   Home,
   Globe,
-  CreditCard,
-  Activity,
-  FileText,
   User,
   Settings2,
 } from "lucide-react";
 
-import { authClient } from "@mehtrics/auth";
 import {
   Menu,
   MenuTrigger,
@@ -24,8 +18,9 @@ import {
   MenuGroupLabel,
   MenuGroup,
 } from "@mehtrics/ui/menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@mehtrics/ui/avatar";
+import { authClient } from "@mehtrics/auth";
 import { Button } from "@mehtrics/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@mehtrics/ui/avatar";
 
 export function UserButton() {
   const { data: session, isPending } = authClient.useSession();
