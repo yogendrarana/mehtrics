@@ -1,40 +1,144 @@
-name: mehtrics-prod
+name: mehtrics
 
+# ============================================================
+# Networks
+# ============================================================
+networks:
+  mehtrics-net:
+    driver: bridge
+
+# ============================================================
+# Volumes
+# ============================================================
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+
+# ============================================================
+# Services
+# ============================================================
 services:
+  # ----------------------------------------------------------
+  # PostgreSQL
+  # ----------------------------------------------------------
   postgres:
-    extends:
-      file: docker-compose.yml
-      service: postgres
-    restart: always
-    volumes:
-      - /opt/mehtrics/data/postgres:/var/lib/postgresql/data
-
-  redis:
-    extends:
-      file: docker-compose.yml
-      service: redis
-    restart: always
-    volumes:
-      - /opt/mehtrics/data/redis:/data
-
-  app:
-    extends:
-      file: docker-compose.yml
-      service: app
-    restart: always
+    build:
+      context: ..
+      dockerfile: docker/postgres.Dockerfile
+    container_name: mehtrics-postgres
+    restart: unless-stopped
     environment:
-      - NODE_ENV=production
+      POSTGRES_USER: ${POSTGRES_USER:-mehtrics}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mehtrics}
+      POSTGRES_DB: ${POSTGRES_DB:-mehtrics}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - mehtrics-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mehtrics} -d ${POSTGRES_DB:-mehtrics}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------
+  # Redis
+  # ----------------------------------------------------------
+  redis:
+    build:
+      context: ..
+      dockerfile: docker/redis.Dockerfile
+    container_name: mehtrics-redis
+    restart: unless-stopped
+
+    volumes:
+      - redis-data:/data
+    networks:
+      - mehtrics-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ----------------------------------------------------------
+  # Main App (self-hosted)
+  # ----------------------------------------------------------
+  app:
+    build:
+      context: ..
+      dockerfile: docker/app.Dockerfile
+      args:
+        APP: app
+    container_name: mehtrics-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
+      REDIS_URL: redis://redis:6379
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:8080}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:8080}
     ports:
-      - "80:8080"
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - /opt/geolite:/opt/geolite
+    networks:
+      - mehtrics-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
+  # ----------------------------------------------------------
+  # Event Worker
+  # ----------------------------------------------------------
   event-worker:
-    extends:
-      file: docker-compose.yml
-      service: event-worker
-    restart: always
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+    container_name: mehtrics-event-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
+      REDIS_URL: redis://redis:6379
+    command: ["bun", "run", "start:event"]
+    networks:
+      - mehtrics-net
 
+  # ----------------------------------------------------------
+  # Aggregation Worker
+  # ----------------------------------------------------------
   aggregation-worker:
-    extends:
-      file: docker-compose.yml
-      service: aggregation-worker
-    restart: always
+    build:
+      context: ..
+      dockerfile: docker/worker.Dockerfile
+    container_name: mehtrics-aggregation-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-mehtrics}:${POSTGRES_PASSWORD:-mehtrics}@postgres:5432/${POSTGRES_DB:-mehtrics}
+    command: ["bun", "run", "start:aggregation"]
+    networks:
+      - mehtrics-net

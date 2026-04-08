@@ -14,7 +14,16 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 INSTALL_DIR="${MEHTRICS_DIR:-$HOME/.mehtrics}"
-DOCKER_COMPOSE_FILE="$INSTALL_DIR/docker/docker-compose.yml"
+COMPOSE_FILES=()
+[ -f "$INSTALL_DIR/docker/docker-compose.prod.yml" ] && COMPOSE_FILES+=("-f" "$INSTALL_DIR/docker/docker-compose.prod.yml")
+[ -f "$INSTALL_DIR/docker/docker-compose.dev.yml" ] && COMPOSE_FILES+=("-f" "$INSTALL_DIR/docker/docker-compose.dev.yml")
+
+# Use prod as primary reference if multiple exist, otherwise use first available
+if [ ${#COMPOSE_FILES[@]} -eq 0 ]; then
+  DOCKER_COMPOSE_FILE="$INSTALL_DIR/docker/docker-compose.prod.yml"
+else
+  DOCKER_COMPOSE_FILE="${COMPOSE_FILES[1]}" # The actual path after the -f flag
+fi
 ENV_FILE="$INSTALL_DIR/.env"
 GEOLITE_DIR="/opt/geolite"
 
@@ -60,26 +69,29 @@ REMOVE_DIR="${REMOVE_DIR:-n}"
 # Step 1: Stop containers
 # =============================================================
 log "Stopping containers..."
-if [ -f "$DOCKER_COMPOSE_FILE" ]; then
-  docker compose -f "$DOCKER_COMPOSE_FILE" --env-file "${ENV_FILE:-/dev/null}" stop 2>/dev/null || true
+if [ ${#COMPOSE_FILES[@]} -gt 0 ]; then
+  docker compose "${COMPOSE_FILES[@]}" --env-file "${ENV_FILE:-/dev/null}" stop 2>/dev/null || true
   success "Containers stopped."
 else
-  warn "docker-compose.yml not found - skipping."
+  warn "No docker-compose files found - skipping."
 fi
 
 # =============================================================
 # Step 2: Remove containers
 # =============================================================
 log "Removing containers..."
-docker compose -f "$DOCKER_COMPOSE_FILE" down 2>/dev/null || true
+if [ ${#COMPOSE_FILES[@]} -gt 0 ]; then
+  docker compose "${COMPOSE_FILES[@]}" down 2>/dev/null || true
+fi
 success "Containers removed."
 
 # =============================================================
 # Step 3: Remove volumes and DB
 # =============================================================
 log "Removing volumes & data..."
-
-docker compose -f "$DOCKER_COMPOSE_FILE" down -v 2>/dev/null || true
+if [ ${#COMPOSE_FILES[@]} -gt 0 ]; then
+  docker compose "${COMPOSE_FILES[@]}" down -v 2>/dev/null || true
+fi
 
 # Fallback: remove by name
 if ! docker volume rm mehtrics_postgres-data mehtrics_redis-data 2>/dev/null; then

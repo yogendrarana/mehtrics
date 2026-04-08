@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  LogOut,
-  Home,
-  Globe,
-  User,
-  Settings2,
-} from "lucide-react";
+import { LogOut, Home, Globe, User, Settings2 } from "lucide-react";
 
 import {
   Menu,
