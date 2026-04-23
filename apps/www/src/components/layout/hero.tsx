@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
 
 import { Button } from "@mehtrics/ui/button";
 import { Container } from "@mehtrics/ui/container";
 import { clientEnv } from "@mehtrics/env/client";
+import { motion, useReducedMotion } from "motion/react";
+
 import { AmbientBackground } from "@/components/ambient-background";
 
 export function Hero() {
@@ -65,43 +66,6 @@ export function Hero() {
               fast dashboard. No cookies. No creepy fingerprinting. Just clean,
               developer-friendly insights.
             </motion.p>
-
-            <motion.div
-              variants={{
-                hidden: prefersReducedMotion
-                  ? { opacity: 1 }
-                  : { opacity: 0, y: 10 },
-                show: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.5, ease: "easeOut" },
-                },
-              }}
-              className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
-            >
-              <Button
-                size="xl"
-                className="h-12 px-6 sm:px-8"
-                render={
-                  <Link
-                    href={`${clientEnv.NEXT_PUBLIC_APP_URL}/signup`}
-                    target="_blank"
-                  />
-                }
-              >
-                Get started
-                <ArrowRight className="size-4" />
-              </Button>
-
-              <Button
-                size="xl"
-                variant="outline"
-                className="h-12 px-6 sm:px-8 bg-background/60 backdrop-blur supports-backdrop-filter:bg-background/40"
-                render={<Link href="#demo" />}
-              >
-                See the dashboard
-              </Button>
-            </motion.div>
           </motion.div>
         </div>
       </section>

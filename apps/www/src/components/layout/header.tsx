@@ -1,11 +1,11 @@
 "use client";
 
+import { Button } from "@mehtrics/ui/button";
+import { Container } from "@mehtrics/ui/container";
+import { GitHub } from "@mehtrics/ui/icons";
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
-import { Container } from "@mehtrics/ui/container";
-import { Button } from "@mehtrics/ui/button";
-import { clientEnv } from "@mehtrics/env/client";
 
 export function Header() {
   return (
@@ -14,29 +14,25 @@ export function Header() {
         <div className="h-16 px-0 md:px-4 flex items-center justify-between border-x border-border">
           <Logo />
 
-          <nav className="hidden md:flex items-center gap-8 ml-10">
-            <Link
-              href="/pricing"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Pricing
-            </Link>
+          <div className="flex items-center gap-4 ml-auto">
             <Link
               href="/docs"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
               Docs
             </Link>
-          </nav>
-
-          <div className="flex items-center gap-4 ml-auto">
             <Button
+              variant="outline"
               size="sm"
               render={
-                <Link href={clientEnv.NEXT_PUBLIC_APP_URL} target="_blank" />
+                <Link
+                  href="https://github.com/yogendrarana/mehtrics"
+                  target="_blank"
+                />
               }
             >
-              Go to app
+              <GitHub className="size-4" />
+              GitHub
             </Button>
           </div>
         </div>

@@ -1,8 +1,8 @@
+import { Container } from "@mehtrics/ui/container";
+import { GitHub } from "@mehtrics/ui/icons";
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
-import { GitHub } from "@mehtrics/ui/icons";
-import { Container } from "@mehtrics/ui/container";
 
 export function Footer() {
   return (
@@ -34,7 +34,10 @@ export function Footer() {
                 links={[
                   { label: "About", href: "/" },
                   { label: "Changelog", href: "/docs" },
-                  { label: "Contact", href: "/pricing" },
+                  {
+                    label: "GitHub",
+                    href: "https://github.com/yogendrarana/mehtrics",
+                  },
                 ]}
               />
             </div>
