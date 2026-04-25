@@ -47,18 +47,6 @@ export function CTASection() {
                   Open docs
                   <ArrowRight className="size-4" />
                 </Button>
-                <Button
-                  variant="outline"
-                  render={
-                    <Link
-                      href="https://github.com/yogendrarana/mehtrics"
-                      target="_blank"
-                    />
-                  }
-                >
-                  <GitHub className="size-4" />
-                  GitHub repo
-                </Button>
               </div>
             </div>
 

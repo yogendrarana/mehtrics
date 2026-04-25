@@ -22,22 +22,11 @@ export function Footer() {
 
             <div className="flex justify-end gap-12 w-full md:w-auto">
               <FooterCol
-                title="Developers"
+                title="Links"
                 links={[
                   { label: "Tracking script", href: "/docs" },
                   { label: "Events", href: "/docs" },
                   { label: "API", href: "/docs" },
-                ]}
-              />
-              <FooterCol
-                title="Company"
-                links={[
-                  { label: "About", href: "/" },
-                  { label: "Changelog", href: "/docs" },
-                  {
-                    label: "GitHub",
-                    href: "https://github.com/yogendrarana/mehtrics",
-                  },
                 ]}
               />
             </div>
