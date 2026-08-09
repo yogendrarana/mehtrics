@@ -6,7 +6,7 @@ import { useForm } from "@tanstack/react-form";
 
 import { RegisterUserSchema } from "../../__lib/validation";
 
-import { Logo } from "@/components/logo";
+import { Logo } from "@mehtrics/ui/logo";
 import { authClient } from "@mehtrics/auth";
 import { Button } from "@mehtrics/ui/button";
 import { Google } from "@mehtrics/ui/icons";

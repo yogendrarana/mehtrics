@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "better-auth": "^1.2.8",
+    "better-auth": "^1.6.26",
     "@mehtrics/env": "workspace:*",
     "@mehtrics/db": "workspace:*"
   },

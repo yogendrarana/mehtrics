@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
     "@mehtrics/worker",
     "@mehtrics/utils",
     "@mehtrics/redis",
-    "@mehtrics/hooks",
     "@mehtrics/env",
   ],
   reactCompiler: true,

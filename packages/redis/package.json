@@ -5,9 +5,9 @@
   "type": "module",
   "main": "./index.ts",
   "dependencies": {
-    "ioredis": "^5.6.1"
+    "ioredis": "^6.0.0"
   },
   "devDependencies": {
-    "typescript": "^5"
+    "typescript": "^7"
   }
 }

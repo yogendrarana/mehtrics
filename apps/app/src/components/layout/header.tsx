@@ -1,8 +1,9 @@
 "use client";
 
-import { Logo } from "@/components/logo";
-import { UserButton } from "@/components/user-button";
 import { Container } from "@mehtrics/ui/container";
+
+import { UserButton } from "@/components/user-button";
+import { Logo } from "@mehtrics/ui/logo";
 
 export function Header() {
   return (

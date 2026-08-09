@@ -2,7 +2,7 @@ import { Container } from "@mehtrics/ui/container";
 import { GitHub } from "@mehtrics/ui/icons";
 import Link from "next/link";
 
-import { Logo } from "@/components/logo";
+import { Logo } from "@mehtrics/ui/logo";
 
 export function Footer() {
   return (

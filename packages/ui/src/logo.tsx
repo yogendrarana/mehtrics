@@ -1,8 +1,9 @@
-import Link from "next/link";
 
-export function Logo() {
+export function Logo({
+  showName = false
+}) {
   return (
-    <Link
+    <a
       href="/"
       className="inline-flex items-center gap-3 text-foreground transition-opacity hover:opacity-90"
       aria-label="Mehtrics home"
@@ -27,7 +28,7 @@ export function Logo() {
           strokeLinejoin="round"
         />
       </svg>
-      <span className="text-lg font-semibold tracking-tight">mehtrics</span>
-    </Link>
+      {showName && <span className="text-lg font-semibold tracking-tight">mehtrics</span>}
+    </a>
   );
 }

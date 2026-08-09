@@ -12,9 +12,9 @@
     "@mehtrics/db": "workspace:*",
     "@mehtrics/env": "workspace:*",
     "@mehtrics/redis": "workspace:*",
-    "ioredis": "^5.6.1"
+    "ioredis": "^6.0.0"
   },
   "devDependencies": {
-    "typescript": "^5"
+    "typescript": "^7"
   }
 }

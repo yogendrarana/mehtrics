@@ -1,11 +1,12 @@
 "use client";
 
-import { Button } from "@mehtrics/ui/button";
-import { Container } from "@mehtrics/ui/container";
-import { GitHub } from "@mehtrics/ui/icons";
 import Link from "next/link";
 
-import { Logo } from "@/components/logo";
+import { Button } from "@mehtrics/ui/button";
+import { GitHub } from "@mehtrics/ui/icons";
+import { Container } from "@mehtrics/ui/container";
+
+import { Logo } from "@mehtrics/ui/logo";
 
 export function Header() {
   return (

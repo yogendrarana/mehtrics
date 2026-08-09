@@ -6,8 +6,8 @@ import { useForm } from "@tanstack/react-form";
 
 import { LoginUserSchema } from "../../__lib/validation";
 
-import { Logo } from "@/components/logo";
 import { authClient } from "@mehtrics/auth";
+import { Logo } from "@mehtrics/ui/logo";
 import { Button } from "@mehtrics/ui/button";
 import { Google } from "@mehtrics/ui/icons";
 import { Input } from "@mehtrics/ui/input";
@@ -84,9 +84,10 @@ export function SignInForm() {
         }}
         className="max-w-96 m-auto h-fit w-full"
       >
-        <div className="space-y-4">
-          <div>
+        <div className="space-y-4 flex flex-col">
+          <div className="">
             <Logo />
+            <div></div>
             <h1 className="mb-1 mt-4 text-xl font-semibold">Sign In</h1>
             <p className="text-muted-foreground">
               Welcome back! Please enter your details
