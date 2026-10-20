@@ -27,22 +27,27 @@ export function UserButton() {
 
   if (!user) {
     return (
-      <Button render={<Link href="/signup" />} size="sm">
-        Get Started
+      <Button render={<Link href="/signin" />} size="sm" variant="outline">
+        Sign In
       </Button>
     );
   }
 
   return (
     <Menu>
-      <MenuTrigger className="rounded-full cursor-pointer">
-        <Avatar className="size-8 rounded-md">
-          <AvatarImage src={user.image || undefined} alt={user.name} />
-          <AvatarFallback className="rounded-md border">
-            {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
-          </AvatarFallback>
-        </Avatar>
-      </MenuTrigger>
+      <MenuTrigger
+        className="rounded-full cursor-pointer"
+        render={
+          <Button variant="outline" size="icon-sm">
+            <Avatar className="size-full rounded-md">
+              <AvatarImage src={user.image || undefined} alt={user.name} />
+              <AvatarFallback className="rounded-md border">
+                {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        }
+      />
 
       <MenuPopup align="end" className="min-w-56" sideOffset={8}>
         <MenuGroup>

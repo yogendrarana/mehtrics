@@ -1,5 +1,5 @@
 import { cn } from "@mehtrics/utils/cn";
-import { Header } from "@/components/marketing/header";
+import { Header } from "@/components/layout/header";
 
 import { Container } from "@mehtrics/ui/container";
 import { ScrollArea } from "@mehtrics/ui/scroll-area";

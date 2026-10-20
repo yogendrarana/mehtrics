@@ -76,8 +76,9 @@ export function SignUpForm() {
         callbackURL: "/dashboard",
       });
       if (res?.error) {
-        const isProviderNotFound =
-          res.error.message?.toLowerCase().includes("provider not found");
+        const isProviderNotFound = res.error.message
+          ?.toLowerCase()
+          .includes("provider not found");
         toastManager.add({
           type: "error",
           title: "Google Sign Up Not Configured",

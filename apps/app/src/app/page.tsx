@@ -1,6 +1,6 @@
 import { Features } from "@/components/marketing/features";
 import { Footer } from "@/components/marketing/footer";
-import { Header } from "@/components/marketing/header";
+import { Header } from "@/components/layout/header";
 import { Hero } from "@/components/marketing/hero";
 
 export default function LandingPage() {

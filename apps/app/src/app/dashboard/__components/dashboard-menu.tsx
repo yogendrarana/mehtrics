@@ -19,7 +19,6 @@ import {
   Home,
 } from "lucide-react";
 import { cn } from "@mehtrics/utils/cn";
-import { Card, CardContent } from "@mehtrics/ui/card";
 import { motion, AnimatePresence } from "motion/react";
 
 const ACCOUNT_NAV_GROUPS = [
@@ -203,27 +202,6 @@ export function DashboardMenu() {
           </div>
         </motion.div>
       </AnimatePresence>
-
-      {!isSiteRoute && (
-        <div className="px-4 pb-4 mt-auto">
-          <Card className="border rounded-sm shadow-sm bg-muted/30">
-            <CardContent className="p-3">
-              <p className="text-[10px] font-bold text-muted-foreground/60 uppercase mb-1">
-                PRO FEATURES
-              </p>
-              <p className="text-[11px] text-muted-foreground/80 mb-2 leading-tight">
-                Unlock advanced reporting and custom alerts.
-              </p>
-              <Link
-                href="/pricing"
-                className="text-xs font-bold text-foreground hover:opacity-80 decoration-foreground/30"
-              >
-                Upgrade Account &rarr;
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }
