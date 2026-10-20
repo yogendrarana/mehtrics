@@ -26,6 +26,18 @@ export const auth = betterAuth({
     autoSignIn: true,
   },
 
+  // Social authentication
+  socialProviders: {
+    ...(serverEnv.GOOGLE_CLIENT_ID && serverEnv.GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            clientId: serverEnv.GOOGLE_CLIENT_ID,
+            clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
+          },
+        }
+      : {}),
+  },
+
   // Session config
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days

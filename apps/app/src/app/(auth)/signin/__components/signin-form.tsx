@@ -68,10 +68,30 @@ export function SignInForm() {
   });
 
   const handleGoogleSignIn = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    });
+    try {
+      const res = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+      });
+      if (res?.error) {
+        const isProviderNotFound =
+          res.error.message?.toLowerCase().includes("provider not found");
+        toastManager.add({
+          type: "error",
+          title: "Google Sign In Not Configured",
+          description: isProviderNotFound
+            ? "Google OAuth credentials are missing. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your .env file and restart the dev server."
+            : (res.error.message ?? "Failed to sign in with Google."),
+        });
+      }
+    } catch (err: any) {
+      toastManager.add({
+        type: "error",
+        title: "Google Sign In Failed",
+        description:
+          "Google OAuth credentials are missing. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your .env file and restart the dev server.",
+      });
+    }
   };
 
   return (
@@ -138,7 +158,7 @@ export function SignInForm() {
                 <Input
                   type="password"
                   id={field.name}
-                  placeholder="***"
+                  placeholder="••••••••"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
