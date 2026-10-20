@@ -12,7 +12,7 @@ import {
   MenuGroupLabel,
   MenuGroup,
 } from "@mehtrics/ui/menu";
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 import { Button } from "@mehtrics/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@mehtrics/ui/avatar";
 

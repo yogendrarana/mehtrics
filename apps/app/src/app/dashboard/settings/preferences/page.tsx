@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 
 import { getUserSetting } from "./__lib/actions";
 import { AppearanceSettings } from "./__components/appearance-settings";

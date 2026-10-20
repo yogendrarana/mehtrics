@@ -15,19 +15,15 @@
   ],
   "scripts": {
     "lint": "bunx biome lint --write",
-    "format": "bun --filter @mehtrics/app format && bun --filter @mehtrics/www format",
+    "format": "bun --filter @mehtrics/app format",
 
-    "build": "bun --env-file .env --filter '*' build",
-    "build:app": "bun --env-file .env --filter @mehtrics/app build",
-    "build:www": "bun --env-file .env --filter @mehtrics/www build",
-    "build:tracker": "bun --env-file .env build apps/app/src/tracker/index.ts --outfile apps/app/public/tracker.js --minify",
-    "build:docs": "bun --env-file .env --filter @mehtrics/docs build",
-
-    "dev:all": "bun dev:www & bun dev:app",
+    "dev": "bun --env-file .env --filter @mehtrics/app dev",
     "dev:app": "bun --env-file .env --filter @mehtrics/app dev",
-    "dev:www": "bun --env-file .env --filter @mehtrics/www dev",
-    "dev:docs": "bun --env-file .env --filter @mehtrics/docs dev",
     "dev:worker": "bun --env-file .env --filter @mehtrics/worker start:event --watch",
+
+    "build": "bun --env-file .env --filter @mehtrics/app build",
+    "build:app": "bun --env-file .env --filter @mehtrics/app build",
+    "build:tracker": "bun --env-file .env build apps/app/src/tracker/index.ts --outfile apps/app/public/tracker.js --minify",
 
     "db:generate": "bun --env-file .env --filter @mehtrics/db db:generate",
     "db:migrate": "bun --env-file .env --filter @mehtrics/db db:migrate",

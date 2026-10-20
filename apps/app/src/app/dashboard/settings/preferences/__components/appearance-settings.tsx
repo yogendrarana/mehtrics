@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { Palette, Moon, Sun } from "lucide-react";
 import { useCallback } from "react";
 
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 import { Label } from "@mehtrics/ui/label";
 import { Button } from "@mehtrics/ui/button";
 import { toastManager } from "@mehtrics/ui/toast";

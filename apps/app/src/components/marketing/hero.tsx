@@ -1,14 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-
-import { Button } from "@mehtrics/ui/button";
 import { Container } from "@mehtrics/ui/container";
-import { clientEnv } from "@mehtrics/env/client";
 import { motion, useReducedMotion } from "motion/react";
 
-import { AmbientBackground } from "@/components/ambient-background";
+import { AmbientBackground } from "./ambient-background";
 
 export function Hero() {
   const prefersReducedMotion = useReducedMotion();

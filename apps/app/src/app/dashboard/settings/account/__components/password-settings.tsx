@@ -5,7 +5,7 @@ import { Shield, Settings } from "lucide-react";
 
 import { Input } from "@mehtrics/ui/input";
 import { Label } from "@mehtrics/ui/label";
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 import { Button } from "@mehtrics/ui/button";
 import { toastManager } from "@mehtrics/ui/toast";
 import { SectionCard } from "@/components/dashboard/section-card";

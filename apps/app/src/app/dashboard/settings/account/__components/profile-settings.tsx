@@ -3,7 +3,7 @@
 import { User, Settings } from "lucide-react";
 import { useState, useTransition } from "react";
 
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@mehtrics/ui/avatar";
 import { Input } from "@mehtrics/ui/input";
 import { Label } from "@mehtrics/ui/label";

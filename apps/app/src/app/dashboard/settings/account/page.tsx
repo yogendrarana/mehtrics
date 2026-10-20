@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 
 import { SectionHeader } from "@/components/section-header";
 import { ProfileSettings } from "./__components/profile-settings";

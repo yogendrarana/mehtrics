@@ -44,6 +44,6 @@ COPY --from=builder /app/apps/${APP}/.next/standalone ./
 COPY --from=builder /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
 COPY --from=builder /app/apps/${APP}/public ./apps/${APP}/public
 
-ENV PORT=8080
-EXPOSE 8080
+ENV PORT=3000
+EXPOSE 3000
 CMD ["node", "apps/app/server.js"]

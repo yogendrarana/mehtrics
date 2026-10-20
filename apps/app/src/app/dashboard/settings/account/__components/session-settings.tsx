@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Globe, Settings, Clock } from "lucide-react";
-import { authClient } from "@mehtrics/auth";
+import { authClient } from "@mehtrics/auth/client";
 import { Button } from "@mehtrics/ui/button";
 import { Badge } from "@mehtrics/ui/badge";
 import { toastManager } from "@mehtrics/ui/toast";

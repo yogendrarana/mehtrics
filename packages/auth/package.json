@@ -15,7 +15,9 @@
     "typescript": "^5"
   },
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./client": "./src/client.ts",
+    "./server": "./src/server.ts"
   },
   "sideEffects": false
 }
